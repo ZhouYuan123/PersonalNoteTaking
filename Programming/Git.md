@@ -33,7 +33,7 @@
 1. 新建一个文件夹。
 
 2. git init: 创建了当前文件夹的git仓库。
-   ​    _**.get目录下：管理了git。**_
+   **.get目录下：管理了git。**
 
 ## 3. Git 常用命令
 
@@ -71,9 +71,40 @@ setting.properties //不追踪这个文件了
 ## 5. 分支
 
 SVN分支是重量级，git分支只是创建了指针。
+分支：一个commit对象链。每个commit有个parent commit。
+HEAD: 指向当前分支，并指向最新一次提交。
+master：指向的是提交。
 
-| git branch          | 查看所有分支。                        |
-| ------------------- | ------------------------------ |
-| git branch brname   | 创建分支。                          |
-| git checkout brname | 切换分支。也可以git checkout -, 回刚刚的分支 |
-|                     |                                |
+| git branch                                                  | 查看所有分支。                                                                                    |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| git branch brname                                           | 创建分支。只是更新指针的指向，轻量级。                                                                        |
+| git checkout brname                                         | 切换分支。也可以git checkout -, 回刚刚的分支                                                             |
+| git checkout -b brname                                      | 创建并且切换。                                                                                    |
+| git branch -d brname                                        | 删除分支。只能删除另一个分支。没有merge无法删除。<br/>-D：强制删除。                                                   |
+| git merge 另一个分支                                             | 把另一个分支的内容合并过来。自动merge时，fast-forward, 删除分支时会丢掉分支信息。                                         |
+| git branch -v                                               | 显示最近一条commit。                                                                              |
+| git status --graph                                          | 。                                                                                          |
+| git reset HEAD^<br/>git reset HEAD~1<br/>git reset commitID | ^代表回退版本个数。<br/>1: 代表第一个提交<br/>git checkout commitID: 可以创建一个游离的分支。                          |
+| git reflog                                                  | git的操作日志。                                                                                  |
+| git stash                                                   | 将当前工作区和stage的修改保存起来了。<br/>git stash list. 查看。<br/>git stash pop和git stash apply。一个删除一个不删除。 |
+
+## 6. 标签
+
+`git tag v1.0.1 [-m '内容']` ：新建标签。
+`git tag` : 查看标签。
+`git tag -d v1.0.1` ：删除标签。
+
+## 7. diff
+
+`git blame 文件名` ：快速查看文件是被谁修改的。
+
+| git diff                      | 工作区和暂存区 |
+| ----------------------------- | ------- |
+| git diff HEAD                 | 工作区和版本库 |
+| git diff --cached [commit_ID] | 暂存区和版本库 |
+|                               |         |
+
+`git remote add origin 地址` : origin是默认名字，代表后面紧接着的地址。
+`git push -u origin master`: 加了参数-u后，以后即可直接用git push代替git push origin master。
+
+
