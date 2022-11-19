@@ -20,7 +20,7 @@
 ### 1.2 为何？
 
   本地建立版本库。会有一个全量变化而不是增量(SVN)的变化。
-  SVN只有一个版本库(commit ID 可以自增), Git有多个版本库 （commit ID是一个摘要值，这个值通过sha1计算出出来的）。
+  SVN只有一个版本库(commit ID 可以自增)(本地只有代码), Git有多个版本库 （commit ID是一个摘要值，这个值通过sha1计算出出来的）。
 
 ### 1.3 安装
 
@@ -31,9 +31,11 @@
   which git：git在什么地方。
 
 1. 新建一个文件夹。
-
 2. git init: 创建了当前文件夹的git仓库。
    **.get目录下：管理了git。**
+   1. git init --bare 创建一个裸库，原 .git 目录下的文件在当前目录下
+   
+3. git clone 地址 [自定义名字]：新建了一个文件夹的git仓库。
 
 ## 3. Git 常用命令
 
@@ -45,12 +47,12 @@
 
 | git init                                                                  | 初始化一个空的git库在当前目录。（如果.git被删除，就不是一个GIT管理的仓库）<br />工作区域：工作区。<br />状态：untracked or modified |
 |:------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| git add                                                                   | 进入staged : <br />工作区域：暂存区。<br />状态：staged                                               |
+| git add<br/>git add \* : 提交所有，越过gitignore     | 进入staged : <br />工作区域：暂存区。<br />状态：staged                                               |
 | git commit                                                                | 进入版本库：<br />工作区域：Git 版本库<br />状态：committed                                              |
 | git config -l <br/>git config user.name                                   | 看config所有信息<br />看config中的user.name的值                                                   |
 | git config --local user.name '李四'<br />git config --local unset user.name |                                                                                         |
 | git config                                                                | 打开使用方式说明                                                                                |
-| git rm <br />rm                                                           | 删除文件，在暂存区<br />删除文件，在工作区                                                                |
+| git rm <br />rm<br/>git rm --cached                                       | 删除文件，在暂存区<br />删除文件，在工作区<br />变为untracked file.                                         |
 | git mv 原文件名 新文件名 / mv                                                     |                                                                                         |
 | git log -n                                                                | 看最近n条提交                                                                                 |
 | git log --pretty=oneline                                                  | 每个commit显示到一行                                                                           |
@@ -83,6 +85,7 @@ master：指向的是提交。
 | git branch -d brname                                        | 删除分支。只能删除另一个分支。没有merge无法删除。<br/>-D：强制删除。                                                   |
 | git merge 另一个分支                                             | 把另一个分支的内容合并过来。自动merge时，fast-forward, 删除分支时会丢掉分支信息。                                         |
 | git branch -v                                               | 显示最近一条commit。                                                                              |
+| git branch -a                                               | 显示所有分支包括远程分支。                                                                              |
 | git status --graph                                          | 。                                                                                          |
 | git reset HEAD^<br/>git reset HEAD~1<br/>git reset commitID | ^代表回退版本个数。<br/>1: 代表第一个提交<br/>git checkout commitID: 可以创建一个游离的分支。                          |
 | git reflog                                                  | git的操作日志。                                                                                  |
@@ -90,21 +93,72 @@ master：指向的是提交。
 
 ## 6. 标签
 
-`git tag v1.0.1 [-m '内容']` ：新建标签。
-`git tag` : 查看标签。
+标签本身就是一个ID，并且指向一个commit ID。
+
+`git tag [-a] v1.0.1 [-m '内容']` ：新建标签。-a：会强制要求-m，通过-m添加是附注标签。
+`git push origin 标签名 ` ：推送到远程。`git push origin --tags` :推送所有标签。
+`git tag` : 查看标签。标签本质特定标记，指向一个commitID. github中release统计标签
 `git tag -d v1.0.1` ：删除标签。
+`git push origin --delete tag v1.0.1` ：删除远程标签。
+`git push origin :refs/tags/标签名 ` ：删除远程标签。
 
 ## 7. diff
 
 `git blame 文件名` ：快速查看文件是被谁修改的。
 
 | git diff                      | 工作区和暂存区 |
-| ----------------------------- | ------- |
+| ----------------------------- | -------------- |
 | git diff HEAD                 | 工作区和版本库 |
 | git diff --cached [commit_ID] | 暂存区和版本库 |
-|                               |         |
+|                               |                |
 
-`git remote add origin 地址` : origin是默认名字，代表后面紧接着的地址。
-`git push -u origin master`: 加了参数-u后，以后即可直接用git push代替git push origin master。
+## 8. GitHub
 
+1. 在GitHub创建仓库。
 
+2. `git remote add origin 仓库地址` : origin是默认名字，代表后面紧接着的地址。
+
+3. `git push -u origin master`: 加了参数-u后，以后即可直接用git push代替git push origin master。
+
+`git remote show` : 显示当前库关联的所有远程仓库。
+`git remote show 别名` : 显示详情。
+
+或者用SSH通过秘钥链接。
+
+## 9.进阶命令
+
+| git gui                                                      | 打开图形化界面                   |
+| ------------------------------------------------------------ | -------------------------------- |
+| git config --global alias.名字 原名字<br />git config --global alias.名字 '!命令'<br />vi ~/.gitconfig | git 别名                         |
+| git push --set-upstream origin develop （跟8.3相同，但是推荐这个） | 将本地分支变为远程               |
+| git checkout -b develop origin/develop 或者<br />git checkout --track origin/develop | 创建一个本地分支跟远程的分支对应 |
+| git push origin --delete 名字                                | 删除远程分支                     |
+| git push origin 本地名：远端名                               | git push 完整写法                |
+| git gc                                                       |                                  |
+| git remove --cache                                           | 从暂存区删除，本地保留。         |
+
+## 10. submodule
+
+`git submodule add 另一个库远程地址 新目录`  : 自动生成 .gitmodules文件和新目录存放另一库代码
+
+<u>git pull：</u>
+
+> cd到submodule 中 git pull更新代码，或者，git submodule foreach git pull
+> 在本库git add commit push
+
+<u>git clone:</u> 
+
+> git clone 地址 [自定义文件夹]
+> git submodule init
+> git submodul update --recursive
+>
+> or
+>
+> git clone 地址 [自定义文件夹]  --recursive
+
+## NOTE: 
+
+ORIG_HEAD: 远程的HEAD.
+FETCH_HEAD: 从远程拉取的HEAD.
+
+# THE END
