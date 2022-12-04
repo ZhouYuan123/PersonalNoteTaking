@@ -82,14 +82,18 @@ boolean   Java规范中，没有明确指出boolean的大小。在《Java虚拟�
 `>>>` : 无符号右移，没有 `<<<`
 
 ```java
-num1 = num1 ^ num2; // 只适用于数值类型
+num1 = num1 ^ num2; // 只适用于数值类型变量值交换
 num2 = num1 ^ num2;
 num1 = num1 ^ num2;
 ```
 
+优先级：
 
+switch 表达式类型：byte，short，char, int, 枚举(1.5)，String(1.7)
 
 ## NOTE: 
+
+`break label 和 continue label 不太一样`
 
 1.简单名称（Simple Name）没有类型和参数修饰的方法或字段名称例如inc方法和字段name
 

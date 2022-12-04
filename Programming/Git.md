@@ -116,9 +116,9 @@ master：指向的是提交。
 
 1. 在GitHub创建仓库。
 
-2. `git remote add origin 仓库地址` : origin是默认名字，代表后面紧接着的地址。
+2. `git remote add origin 仓库地址` : origin是默认名字，代表后面紧接着的地址。（关联远程库）
 
-3. `git push -u origin master`: 加了参数-u后，以后即可直接用git push代替git push origin master。
+3. `git push -u origin master`: 加了参数-u后，以后即可直接用git push代替git push origin master。（关联分支）
 
 `git remote show` : 显示当前库关联的所有远程仓库。
 `git remote show 别名` : 显示详情。
@@ -155,6 +155,66 @@ master：指向的是提交。
 > or
 >
 > git clone 地址 [自定义文件夹]  --recursive
+
+## 11. subtree
+
+在主分支：
+
+`git remote add subtree-origin 地址`  ：引入子仓库
+
+`git subtree add --prefix=subtree subtree-origin master` : 关联分支。--squash: 只将本次操作在主仓库生成一条commit记录，子仓库的历史记录并不会合并进来。（三方合并存在问题）
+
+`git subtree` : 查看subtree所有命令。
+
+## 12. Cherry-pick
+
+`git cherry-pick (commitidA..commitidB]` :  不包含A 
+
+`git cherry-pick A^..B` ：包含A
+
+**<u>拉出dev1分支随后合并分支：</u>**
+
+```mermaid
+graph LR;
+	A((A)) --> B((B)) --> C((C)) --> |master| F((F)) --> G((G)) --> H((H)) --> M((M)) ;
+	C --> |dev1|D(D) --> E(E) --> M;
+```
+
+<u>**拉出feature分支：**</u>
+
+```mermaid
+graph LR;
+	G --> |feature| G1((G1)) --> G2((G2)) 
+	A((A)) --> B((B)) --> C((C)) --> |master| F((F)) --> G((G)) --> H((H)) --> M((M));
+	C --> |dev1|D(D) --> E(E) --> M;
+```
+
+此时发现需要把分支dev1的改动(D和E)合并进来,  此时使用使用`git cherry-pick -m 1 <hash M>`就会把commit D和E的内容复制到分支feature上面来。1：原始分支号dev1，2: 变动来源分支master。
+```mermaid
+graph LR;
+	G --> |feature| G1((G1)) --> G2((G2)) --> N["N(D,E)"]  
+```
+
+## 13. Git rebase
+
+**<u>合并分支：</u>**
+
+```bash
+git rebase -i commitID # 合并这个commit之后的提交(该节点不参与合并)。 -i: --interactive let the user edit the list of commits to rebase.
+
+pick cmidff1 第一个提交
+pick cmidff2 第二个提交
+s cmidff3 第三个提交
+s cmidff4 第四个提交
+
+p，pick：使用该次提交
+r，reword：使用该次提交，但重新编辑提交信息
+e，edit：使用该次提交，但停止到该次提交
+s，squash：将该commit和前一个commit合并
+f，fixup：将该commit和前一个commit合并，但不保留该提交的注释信息
+x，exec：执行shell命令
+d，drop：丢弃该commit
+```
 
 ## NOTE: 
 
