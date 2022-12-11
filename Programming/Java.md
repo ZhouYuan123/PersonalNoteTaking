@@ -59,7 +59,9 @@ true, false, null不是关键字。保留字： goto, const.
 
 ## 2. 数据类型
 
-### 2.1 基本数据类型
+### 2.1 数据类型
+
+#### 2.1.1 基本数据类型
 
 byte 		byte b = 128;// 编译不通过
 short 	2byte
@@ -67,8 +69,12 @@ int      	4byte
 long 		8byte
 float 		4byte 表示范围比long要大
 double 	8byte
-char 		2byte  '\u0043' Unicode值是一个字符，CodeChars.pdf所有字符集。有且一个字符。a:97， A:65。
+char 		2byte  '\u0043' Unicode值是一个字符，CodeChars.pdf所有字符集。有且一个字符。a:97， A:65。默认值是0或者‘\u0000’
 boolean   Java规范中，没有明确指出boolean的大小。在《Java虚拟机规范》给出了4个字节，和boolean数组1个字节的定义，具体还要看虚拟机实现是否按照规范来，所以1个字节、4个字节都是有可能的。
+
+#### 2.1.2 数组
+
+`int [] arr = {1, 2, 3, 4, 5}`: 可以省略等号右边的 new int []
 
 ### 2.2 进制
 
@@ -92,6 +98,19 @@ num1 = num1 ^ num2;
 switch 表达式类型：byte，short，char, int, 枚举(1.5)，String(1.7)
 
 ## NOTE: 
+
+### 1. Eclipse 快捷方式
+
+|                  |                |
+| ---------------- | -------------- |
+| Shift + Enter    | 快速新建下一行 |
+| Ctrl + 1 + Enter | 接收变量名     |
+|                  |                |
+
+
+
+1. eclipse设置
+   1. 在workspace根目录 `.metadata` 中
 
 `break label 和 continue label 不太一样`
 

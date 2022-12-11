@@ -1,11 +1,13 @@
 # Git
 
-## 1. 介绍
+## 1. 简介
+创始人：Linux创始人，Linus Torvalds。
 
-​    创始人：Linux创始人。
-​    2005年，BitKeeper 不再免费。
-​    拥有难以置信的非线性分支管理系统。
-​    集中式版本控制系统（DVCS), 分布式版本控制系统（DVCS）.
+2005年，BitKeeper 不再免费。
+
+拥有难以置信的非线性分支管理系统。
+
+集中式版本控制系统（DVCS), 分布式版本控制系统（DVCS）。
 
 ### 1.1 GIT, GitHub 与 GitLab
 
@@ -20,22 +22,39 @@
 ### 1.2 为何？
 
   本地建立版本库。会有一个全量变化而不是增量(SVN)的变化。
+
   SVN只有一个版本库(commit ID 可以自增)(本地只有代码), Git有多个版本库 （commit ID是一个摘要值，这个值通过sha1计算出出来的）。
 
 ### 1.3 安装
 
 地址： https://git-scm.com/downloads
 
+`git --version` ：查看安装的Git版本
+
+`git config --list` : 查看config信息。
+
 ## 2. 创建Git库
 
   which git：git在什么地方。
 
 1. 新建一个文件夹。
+
 2. git init: 创建了当前文件夹的git仓库。
    **.get目录下：管理了git。**
    1. git init --bare 创建一个裸库，原 .git 目录下的文件在当前目录下
    
 3. git clone 地址 [自定义名字]：新建了一个文件夹的git仓库。
+
+| .git 中的目录or文件 |                    |
+| ------------------- | ------------------ |
+| /hooks              |                    |
+| /info               | 包含全局性排除文件 |
+| /logs               | 日志               |
+| /objects            |                    |
+| /refs               |                    |
+| config              |                    |
+| description         | 仓库信息           |
+| HEAD                |                    |
 
 ## 3. Git 常用命令
 
@@ -77,18 +96,19 @@ SVN分支是重量级，git分支只是创建了指针。
 HEAD: 指向当前分支，并指向最新一次提交。
 master：指向的是提交。
 
-| git branch                                                  | 查看所有分支。                                                                                    |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| git branch brname                                           | 创建分支。只是更新指针的指向，轻量级。                                                                        |
-| git checkout brname                                         | 切换分支。也可以git checkout -, 回刚刚的分支                                                             |
-| git checkout -b brname                                      | 创建并且切换。                                                                                    |
-| git branch -d brname                                        | 删除分支。只能删除另一个分支。没有merge无法删除。<br/>-D：强制删除。                                                   |
-| git merge 另一个分支                                             | 把另一个分支的内容合并过来。自动merge时，fast-forward, 删除分支时会丢掉分支信息。                                         |
-| git branch -v                                               | 显示最近一条commit。                                                                              |
-| git branch -a                                               | 显示所有分支包括远程分支。                                                                              |
-| git status --graph                                          | 。                                                                                          |
-| git reset HEAD^<br/>git reset HEAD~1<br/>git reset commitID | ^代表回退版本个数。<br/>1: 代表第一个提交<br/>git checkout commitID: 可以创建一个游离的分支。                          |
-| git reflog                                                  | git的操作日志。                                                                                  |
+| git branch                                                  | 查看所有分支。                                               |
+| ----------------------------------------------------------- | ------------------------------------------------------------ |
+| git branch brname                                           | 创建分支。只是更新指针的指向，轻量级。                       |
+| git checkout brname                                         | 切换分支。也可以git checkout -, 回刚刚的分支                 |
+| git checkout -b brname                                      | 创建并且切换。                                               |
+| git branch -d brname                                        | 删除分支。只能删除另一个分支。没有merge无法删除。<br/>-D：强制删除。 |
+| git merge 另一个分支                                        | 把另一个分支的内容合并过来。自动merge时，fast-forward, 删除分支时会丢掉分支信息。 |
+| git branch -v                                               | 显示最近一条commit。                                         |
+| git branch -r                                               | 查看远程分支。                                               |
+| git branch -a                                               | 显示所有分支包括远程分支。                                   |
+| git status --graph                                          | 。                                                           |
+| git reset HEAD^<br/>git reset HEAD~1<br/>git reset commitID | ^代表回退版本个数。<br/>1: 代表第一个提交<br/>git checkout commitID: 可以创建一个游离的分支。 |
+| git reflog                                                  | git的操作日志。                                              |
 | git stash                                                   | 将当前工作区和stage的修改保存起来了。<br/>git stash list. 查看。<br/>git stash pop和git stash apply。一个删除一个不删除。 |
 
 ## 6. 标签

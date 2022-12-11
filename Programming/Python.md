@@ -133,6 +133,8 @@ else:
 
 一切皆对象，所有对象都有一个布尔值。
 
+- 0的布尔值为False，非0布尔值为True.
+
 ## 9. 数据结构
 
 ### 9.1 列表
@@ -302,7 +304,7 @@ s1.symmetric_difference(s2) or s1^ s2 # 取对称差集
 |                                                              |                                          |
 | ------------------------------------------------------------ | ---------------------------------------- |
 | .index('')                                                   | 找不到，ValueError                       |
-| .ifind('')                                                   | 找不到，返回 -1                          |
+| .find('')                                                    | 找不到，返回 -1                          |
 | .rindex('')                                                  | 最后一个指定字串, 找不到，ValueError     |
 | .rfind('')                                                   | 最后一个指定字串, 找不到，返回 -1        |
 | .upper(), lower(), swapcase(), capitalize(), title()         | 产生新的转换的字符串。                   |
@@ -318,8 +320,73 @@ s1.symmetric_difference(s2) or s1^ s2 # 取对称差集
 | isdecimal()                                                  | 是否全部由十进制数字组成                 |
 | isnumeric()                                                  | 是否全部由数字组成 （123四）true         |
 | isalnum()                                                    | 是否由数字和字母组成                     |
+| replace('Pythoin', 'Java')<br />replace('Pythoin', 'Java', 指定次数) | 用Java替换Python                         |
+| '\|'.join(lst)，'*'.join(t)，                                | lst转为字符串用指定字符拼接              |
 
-​	
+### 10.3 字符串的比较
+
+内置函数ord()获取原始值。
+
+`'a'>'b'` : 97>98, False
+
+`==` : 判断内容，is 判断地址。
+
+### 10.4 字符串切片
+
+切片后返回新的字符串。
+
+`s[:5]` : 前五个字符的串。
+
+`s[6:]`:  从六到最后。
+
+`s[6::2]`: 步长为2。`s[::-1]`: 反转了字符串。
+
+### 10.5 格式化字符串
+
+```python
+print('%s%d' % (name,age))
+print('%10d' % 99) # 10表示宽度
+print('%.3f' % 3.1415926) # 3个小数 3.142
+print('%10.3f' % 3.1415926) # 同时设置 			3.142
+
+print('{0}{1}{0}'.format(name,age))
+print('{0:.3'.format(3.1415926)) # 3位 3.14
+print('{0:.3f'.format(3.1415926)) # 3个小数 3.142
+print(f'{name}{age}')
+```
+
+### 10.6 字符串编码转换
+
+`print(s.encode(encoding='GBK'))` : 一个中文占两个字节
+
+`print(s.encode(encoding='UTF-8'))` : 一个中文占三个字节
+
+`print(b.decode(encoding='UTF-8'))` : 一个中文占三个字节
+
+## 11. 函数
+
+```python
+def calc(a, b):
+calc(20, 10) # 位置实参   
+calc(*lst) # 结构列表，不然会因为参数不对应报错。字典：calc(**dict) 
+calc(b=10, a=20); # 关键字实参   
+
+# 只有一个返回值返回原值。
+# 返回值是多个返回元组。
+
+# 参数默认值
+def calc(a, b=10):
+    
+# 可变位置参数
+def fun(*args):
+    print(args)
+# 可变关键字参数
+def fun1(**args): # 结果是一个字典
+    print(args)
+fun1(a=1,b=2) # {'a':1, 'b':2}
+```
+
+局部变量作用域只在函数内部。需要global a变为全局。
 
 ## NOTE：
 
