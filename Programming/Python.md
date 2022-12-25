@@ -388,6 +388,67 @@ fun1(a=1,b=2) # {'a':1, 'b':2}
 
 局部变量作用域只在函数内部。需要global a变为全局。
 
+## 12. 异常
+
+```python
+try:
+	执行语句
+except ZeroDivisionError:
+    执行语句
+except ValueError as e:
+    print(e)
+else:
+    执行语句 # 只有没有expection的时候，才会执行
+finally:
+    总是执行
+```
+
+常见异常：`ZeroDivisionError, IndexError, KeyError, NameError, SyntaxError, ValueError`
+
+traceback模块：
+
+```python
+import traceback
+	traceback.print_exc()
+```
+
+## 13. 类
+
+### 13.1 类定义
+
+```python
+class Student:
+    a = 'a' # 类属性
+    def eat(self): # 实例方法， 类之外称为函数，类之内叫作方法。
+        pass
+    @staticmethod
+    def sm(): # 静态方法
+        pass
+    @classmethod
+    def cm(cls): # 类方法，调用 Student.cm() // 不需要传参
+        pass
+    
+    def __init__(self,name,age): # 初始化方法
+        self.name = name # self.name 实例属性
+        self.age = age
+        
+```
+
+### 13.2 对象创建
+
+```python
+stu = Student('zs', 20)
+print(stu) # 实例对象
+print(Student) # 类对象
+stu.eat() # 方法调用
+Student.eat(stu) # 方法调用
+
+stu.gender='女' # 动态绑定
+def show():
+    pass
+stu.show = show # 动态绑定方法
+```
+
 ## NOTE：
 
 ### 1. 内置函数
@@ -396,6 +457,7 @@ fun1(a=1,b=2) # {'a':1, 'b':2}
 print("Hello",end ="") # 默认换行，用end参数来设置你想要的结束符号
 range(stop) # 返回一个[0-stop)的序列，步长为1
 range(start,stop,step)
+input('提示') # 从键盘接收
 ```
 
 # THE END

@@ -42,19 +42,9 @@
 2. git init: 创建了当前文件夹的git仓库。
    **.get目录下：管理了git。**
    1. git init --bare 创建一个裸库，原 .git 目录下的文件在当前目录下
-   
-3. git clone 地址 [自定义名字]：新建了一个文件夹的git仓库。
 
-| .git 中的目录or文件 |                    |
-| ------------------- | ------------------ |
-| /hooks              |                    |
-| /info               | 包含全局性排除文件 |
-| /logs               | 日志               |
-| /objects            |                    |
-| /refs               |                    |
-| config              |                    |
-| description         | 仓库信息           |
-| HEAD                |                    |
+3. git add -> git commit -> i
+4. git clone 地址 [自定义名字]：新建了一个文件夹的git仓库。
 
 ## 3. Git 常用命令
 
@@ -64,18 +54,18 @@
 2. ~/.gitconfig (用户) , git config --global
 3. .git/config  (特定项目) , git config --local
 
-| git init                                                                  | 初始化一个空的git库在当前目录。（如果.git被删除，就不是一个GIT管理的仓库）<br />工作区域：工作区。<br />状态：untracked or modified |
-|:------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| git add<br/>git add \* : 提交所有，越过gitignore     | 进入staged : <br />工作区域：暂存区。<br />状态：staged                                               |
-| git commit                                                                | 进入版本库：<br />工作区域：Git 版本库<br />状态：committed                                              |
-| git config -l <br/>git config user.name                                   | 看config所有信息<br />看config中的user.name的值                                                   |
-| git config --local user.name '李四'<br />git config --local unset user.name |                                                                                         |
-| git config                                                                | 打开使用方式说明                                                                                |
-| git rm <br />rm<br/>git rm --cached                                       | 删除文件，在暂存区<br />删除文件，在工作区<br />变为untracked file.                                         |
-| git mv 原文件名 新文件名 / mv                                                     |                                                                                         |
-| git log -n                                                                | 看最近n条提交                                                                                 |
-| git log --pretty=oneline                                                  | 每个commit显示到一行                                                                           |
-| git log --pretty=format ....                                              | 自定义格式                                                                                   |
+| git init                                                     | 初始化一个空的git库在当前目录。（如果.git被删除，就不是一个GIT管理的仓库）<br />工作区域：工作区。<br />状态：untracked or modified |
+| :----------------------------------------------------------- | ------------------------------------------------------------ |
+| git add<br/>git add \* : 提交所有，越过gitignore             | 进入staged : <br />工作区域：暂存区。<br />状态：staged      |
+| git commit                                                   | 进入版本库：<br />工作区域：Git 版本库<br />状态：committed  |
+| git config -l <br/>git config user.name                      | 看config所有信息<br />看config中的user.name的值              |
+| git config --local user.name '李四'<br />git config --local unset user.name |                                                              |
+| git config                                                   | 打开使用方式说明                                             |
+| git rm <br />rm<br/>git rm --cached                          | 删除文件，在暂存区<br />删除文件，在工作区<br />变为untracked file. |
+| git mv 原文件名 新文件名 / mv                                |                                                              |
+| git log -n                                                   | 看最近n条提交                                                |
+| git log --pretty=oneline<br />git log --oneline              | 每个commit显示到一行                                         |
+| git log --pretty=format ....                                 | 自定义格式                                                   |
 
 ## 4. .gitignore
 
@@ -126,11 +116,11 @@ master：指向的是提交。
 
 `git blame 文件名` ：快速查看文件是被谁修改的。
 
-| git diff                      | 工作区和暂存区 |
-| ----------------------------- | -------------- |
-| git diff HEAD                 | 工作区和版本库 |
-| git diff --cached [commit_ID] | 暂存区和版本库 |
-|                               |                |
+| git diff                                             | 工作区和暂存区 |
+| ---------------------------------------------------- | -------------- |
+| git diff HEAD                                        | 工作区和版本库 |
+| git diff --cached [commit_ID]<br />git diff --staged | 暂存区和版本库 |
+|                                                      |                |
 
 ## 8. GitHub
 
@@ -236,6 +226,17 @@ x，exec：执行shell命令
 d，drop：丢弃该commit
 ```
 
+## 14. git objects
+| .git 中的目录or文件 |                                                              |
+| ------------------- | ------------------------------------------------------------ |
+| /hooks              |                                                              |
+| /info               | 包含全局性排除文件                                           |
+| /logs               | 日志                                                         |
+| /objects            | git add 先到这生成git对象，再到暂存区，一个文件每修改一次生成一个git对象<br />git对象，存储键值对对象。<br />key : value对应的hash值。<br />value: blob类型<br />树对象，总是覆盖。<br />提交对象， |
+| /refs               |                                                              |
+| config              |                                                              |
+| description         | 仓库信息                                                     |
+| HEAD                |                                                              |
 ## NOTE: 
 
 ORIG_HEAD: 远程的HEAD.
