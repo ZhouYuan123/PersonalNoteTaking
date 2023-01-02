@@ -43,3 +43,9 @@ ice sb out。不理睬某人。
 ghost someone 指跟某人突然切断所有联系，一般指约会对象比较多。（躲着某人）
 
 sure as hell 肯定无疑
+
+be head of ...的主管，领导
+
+kill it 做的极其好
+
+Take sb on a tour of sth.

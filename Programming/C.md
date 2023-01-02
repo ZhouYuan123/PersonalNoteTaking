@@ -57,7 +57,7 @@ int main()
 | ---------- | ------------------------------------------------------------ |
 | 字面常量   | 3.14，10 ，‘a’， ”hello“                                     |
 | 常变量     | const 修饰的                                                 |
-| 标识符常量 | define是一个预处理指令 <br />#define MAX 1000. 定义了一个常量<br />#define ADD(X,Y) X+Y .定义了宏 (define只是替换) ADD(2, 3) = 2 + 3 |
+| 标识符常量 | define是一个预处理指令 <br />#define MAX 1000. 定义了一个常量<br />#define ADD(X,Y) X+Y .定义了宏 (宏就是替换) 4\*ADD(2, 3) = 4\*2 + 3 |
 | 枚举常量   |                                                              |
 
 ```c
@@ -103,6 +103,24 @@ int len = strlen("abc"); // 3
 | typedef 原名 新名 | 类型重定义                                                   |
 | static            | 修饰局部变量，只初始化一次，方法结束不销毁。<br />修饰全局变量，只能在自己所在源文件使用，切断外部链接。<br />修饰函数，只能在自己所在源文件使用，切断外部链接。 |
 
+## 7. 指针
+
+指针变量。
+
+大小：所有类型指针大小相同。
+
+## 8. 结构体
+
+```c
+struct Stu
+{
+    char name[20];
+    int age;
+}
+struct Stu s = { "zs" , 20};
+s.name;
+```
+
 
 
 
@@ -115,7 +133,7 @@ int len = strlen("abc"); // 3
 | Ctrl k-> Ctrl c<br />Ctrl k-> Ctrl u | 注释<br />取消注释 |
 |                                      |                    |
 ### 2. 内置函数
-| printf("Hello World");<br />printf(“%d\n”, sizeof(a)); | <stdio.h>, <br />%d：整数<br />%f: float<br />%lf: double<br />%s: 字符串 |
+| printf("Hello World");<br />printf(“%d\n”, sizeof(a)); | <stdio.h>, <br />%d：整数<br />%f: float<br />%lf: double<br />%s: 字符串<br />%p: 地址 |
 | ------------------------------------------------------ | ------------------------------------------------------------ |
 | scanf(“%d %d”，&a, &b);                                | 输入函数，scanf_s是VS自带的                                  |
 |                                                        |                                                              |

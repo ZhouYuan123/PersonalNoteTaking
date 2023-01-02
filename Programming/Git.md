@@ -54,10 +54,11 @@
 2. ~/.gitconfig (用户) , git config --global
 3. .git/config  (特定项目) , git config --local
 
-| git init                                                     | 初始化一个空的git库在当前目录。（如果.git被删除，就不是一个GIT管理的仓库）<br />工作区域：工作区。<br />状态：untracked or modified |
+|                                                              |                                                              |
 | :----------------------------------------------------------- | ------------------------------------------------------------ |
-| git add<br/>git add \* : 提交所有，越过gitignore             | 进入staged : <br />工作区域：暂存区。<br />状态：staged      |
-| git commit                                                   | 进入版本库：<br />工作区域：Git 版本库<br />状态：committed  |
+| git init                                                     | 初始化一个空的git库在当前目录。（如果.git被删除，就不是一个GIT管理的仓库）<br />工作区域：工作区。<br />状态：untracked or modified |
+| git add<br/>git add \* : 提交所有，越过gitignore             | 库中生成git对象 --> 进入staged : <br />工作区域：暂存区。<br />状态：staged |
+| git commit <br />or<br />git commit -a (跳过暂存区操作)      | 进入版本库：<br />工作区域：Git 版本库<br />状态：committed  |
 | git config -l <br/>git config user.name                      | 看config所有信息<br />看config中的user.name的值              |
 | git config --local user.name '李四'<br />git config --local unset user.name |                                                              |
 | git config                                                   | 打开使用方式说明                                             |
@@ -116,11 +117,10 @@ master：指向的是提交。
 
 `git blame 文件名` ：快速查看文件是被谁修改的。
 
-| git diff                                             | 工作区和暂存区 |
-| ---------------------------------------------------- | -------------- |
-| git diff HEAD                                        | 工作区和版本库 |
-| git diff --cached [commit_ID]<br />git diff --staged | 暂存区和版本库 |
-|                                                      |                |
+| git diff                                                     | 工作区和暂存区 |
+| ------------------------------------------------------------ | -------------- |
+| git diff HEAD                                                | 工作区和版本库 |
+| git diff --cached [commit_ID]<br />git diff --staged （1.6.1以上） | 暂存区和版本库 |
 
 ## 8. GitHub
 
@@ -226,17 +226,61 @@ x，exec：执行shell命令
 d，drop：丢弃该commit
 ```
 
-## 14. git objects
+## 14. Git Objects
+
+Git的核心部分是一个简单的键值对数据库。
+
+可以向数据库插入任何类型的内容，返回一个键值，通过键值可以再次检索该内容。
+
 | .git 中的目录or文件 |                                                              |
 | ------------------- | ------------------------------------------------------------ |
 | /hooks              |                                                              |
 | /info               | 包含全局性排除文件                                           |
 | /logs               | 日志                                                         |
-| /objects            | git add 先到这生成git对象，再到暂存区，一个文件每修改一次生成一个git对象<br />git对象，存储键值对对象。<br />key : value对应的hash值。<br />value: blob类型<br />树对象，总是覆盖。<br />提交对象， |
+| /objects            | Git 数据库。<br />git add 先到这生成git对象，存的全量不是增量，再到暂存区，一个文件每修改一次生成一个git对象<br />树对象，总是覆盖。<br />提交对象， |
 | /refs               |                                                              |
 | config              |                                                              |
 | description         | 仓库信息                                                     |
 | HEAD                |                                                              |
+
+### 14.1 Git 对象 （文件版本）
+
+Git对象，用来存储文件内容，一个文件生成一个git对象。Git对象，存储键值对对象。
+
+`git hash-object -w 文件名` ：生成git对象，放到/objects中，返回key : value对应的hash值, value: blob类型, 文件内容作为值。
+
+`git cat-file -p 文件夹+文件名` : 查看object内容。
+
+`git cat-file -t 文件夹+文件名` : 查看object类型。
+
+### 14.2 树对象 （项目版本）
+
+树对象，解决文件名保存问题。存储git对象和子树对象。
+
+`git update-index --add --cacheinfo 100644 hash值 文件名` ：往暂存区添加一个对象。
+
+> 100644，表明这是一个普通文件。
+>
+> --add: 加入暂存区, 第一次添加需要。
+>
+> --cacheinfo: 要将添加的文件位于Git数据库中。
+
+git write-tree : 将暂存区的tree写入/objects
+
+`git ls-files -s` ： 查看暂存区。
+
+`git read-tree --prefix=bak 树对象hash` ：树对象链接树对象。
+
+`git write-tree` : 把树对象读入暂存区。
+
+### 14.3 提交对象 
+
+`echo 'first commit' | git commit-tree treeid [-P ]` ： 创建提交对象
+
+<font color="#cc9900"> **git add = git hash-object -w 文件名 + git udate-index ...**</font>
+
+<font color="#cc9900"> **git commit = git write-tree + git commit-tree**</font>
+
 ## NOTE: 
 
 ORIG_HEAD: 远程的HEAD.
