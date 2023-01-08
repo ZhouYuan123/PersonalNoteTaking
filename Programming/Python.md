@@ -511,6 +511,8 @@ obj3 = copy.deepcopy(obj1) # 深拷贝
 
 ## 17. 模块
 
+### 17.1 模块
+
 一个 .py 文件就是一个模块。
 
 ```python
@@ -521,6 +523,95 @@ from 模块名称 import 函数/变量/类
 PyCharm导入自定义模块：
 
 在模块所在文件夹右击 --> Mark Directory as  Sources Root
+
+package中 默认包含\_\_int\_\_.py文件
+
+```python
+if __name__ == '__main__'
+	pass # 只有当前模块作为主程序运行才会执行
+
+```
+
+### 17.2 常用内置模块
+
+| 常用内置模块 |                                                              |
+| ------------ | ------------------------------------------------------------ |
+| sys          | sys.getsizeof(a)                                             |
+| time         | time.time()： 秒<br />time.localtime(time.time()) : 转成本地时间 |
+| urllib       | .request.urlopen('http://www.baidu.com')                     |
+| re           | 正则                                                         |
+| math         | .pi : 圆周率                                                 |
+| decimal      |                                                              |
+
+### 17.3 第三方模块
+
+`pip install 模块名 `： 在线安装， DOS窗口中执行。
+
+`python`：进入python交互程序。
+
+`import 模块名`：验证是否报错。
+
+## 18. 编码与持久化
+
+Python的解释器使用的是Unicode内存，.py文件在磁盘上使用UTF-8存储外存。
+
+```python
+#encoding=gbk #指定编码格式
+file = open('a.txt', 'a')
+file.write('Python')
+file.writelines(['Python','java']) # 同一行
+file.close()
+
+file = open('a.txt', 'r')
+file.read() # 读出所有 file.read(n) n:字符个数
+file.readline() 
+file.readlines() # 返回列表
+file.seek(2) # 跳过字节的个数 seek(offset[,whence]) offset:负数反向。whence：0，从开头开始计算。1：从当前位置计算。2：从文件尾开始计算。
+file.tell() # 告诉指针当前位置
+file.flush()
+file.close()
+
+#with 语句, 不需要手动关闭
+with open('a.txt', 'r') as file: # file 文件重写了上下文管理器
+    pass 
+```
+
+| 打开方式 |                        |
+| -------- | ---------------------- |
+| r        | 只读                   |
+| w        | 创建或者覆盖           |
+| a        | 创建或者追加           |
+| b        | 以二进制打开，rb or wb |
+| +        | 读写方式打开           |
+
+## 19. os
+
+```python
+import os
+os.system('notepad.exe') # 打开记事本
+os.system('calc.exe') # 打开计算器
+os.startfile('路径') # 打开程序
+```
+
+| os.                                                  |                            |
+| ---------------------------------------------------- | -------------------------- |
+| getcwd()                                             | 返回当前工作目录           |
+| listdir('../文件夹')                                 | 列出文件和目录             |
+| mkdir(path[,mode])<br />makedirs(path1/path2[,mode]) | 创建目录<br />创建多级目录 |
+| rmdir(path)<br />removedirs('')                      |                            |
+| chdir(path)                                          | 切换工作目录               |
+| walk(path)                                           | 返回对象列表               |
+
+| os.path          |                    |
+| ---------------- | ------------------ |
+| abspath(path)    |                    |
+| exists(path)     |                    |
+| join(path, name) | 拼接名字。         |
+| split(path)      | 分离路径和文件名。 |
+| splittext(path)  | 分离文件和后缀名。 |
+| basename(path)   | 提取文件名。       |
+| dirname(path)    | 提取目录。         |
+| isdir(path)      |                    |
 
 ## NOTE：
 

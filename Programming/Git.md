@@ -38,15 +38,28 @@
   which git：git在什么地方。
 
 1. 新建一个文件夹。
-
 2. git init: 创建了当前文件夹的git仓库。
    **.get目录下：管理了git。**
    1. git init --bare 创建一个裸库，原 .git 目录下的文件在当前目录下
-
 3. git add -> git commit -> i
 4. git clone 地址 [自定义名字]：新建了一个文件夹的git仓库。
 
-## 3. Git 常用命令
+## 3. .git目录
+
+| .git 中的目录or文件 |                                                           |
+| ------------------- | --------------------------------------------------------- |
+| /hooks              |                                                           |
+| /info               | 包含全局性排除文件                                        |
+| /logs               | 日志                                                      |
+| /objects            | Git 数据库。<br />树对象，总是覆盖。<br />提交对象，      |
+| /refs               | 表示一系列的引用，保存包含`heads`、`remote`、`tags`等目录 |
+| config              | 保存了本地仓库的配置信息                                  |
+| description         | 仓库信息                                                  |
+| HEAD                | 指向当前正在工作的分支, 例如ref: refs/heads/test          |
+| index               | 存储的是暂存区内容                                        |
+
+
+## 4. Git 常用命令
 
    user.name与user.email的设置。
 
@@ -68,7 +81,14 @@
 | git log --pretty=oneline<br />git log --oneline              | 每个commit显示到一行                                         |
 | git log --pretty=format ....                                 | 自定义格式                                                   |
 
-## 4. .gitignore
+| diff命令                                                     |                            |
+| ------------------------------------------------------------ | -------------------------- |
+| git diff                                                     | 工作区和暂存区             |
+| git diff HEAD                                                | 工作区和版本库             |
+| git diff --cached [commit_ID]<br />git diff --staged （1.6.1以上） | 暂存区和版本库             |
+| git blame 文件名                                           | 快速查看文件是被谁修改的。 |
+
+## 5. .gitignore
 
 自己新建一个.gitignore  --> 提交这个文件进库
 
@@ -80,17 +100,24 @@ setting.properties //不追踪这个文件了
 /**/ab // 一个星表示一层目录，两个星表示所有层的目录
 ```
 
-## 5. 分支
+## 6. 分支
 
 SVN分支是重量级，git分支只是创建了指针。
-分支：一个commit对象链。每个commit有个parent commit。
-HEAD: 指向当前分支，并指向最新一次提交。
+
+分支：指向最新提交对象的一个指针，一个commit对象链。每个commit有个parent commit。
+
+分支本质：其实就是一个提交对象。
+
+HEAD: 是一个指针。 默认指向master分支，切换分支时其实就是让HEAD指向不同的分支，每次有新的提交时HEAD都会带着当前指向的分支一起往前移动。
+
 master：指向的是提交。
 
-| git branch                                                  | 查看所有分支。                                               |
+| 命令                                                        |                                                              |
 | ----------------------------------------------------------- | ------------------------------------------------------------ |
+| git branch                                                  | 查看所有分支。                                               |
 | git branch brname                                           | 创建分支。只是更新指针的指向，轻量级。                       |
-| git checkout brname                                         | 切换分支。也可以git checkout -, 回刚刚的分支                 |
+| git branch brname commitID                                  | 新建分支。                                                   |
+| git checkout brname                                         | 切换分支。HEAD指向当前分支。也可以git checkout -,  回刚刚的分支。 |
 | git checkout -b brname                                      | 创建并且切换。                                               |
 | git branch -d brname                                        | 删除分支。只能删除另一个分支。没有merge无法删除。<br/>-D：强制删除。 |
 | git merge 另一个分支                                        | 把另一个分支的内容合并过来。自动merge时，fast-forward, 删除分支时会丢掉分支信息。 |
@@ -102,7 +129,7 @@ master：指向的是提交。
 | git reflog                                                  | git的操作日志。                                              |
 | git stash                                                   | 将当前工作区和stage的修改保存起来了。<br/>git stash list. 查看。<br/>git stash pop和git stash apply。一个删除一个不删除。 |
 
-## 6. 标签
+## 7. 标签
 
 标签本身就是一个ID，并且指向一个commit ID。
 
@@ -112,15 +139,6 @@ master：指向的是提交。
 `git tag -d v1.0.1` ：删除标签。
 `git push origin --delete tag v1.0.1` ：删除远程标签。
 `git push origin :refs/tags/标签名 ` ：删除远程标签。
-
-## 7. diff
-
-`git blame 文件名` ：快速查看文件是被谁修改的。
-
-| git diff                                                     | 工作区和暂存区 |
-| ------------------------------------------------------------ | -------------- |
-| git diff HEAD                                                | 工作区和版本库 |
-| git diff --cached [commit_ID]<br />git diff --staged （1.6.1以上） | 暂存区和版本库 |
 
 ## 8. GitHub
 
@@ -232,22 +250,11 @@ Git的核心部分是一个简单的键值对数据库。
 
 可以向数据库插入任何类型的内容，返回一个键值，通过键值可以再次检索该内容。
 
-| .git 中的目录or文件 |                                                              |
-| ------------------- | ------------------------------------------------------------ |
-| /hooks              |                                                              |
-| /info               | 包含全局性排除文件                                           |
-| /logs               | 日志                                                         |
-| /objects            | Git 数据库。<br />git add 先到这生成git对象，存的全量不是增量，再到暂存区，一个文件每修改一次生成一个git对象<br />树对象，总是覆盖。<br />提交对象， |
-| /refs               |                                                              |
-| config              |                                                              |
-| description         | 仓库信息                                                     |
-| HEAD                |                                                              |
-
 ### 14.1 Git 对象 （文件版本）
 
-Git对象，用来存储文件内容，一个文件生成一个git对象。Git对象，存储键值对对象。
+Git对象，用来存储文件内容，**一个文件生成一个git对象**。Git对象，存储键值对对象。
 
-`git hash-object -w 文件名` ：生成git对象，放到/objects中，返回key : value对应的hash值, value: blob类型, 文件内容作为值。
+`git hash-object -w 文件名` ：生成git对象，存的全量不是增量,  <font color="#ff0000">**放到/objects中**</font>，返回key : value对应的hash值, value: blob类型, 文件内容作为值。
 
 `git cat-file -p 文件夹+文件名` : 查看object内容。
 
@@ -257,7 +264,7 @@ Git对象，用来存储文件内容，一个文件生成一个git对象。Git�
 
 树对象，解决文件名保存问题。存储git对象和子树对象。
 
-`git update-index --add --cacheinfo 100644 hash值 文件名` ：往暂存区添加一个对象。
+`git update-index --add --cacheinfo 100644 hash值 文件名` ：<font color="#ff0000">**往暂存区(.git/index)添加一个对象。**</font>
 
 > 100644，表明这是一个普通文件。
 >
@@ -275,7 +282,7 @@ git write-tree : 将暂存区的tree写入/objects
 
 ### 14.3 提交对象 
 
-`echo 'first commit' | git commit-tree treeid [-P ]` ： 创建提交对象
+`echo 'first commit' | git commit-tree treeid [-P ]` ：<font color="#ff0000">  **创建提交对象, 存到.git/objects** </font>
 
 <font color="#cc9900"> **git add = git hash-object -w 文件名 + git udate-index ...**</font>
 

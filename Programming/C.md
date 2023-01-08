@@ -121,7 +121,9 @@ struct Stu s = { "zs" , 20};
 s.name;
 ```
 
+## 9. 流程控制
 
+switch （整型表达式）
 
 
 ## NOTE:
