@@ -53,6 +53,7 @@
 | /logs               | 日志                                                      |
 | /objects            | Git 数据库。<br />树对象，总是覆盖。<br />提交对象，      |
 | /refs               | 表示一系列的引用，保存包含`heads`、`remote`、`tags`等目录 |
+| /refs/heads         | 保存了分支以及其对应的提交对象(对象文件值存hash值)。      |
 | config              | 保存了本地仓库的配置信息                                  |
 | description         | 仓库信息                                                  |
 | HEAD                | 指向当前正在工作的分支, 例如ref: refs/heads/test          |
@@ -106,7 +107,7 @@ SVN分支是重量级，git分支只是创建了指针。
 
 分支：指向最新提交对象的一个指针，一个commit对象链。每个commit有个parent commit。
 
-分支本质：其实就是一个提交对象。
+分支本质：其实就是一个指向提交对象的可变指针。
 
 HEAD: 是一个指针。 默认指向master分支，切换分支时其实就是让HEAD指向不同的分支，每次有新的提交时HEAD都会带着当前指向的分支一起往前移动。
 
@@ -114,10 +115,10 @@ master：指向的是提交。
 
 | 命令                                                        |                                                              |
 | ----------------------------------------------------------- | ------------------------------------------------------------ |
-| git branch                                                  | 查看所有分支。                                               |
+| git branch                                                  | 查看本地所有分支。                                           |
 | git branch brname                                           | 创建分支。只是更新指针的指向，轻量级。                       |
 | git branch brname commitID                                  | 新建分支。                                                   |
-| git checkout brname                                         | 切换分支。HEAD指向当前分支。也可以git checkout -,  回刚刚的分支。 |
+| git checkout brname                                         | 切换分支。HEAD指向当前分支。也可以git checkout -,  回刚刚的分支。切换分支会改变工作目录中的文件为当前分支的，之前untracked文件会保留， 没有add的文件会无法切换。 |
 | git checkout -b brname                                      | 创建并且切换。                                               |
 | git branch -d brname                                        | 删除分支。只能删除另一个分支。没有merge无法删除。<br/>-D：强制删除。 |
 | git merge 另一个分支                                        | 把另一个分支的内容合并过来。自动merge时，fast-forward, 删除分支时会丢掉分支信息。 |
@@ -127,7 +128,7 @@ master：指向的是提交。
 | git status --graph                                          | 。                                                           |
 | git reset HEAD^<br/>git reset HEAD~1<br/>git reset commitID | ^代表回退版本个数。<br/>1: 代表第一个提交<br/>git checkout commitID: 可以创建一个游离的分支。 |
 | git reflog                                                  | git的操作日志。                                              |
-| git stash                                                   | 将当前工作区和stage的修改保存起来了。<br/>git stash list. 查看。<br/>git stash pop和git stash apply。一个删除一个不删除。 |
+| git remote [-v]                                             | 查看远程分支. -v 详细                                        |
 
 ## 7. 标签
 
@@ -155,8 +156,9 @@ master：指向的是提交。
 
 ## 9.进阶命令
 
-| git gui                                                      | 打开图形化界面                   |
+| 命令                                                         |                                  |
 | ------------------------------------------------------------ | -------------------------------- |
+| git gui                                                      | 打开图形化界面                   |
 | git config --global alias.名字 原名字<br />git config --global alias.名字 '!命令'<br />vi ~/.gitconfig | git 别名                         |
 | git push --set-upstream origin develop （跟8.3相同，但是推荐这个） | 将本地分支变为远程               |
 | git checkout -b develop origin/develop 或者<br />git checkout --track origin/develop | 创建一个本地分支跟远程的分支对应 |
@@ -164,6 +166,17 @@ master：指向的是提交。
 | git push origin 本地名：远端名                               | git push 完整写法                |
 | git gc                                                       |                                  |
 | git remove --cache                                           | 从暂存区删除，本地保留。         |
+
+| git 存储                      |                          |
+| ----------------------------- | ------------------------ |
+| git stash list                | 查看存储。               |
+| git stash show [stash@{2}]    | 查看哪些修改。           |
+| git stash show [stash@{2}] -p | 查看修改内容。           |
+| git stash [save '注释']       | 不会存储 untracked files |
+| git stash apply [stash@{2}]   | 默认栈顶。               |
+| git stash drop [stash@{2}]    | 丢弃。                   |
+| git stash clear               |                          |
+| git stash pop [stash@{1}]     |                          |
 
 ## 10. submodule
 
@@ -262,7 +275,7 @@ Git对象，用来存储文件内容，**一个文件生成一个git对象**。G
 
 ### 14.2 树对象 （项目版本）
 
-树对象，解决文件名保存问题。存储git对象和子树对象。
+树对象，解决文件名保存问题。存储git对象hash, 对象文件名和子树对象。
 
 `git update-index --add --cacheinfo 100644 hash值 文件名` ：<font color="#ff0000">**往暂存区(.git/index)添加一个对象。**</font>
 
@@ -287,6 +300,21 @@ git write-tree : 将暂存区的tree写入/objects
 <font color="#cc9900"> **git add = git hash-object -w 文件名 + git udate-index ...**</font>
 
 <font color="#cc9900"> **git commit = git write-tree + git commit-tree**</font>
+
+## 15. 撤回
+
+```mermaid
+graph LR;
+	C((版本库)) -->|git reset --soft| B((暂存区))--> |git reset HEAD fileName | A((工作区));
+	B --> |git restore --staged fileName | A
+	A --> |git checkout fileName | D((丢弃))
+	A --> |git restore fileName | D((丢弃))
+	C --> |git commit --amend| C
+	C --> |git reset --mixed| A
+	C --> |git reset --hard| D
+```
+
+
 
 ## NOTE: 
 

@@ -14,6 +14,8 @@ what harm can come from trying?
 
 take quite a spill。摔得不轻
 
+work out all the details。
+
 ## Phrases
 
 probably best ... 可能是最好的。。。
@@ -49,3 +51,5 @@ be head of ...的主管，领导
 kill it 做的极其好
 
 Take sb on a tour of sth.
+
+shut somebody out 把某人拒之门外

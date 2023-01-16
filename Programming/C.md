@@ -125,6 +125,19 @@ s.name;
 
 switch （整型表达式）
 
+```c
+int main()
+{
+    int ch = 0;
+    // windows下，在输入的空行位置，按ctrl+z可产生EOF。inux下，按ctrl+d可产生EOF
+    while((ch = getchar()) != EOF) 
+        putchar(ch); // 在终端输出
+    retrun 0;
+}
+```
+
+
+
 
 ## NOTE:
 
@@ -137,13 +150,15 @@ switch （整型表达式）
 ### 2. 内置函数
 | printf("Hello World");<br />printf(“%d\n”, sizeof(a)); | <stdio.h>, <br />%d：整数<br />%f: float<br />%lf: double<br />%s: 字符串<br />%p: 地址 |
 | ------------------------------------------------------ | ------------------------------------------------------------ |
-| scanf(“%d %d”，&a, &b);                                | 输入函数，scanf_s是VS自带的                                  |
-|                                                        |                                                              |
+| scanf(“%d %d”，&a, &b);                                | 输入函数，scanf_s是VS自带的。不能读空格。                    |
+| getchar()                                              | 获取缓冲区                                                   |
 |                                                        |                                                              |
 ### 3. 
 
 `~` : 所有二进制位取反。整数在内存中存的是补码。
 
 `, ` : 逗号操作符，从左向右一次执行，赋值时会使用最后一个表达式的值
+
+数组的数组名就是地址。
 
 ## THE END

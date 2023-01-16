@@ -1,3 +1,5 @@
+
+
 # Linux
 
 ## 1. 简介
@@ -52,12 +54,18 @@ Install CentOS7 --> 软件选择，GNOME桌面，互联网应用程序，开发�
 
 > <font color="#000000">主分区： 最多4个。</font> 
 > <font color="#000000">扩展分区：</font>
-> 
+>
 > > <font color="#000000">最多1个。</font>
 > > <font color="#000000">主分区 + 扩展分区最多有4个。</font>
 > > <font color="#000000">不能写入数据，只能包含逻辑分区。</font>
-> 
+>
 > <font color="#000000">逻辑分区：从编号5开始。包含于扩展分区。</font>
+
+| 命令       |                |
+| ---------- | -------------- |
+| fdisk -l   | 查看磁盘信息。 |
+| fdisk 设备 | 分区。         |
+|            |                |
 
 ### 3.2 格式化
 
@@ -483,7 +491,8 @@ visudo：打开sudoers配置文件。修改文件从而更改对别人赋予权�
 | df                        | disk free 真正被占用的空间，例如被命令和程序占用的空间，未删除的文件。<br />temfs: 临时文件系统。 |
 | free                      | 查看内存。                                                   |
 | lsblk                     | 查看块设备。                                                 |
-| mount                     | 查看挂载。                                                   |
+| mount                     | 查看挂载。/etc/fstab                                         |
+| mount 指定设备 挂载点     |                                                              |
 | mount -a                  | 依赖/etc/fstab 自动挂载。                                    |
 | diff -u 文件1 文件2       | 比较两个文件，-u: 更加图形化。                               |
 | tree 目录                 | 需要安装。                                                   |
@@ -723,6 +732,8 @@ until []
 
 ## 14. 服务管理
 
+一直存在的进程叫服务。
+
 Linux服务：
 
 1. RPM服务
@@ -745,41 +756,46 @@ Linux服务：
 
 路径：/usr/lib/systemd/
 
-文件： 以.service结尾
+文件： 以.service结尾，守护进程以d.service结尾。
 
-命令： systemctl 操作 服务
+命令： systemctl 操作 服务名
 
 ## 15. 系统管理
 
 ### 15.1 进程
 
-`ps aux` : 显示所有进程
+正在执行的程序或命令叫进程。
 
+`ps aux` : 显示系统中所有进程。process status。a: 带有终端的所有用户进程。x:当前用户所有进程。u: 友好风格。
+
+> <font color="#000000">USER: 产生进程的用户 </font>
+> <font color="#000000">PID: 进程ID</font>
 > <font color="#000000">VSZ: 虚拟内存，单位KB</font>
 > <font color="#000000">RSS: 实际内存，单位KB</font>
-> <font color="#000000">TTY: 哪个终端中运行。tty1-6 本地字符界面终端，tty7图形终端。pts/0-255 代表虚拟终端</font>
-> <font color="#000000">STAT: 进程状态。R: 运行，S: 睡眠。T：停止。s: 包含子进程。+： 位于后台。</font>
+> <font color="#000000">TTY: 哪个终端中运行。tty2-6 本地字符界面终端，tty1图形终端。pts/0-255 代表虚拟终端 (任何方式打开都是虚拟终端)</font>
+> <font color="#000000">STAT: 进程状态。R: 运行，S: 睡眠。T：停止。Z：僵尸状态(空壳，一般父进程结束他会结束)。s: 包含子进程。1：多线程。+：前台显示， 位于后台。<: 优先级很高。N：优先级很低。 </font>
 > <font color="#000000">START: 该进程启动时间</font>
 > <font color="#000000">TIME: 进程占用CPU的运算时间。</font>
 
-`ps -el` : e所有进程
-`ps -ef` : e所有进程
-`TOP` : -d 秒数:每多少秒更新一次。
+`ps -ef` : e:显示所有进程。f显示完整格式的进程列表。 <font color="#cc9900">**可以查看子父进程之间的关系。**</font>
+`TOP -d 描述` : 每多少秒更新一次。
 
-> <font color="#000000">第一行: 系统当前时间，运行时间（up 1 day，13:32），当前登录的用户，1分钟5分钟15分钟负载</font>
-> <font color="#000000">第二行: 最后一个是僵尸进程。</font>
+> <font color="#000000">第一行:  系统当前时间，运行时间（up 1 day，13:32），当前登录的用户，1分钟5分钟15分钟负载 (一般小于0.7)</font>
+> <font color="#000000">第二行:  最后一个是僵尸进程。</font>
 > <font color="#000000">第三行：CPU.</font>
 > <font color="#000000">第四行：内存，用户，系统，空闲。</font>
 > <font color="#000000">第五行： SWAP</font>
+>
+> 交互操作： M 按memory排序，P 按照CPU 排序, PgDown PgUp翻页，u 用户名 查看具体用户进程,k PID 终止进程。
 
 `pstree` : 查看进程树。
 
 <u>终止进程：</u>
 
-`kill -l` : 查看所有信号名称。
-`kill -9 pid` : 强制终止。
-`killall -9 进程名` ：。
-`pkill -9 进程名` ：。
+`kill -l` : 查看所有信号名称。例如 9）SIGKILL
+`kill [-9] pid` : -9 强制终止。
+`killall -9 进程名称` ：。
+`pkill -9 进程名称` ：。
 `pkill -t -9 终端号` ：-t 终端号。
 
 `jobs [-l]` : 查看后台进程。
@@ -855,6 +871,8 @@ cache : 用来加速读取。
 buffer：用来加速写入。 
 
 ctrl + l : 清屏
+
+命令参数加杠：标准UNIX风格。不加是BSD风格。
 
 
 # THE END
