@@ -92,6 +92,7 @@ int len = strlen("abc"); // 3
 
 1. while
 2. do while
+2. for 
 
 ## 6. 常见关键字
 
@@ -129,7 +130,7 @@ switch （整型表达式）
 int main()
 {
     int ch = 0;
-    // windows下，在输入的空行位置，按ctrl+z可产生EOF。inux下，按ctrl+d可产生EOF
+    // windows下，在输入的空行位置，按ctrl+z可产生EOF。Linux下，按ctrl+d可产生EOF
     while((ch = getchar()) != EOF) 
         putchar(ch); // 在终端输出
     retrun 0;

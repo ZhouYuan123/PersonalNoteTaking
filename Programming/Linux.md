@@ -241,18 +241,18 @@ ifconfig: interface config
 
 ### 7.7 网络
 
-| write 用户名        | 给在线用户发信息。Ctrl+D结束保存发送。                                                 |
-| ---------------- | ---------------------------------------------------------------------- |
-| wall 内容          | write all                                                              |
-| ping [-c 次数] ip  |                                                                        |
-| ifconfig         | eth0: 真实网卡。HWaddr：mac地址。inet addr: 网址。<br/>lo: loopback网卡。127.0.0.1固定的 |
-| mail 用户名         | Ctrl+D结束保存发送。<br/>mail： 看邮件。help: 帮助。                                  |
-| last             | 所有用户登录信息。                                                              |
-| lastlog [-u uid] | 所有用户最后一次登录时间。                                                          |
-| traceroute 网站地址  | 显示数据包到主机间的路径。                                                          |
-| netstat          | /                                                                      |
-| setup            | redhat 特有。                                                             |
-| mount            |                                                                        |
+| write 用户名        | 给在线用户发信息。Ctrl+D结束保存发送。                       |
+| ------------------- | ------------------------------------------------------------ |
+| wall 内容           | write all                                                    |
+| ping [-c 次数] ip   |                                                              |
+| ifconfig            | eth0: 真实网卡。HWaddr：mac地址。inet addr: 网址。<br/>lo: loopback网卡。127.0.0.1固定的 |
+| mail 用户名         | Ctrl+D结束保存发送。<br/>mail： 看邮件。help: 帮助。         |
+| last                | 所有用户登录信息。                                           |
+| lastlog [-u uid]    | 所有用户最后一次登录时间。                                   |
+| traceroute 网站地址 | 显示数据包到主机间的路径。                                   |
+| netstat             | -a: 所有 -n: 拒绝别名显示 -l: 仅列出监听的服务状态 -p: 表示显示哪个进程在调用 |
+| setup               | redhat 特有。                                                |
+| mount               |                                                              |
 
 ### 7.8 关机重启
 
@@ -343,26 +343,28 @@ aio: 由命令模式变插入模式。Esc：退出插入模式。右下角显示
 
 #### 9.1.1 RPM命令管理
 
-不需要指定安装位置。
+不需要指定安装位置。RedHat Package Manager
 
-- 命令规则：.rpm 结尾。
+- 命令规则：
+  .rpm 结尾。
   -rpm 命令管理。
   依赖: 模块依赖查询网站：www.rpmfind.net 
   -yum 在线管理，自主解决依赖。
-
-- 安装： rpm -ivh 包全名。更新：rpm -Uvh 包全名。卸载：rpm -e 包名 。
+- 安装：
+  rpm -ivh 包全名。更新：rpm -Uvh 包全名。卸载：rpm -e 包名 。
   -i : install 安装。-v : verbose 显示详细信息。 -h: hash 显示进度。--nodeps: 不检测依赖性。
-
 - 查询：
-  rpm -q 包名 or rpm -qa （查出所有）（q:query)
+  rpm -q 包名 or rpm -qa （查出所有）（q:query, i:information详细信息)
   rpm -qip 包名（-p package  需要的但未安装的包信息）
   rpm -qlp 包名（-l list）
   rpm -qf 系统文件名 （查询系统文件属于那个RPM 包）
   rpm -qR 包名： 查询需要依赖的包。R: requires.
-
 - 校验：
   rpm -V 已安装的包名 (verify)
   RPM 包中文件提取 ···
+- 卸载:
+  rpm -e RPM软件包
+  rpm -e --nodeps RPM软件包 : 不检查依赖直接卸载
 
 #### 9.1.2 YUM在线管理
 

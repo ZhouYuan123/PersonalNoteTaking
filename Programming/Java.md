@@ -103,6 +103,26 @@ num1 = num1 ^ num2;
 
 switch 表达式类型：byte，short，char, int, 枚举(1.5)，String(1.7)
 
+## 3. 可变个数形参
+
+JDK 5.0新增。参数可以是0至多个
+
+```java
+void method(String str){
+    
+} 
+void method(String ... strs){
+    
+} 
+void method(String [] strs){
+    
+} 
+// 1和4优先调用1
+// 4和7不能构成重载
+```
+
+
+
 ## NOTE: 
 
 ### 1. Eclipse 快捷方式
@@ -117,6 +137,7 @@ switch 表达式类型：byte，short，char, int, 枚举(1.5)，String(1.7)
 
 1. eclipse设置
    1. 在workspace根目录 `.metadata` 中
+2. java方法的参数传递机制只有一种，就是值传递。
 
 `break label 和 continue label 不太一样`
 

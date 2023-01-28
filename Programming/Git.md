@@ -107,7 +107,7 @@ SVN分支是重量级，git分支只是创建了指针。
 
 分支：指向最新提交对象的一个指针，一个commit对象链。每个commit有个parent commit。
 
-分支本质：其实就是一个指向提交对象的可变指针。
+分支本质：其实就是一个提交对象, 所有分支都有可能被HEAD所引用。
 
 HEAD: 是一个指针。 默认指向master分支，切换分支时其实就是让HEAD指向不同的分支，每次有新的提交时HEAD都会带着当前指向的分支一起往前移动。
 
@@ -116,12 +116,13 @@ master：指向的是提交。
 | 命令                                                        |                                                              |
 | ----------------------------------------------------------- | ------------------------------------------------------------ |
 | git branch                                                  | 查看本地所有分支。                                           |
-| git branch brname                                           | 创建分支。只是更新指针的指向，轻量级。                       |
+| git branch brname [commitID]                                | 创建分支。只是更新指针的指向，轻量级。                       |
 | git branch brname commitID                                  | 新建分支。                                                   |
 | git checkout brname                                         | 切换分支。HEAD指向当前分支。也可以git checkout -,  回刚刚的分支。切换分支会改变工作目录中的文件为当前分支的，之前untracked文件会保留， 没有add的文件会无法切换。 |
 | git checkout -b brname                                      | 创建并且切换。                                               |
 | git branch -d brname                                        | 删除分支。只能删除另一个分支。没有merge无法删除。<br/>-D：强制删除。 |
 | git merge 另一个分支                                        | 把另一个分支的内容合并过来。自动merge时，fast-forward, 删除分支时会丢掉分支信息。 |
+| git branch --merged                                         | 已经合并的分支。git branch --no-merged: 还没有被合并的。     |
 | git branch -v                                               | 显示最近一条commit。                                         |
 | git branch -r                                               | 查看远程分支。                                               |
 | git branch -a                                               | 显示所有分支包括远程分支。                                   |
@@ -134,11 +135,18 @@ master：指向的是提交。
 
 标签本身就是一个ID，并且指向一个commit ID。
 
+`git show tagName` : 查看标签。
+
 `git tag [-a] v1.0.1 [-m '内容']` ：新建标签。-a：会强制要求-m，通过-m添加是附注标签。
+
 `git push origin 标签名 ` ：推送到远程。`git push origin --tags` :推送所有标签。
-`git tag` : 查看标签。标签本质特定标记，指向一个commitID. github中release统计标签
+
+`git tag [-l 正则]` : 查看标签。标签本质特定标记，指向一个commitID. github中release统计标签
+
 `git tag -d v1.0.1` ：删除标签。
+
 `git push origin --delete tag v1.0.1` ：删除远程标签。
+
 `git push origin :refs/tags/标签名 ` ：删除远程标签。
 
 ## 8. GitHub
@@ -302,19 +310,18 @@ git write-tree : 将暂存区的tree写入/objects
 <font color="#cc9900"> **git commit = git write-tree + git commit-tree**</font>
 
 ## 15. 撤回
+​				**fN: fileName**
 
 ```mermaid
 graph LR;
-	C((版本库)) -->|git reset --soft| B((暂存区))--> |git reset HEAD fileName | A((工作区));
-	B --> |git restore --staged fileName | A
-	A --> |git checkout fileName | D((丢弃))
-	A --> |git restore fileName | D((丢弃))
+	C((版本库)) -->|"git reset --soft cmitID"| B((暂存区))--> |git reset HEAD| A((工作区));
+	B --> |git restore --staged fN| A
+	A --> |git checkout fN| D((丢弃))
+	A --> |git restore fN| D((丢弃))
 	C --> |git commit --amend| C
-	C --> |git reset --mixed| A
-	C --> |git reset --hard| D
+	C --> |"git reset [--mixed] cmitID [fN]"| A
+	C --> |"git reset --hard cmitID [fN]"| D
 ```
-
-
 
 ## NOTE: 
 

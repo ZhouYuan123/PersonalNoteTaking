@@ -560,6 +560,7 @@ Python的解释器使用的是Unicode内存，.py文件在磁盘上使用UTF-8�
 file = open('a.txt', 'a')
 file.write('Python')
 file.writelines(['Python','java']) # 同一行
+# print('内容', file=file)
 file.close()
 
 file = open('a.txt', 'r')
@@ -626,11 +627,28 @@ dir(stu) # 返回当前范围内变量
 id(stu)
 type(stu) # 数据类型
 '{0}{1}'.format('内容1','内容2')
+'{:>8}{:a>8}'.format('内容1','内容2') # '     内容1','aaaaa内容2'， ^<>中左右对其
+# 进制 精度 format等等
+
+# sorted(iterable, cmp=None, key=None, reverse=False)，其中
+# iterable是可迭代对象，包括列表、元组、字典、字符串；
+# cmp代表比较函数；
+# key代表迭代对象中的某个属性，如某个元素的下标；
+# reverse代表升序或者降序
+
+add = lambda x,y:x+y
+add(1,2) # 结果是3
+lambda x, y: x*y			# 函数输入是x和y，输出是它们的积x*y
+lambda:None					# 函数没有输入参数，输出是None
+lambda *args: sum(args)		# 输入是任意个数参数，输出是它们的和(隐性要求输入参数必须能进行算术运算)
+lambda **kwargs: 1			# 输入是任意键值对参数，输出是1
 
 eval('1+1') 
 # 结果为2。
 # 将字符串当成有效的表达式来求值，并返回计算结果
 # 所谓表达式就是：eval这个函数会把里面的字符串参数的引号去掉，把中间的内容当成Python的代码，eval函数会执行这段代码并且返回执行结果
+
+
 ```
 
 # THE END
