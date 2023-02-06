@@ -33,16 +33,16 @@
 
 `git config --list` : 查看config信息。
 
-## 2. 创建Git库
+## 2. 创建Git本地库
 
   which git：git在什么地方。
 
 1. 新建一个文件夹。
 2. git init: 创建了当前文件夹的git仓库。
-   **.get目录下：管理了git。**
-   1. git init --bare 创建一个裸库，原 .git 目录下的文件在当前目录下
-3. git add -> git commit -> i
-4. git clone 地址 [自定义名字]：新建了一个文件夹的git仓库。
+   1. **.get目录下：管理了git。**
+   2. git init --bare 创建一个裸库，原 .git 目录下的文件在当前目录下
+
+3. git clone 地址 [自定义名字]：新建了一个文件夹的git仓库。
 
 ## 3. .git目录
 
@@ -59,8 +59,9 @@
 | HEAD                | 指向当前正在工作的分支, 例如ref: refs/heads/test          |
 | index               | 存储的是暂存区内容                                        |
 
-
 ## 4. Git 常用命令
+
+### 4.1 配置
 
    user.name与user.email的设置。
 
@@ -68,19 +69,24 @@
 2. ~/.gitconfig (用户) , git config --global
 3. .git/config  (特定项目) , git config --local
 
-|                                                              |                                                              |
-| :----------------------------------------------------------- | ------------------------------------------------------------ |
-| git init                                                     | 初始化一个空的git库在当前目录。（如果.git被删除，就不是一个GIT管理的仓库）<br />工作区域：工作区。<br />状态：untracked or modified |
-| git add<br/>git add \* : 提交所有，越过gitignore             | 库中生成git对象 --> 进入staged : <br />工作区域：暂存区。<br />状态：staged |
-| git commit <br />or<br />git commit -a (跳过暂存区操作)      | 进入版本库：<br />工作区域：Git 版本库<br />状态：committed  |
-| git config -l <br/>git config user.name                      | 看config所有信息<br />看config中的user.name的值              |
-| git config --local user.name '李四'<br />git config --local unset user.name |                                                              |
-| git config                                                   | 打开使用方式说明                                             |
-| git rm <br />rm<br/>git rm --cached                          | 删除文件，在暂存区<br />删除文件，在工作区<br />变为untracked file. |
-| git mv 原文件名 新文件名 / mv                                |                                                              |
-| git log -n                                                   | 看最近n条提交                                                |
-| git log --pretty=oneline<br />git log --oneline              | 每个commit显示到一行                                         |
-| git log --pretty=format ....                                 | 自定义格式                                                   |
+| 命令                                                         |                                                 |
+| ------------------------------------------------------------ | ----------------------------------------------- |
+| git config                                                   | 打开使用方式说明                                |
+| git config [--system] -l <br/>git config user.name           | 看config所有信息<br />看config中的user.name的值 |
+| git config --local user.name '李四'<br />git config --local unset user.name | 配置<br />取消                                  |
+
+### 4.2 工作区域
+
+| 命令                                                    |                                                              |
+| :------------------------------------------------------ | ------------------------------------------------------------ |
+| git init                                                | 初始化一个空的git库在当前目录。（如果.git被删除，就不是一个GIT管理的仓库）<br />工作区域：工作区。<br />状态：untracked or modified |
+| git add<br/>git add \* : 提交所有，越过gitignore        | 库中生成git对象 --> 进入staged : <br />工作区域：暂存区。<br />状态：staged |
+| git commit <br />or<br />git commit -a (跳过暂存区操作) | 进入版本库：<br />工作区域：Git 版本库<br />状态：committed  |
+| git rm <br />rm<br/>git rm --cached                     | 删除文件，在暂存区<br />删除文件，在工作区<br />变为untracked file. |
+| git mv 原文件名 新文件名 / mv                           |                                                              |
+| git log -n                                              | 看最近n条提交                                                |
+| git log --pretty=oneline<br />git log --oneline         | 每个commit显示到一行                                         |
+| git log --pretty=format ....                            | 自定义格式                                                   |
 
 | diff命令                                                     |                            |
 | ------------------------------------------------------------ | -------------------------- |
@@ -124,12 +130,13 @@ master：指向的是提交。
 | git merge 另一个分支                                        | 把另一个分支的内容合并过来。自动merge时，fast-forward, 删除分支时会丢掉分支信息。 |
 | git branch --merged                                         | 已经合并的分支。git branch --no-merged: 还没有被合并的。     |
 | git branch -v                                               | 显示最近一条commit。                                         |
+| git branch -vv                                              | 查看本地分支对应的远程分支。                                 |
 | git branch -r                                               | 查看远程分支。                                               |
 | git branch -a                                               | 显示所有分支包括远程分支。                                   |
 | git status --graph                                          | 。                                                           |
 | git reset HEAD^<br/>git reset HEAD~1<br/>git reset commitID | ^代表回退版本个数。<br/>1: 代表第一个提交<br/>git checkout commitID: 可以创建一个游离的分支。 |
 | git reflog                                                  | git的操作日志。                                              |
-| git remote [-v]                                             | 查看远程分支. -v 详细                                        |
+| git remote [-v]                                             | 查看远程仓库. -v 详细                                        |
 
 ## 7. 标签
 
@@ -155,10 +162,13 @@ master：指向的是提交。
 
 2. `git remote add origin 仓库地址` : origin是默认名字，代表后面紧接着的地址。（关联远程库）
 
-3. `git push -u origin master`: 加了参数-u后，以后即可直接用git push代替git push origin master。（关联分支）
+3. `git push -u origin master`: 加了参数-u后，以后即可直接用git push代替git push origin master。（生成远程跟踪分支）
 
 `git remote show` : 显示当前库关联的所有远程仓库。
+
 `git remote show 别名` : 显示详情。
+
+`git branch -u 地址/分支`： 本地分支跟踪远程分支。
 
 或者用SSH通过秘钥链接。
 

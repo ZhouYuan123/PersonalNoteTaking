@@ -346,41 +346,69 @@ aio: 由命令模式变插入模式。Esc：退出插入模式。右下角显示
 不需要指定安装位置。RedHat Package Manager
 
 - 命令规则：
+  
   .rpm 结尾。
+  
   -rpm 命令管理。
+  
   依赖: 模块依赖查询网站：www.rpmfind.net 
+  
   -yum 在线管理，自主解决依赖。
+  
 - 安装：
+
   rpm -ivh 包全名。更新：rpm -Uvh 包全名。卸载：rpm -e 包名 。
+  
   -i : install 安装。-v : verbose 显示详细信息。 -h: hash 显示进度。--nodeps: 不检测依赖性。
 - 查询：
+  
   rpm -q 包名 or rpm -qa （查出所有）（q:query, i:information详细信息)
+  
   rpm -qip 包名（-p package  需要的但未安装的包信息）
+  
   rpm -qlp 包名（-l list）
+  
   rpm -qf 系统文件名 （查询系统文件属于那个RPM 包）
+  
   rpm -qR 包名： 查询需要依赖的包。R: requires.
 - 校验：
+  
   rpm -V 已安装的包名 (verify)
+  
   RPM 包中文件提取 ···
 - 卸载:
+  
   rpm -e RPM软件包
+  
   rpm -e --nodeps RPM软件包 : 不检查依赖直接卸载
 
 #### 9.1.2 YUM在线管理
 
+Yellow dog Updater, Modified
+
 IP地址配置。--> service network restart --> 配置网络yum源
+
 yum命令：
+
 yum list : 查看算有可装包。
+
 yum search 关键字 ：查询。
-yum -y install 包名： 安装。
+
+yum -y install 包名： 安装。-y: 所有询问都是yes.
+
 yum -y update 包名： 升级。（没有包名会升级所有，包括linux内核，谨慎操作）
+
+yum -y check-update : 检查是否有可用更新 
+
 yum -y remove 包名： 卸载。（会卸载所有依赖包，包括linux，谨慎操作）
+
 yum grouplist: 列出软件组。
+
 yum groupinstall: ----
+
 yum groupremove: ----
 
-光盘yum源。
-挂载光盘--> 让网络yum源失效 --> 让光盘yum源生效
+光盘yum源。挂载光盘--> 让网络yum源失效 --> 让光盘yum源生效
 
 ### 9.2 源码包
 
@@ -502,13 +530,17 @@ visudo：打开sudoers配置文件。修改文件从而更改对别人赋予权�
 ## 13. Shell编程
 
 命令解释器，介于内核和应用软件之间。
+
 是一个强大的编程语言。解释执行的脚本语言，在Shell 中可以直接调用Linux系统命令。
 
 **分类：**
+
 B shell： Bourne 包括 sh, ksh, Bash, psh, zsh
+
 C shell:    C语言 包括 csh, tsh
 
 **Linux 支持的 Shell:**
+
 sh，bash
 
 ### 13.1 命令
@@ -522,27 +554,29 @@ sh，bash
 ```第一个脚本
 #!/bin/Bash
 #用户名 （邮箱）
-
 echo "内容"
 ```
 
-chmod 755 hello.sh
+调用: 
 
-调用: 直接调用或者bash hello.sh
+1. bash hello.sh **OR** sh hello.sh
+2. 直接调用: chmod 755 hello.sh --> ./hello.sh
+3. source hello.sh **OR** . hello.sh (不会启动子shell, `source 配置文件` or `. 配置文件`：配置文件直接生效。)
 
 ### 13.2 Bash
 
 #### 13.2.1 Bash命令
 
-| history<br/>-c<br/>-w                                                                                      | 查看历史命令。 保存在 \~/.bash_history, 但是不会立即保存<br/>清空历史命令。！字符串：执行最后一条以该字符串开头的命令<br/>立即保存到历史文件中. /etc/profile 中 HISTORYSIZE=10000 |
-| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| alias 别名 = '原来命令'<br/>unalias 别名                                                                           | ls：所有命令都是绝对路径执行，这个命令是通过环境变量执行的。<br/>命令执行顺序：<font color="#4169E1">绝对路径 -> 别名 -> Bash内部命令 -> 环境变量</font><br/>\~ /.bashrc   |
-| ctrl a <br/>ctrl e<br/>ctrl C<br/>ctrl l<br/>ctrl u<br/>ctrl k<br/>ctrl y<br/>ctrl r<br/>ctrl d<br/>ctrl z | 命令开头。<br/>命令结尾。<br/>强制终止。<br/>=clear.<br/>剪切光标之前的内容。<br/>剪切光标之后的内容。<br/>粘贴。<br/>history 中搜索。<br/>退出当前终端。<br/>暂停并放入后台。    |
-| >, >> , 错误命令 2>文件，>>, 命令 > 文件 2>&1 , 命令 &> 文件                                                              | 输出重定向。                                                                                                                   |
-| wc 文件，<br/>wc 然后开始敲，然后 ctrl d结束。                                                                           | 输入重定向。-c: 统计字节数。 -w: 单词数。 -l: 行数。                                                                                        |
-| ; , && , \|\|                                                                                              |                                                                                                                          |
-| grep                                                                                                       | -i：忽略大小写。<br/>-n: 输出行号。<br/>-v: 取反。<br/>--color=auto 搜索出的关键字用颜色显示。                                                       |
-| w, chvt n                                                                                                  | 看所有终端。切换终端。                                                                                                              |
+| history<br/>-c<br/>-w                                        | 查看历史命令。 保存在 \~/.bash_history, 但是不会立即保存<br/>清空历史命令。！字符串：执行最后一条以该字符串开头的命令<br/>立即保存到历史文件中. /etc/profile 中 HISTORYSIZE=10000 |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| alias 别名 = '原来命令'<br/>unalias 别名                     | ls：所有命令都是绝对路径执行，这个命令是通过环境变量执行的。<br/>命令执行顺序：<font color="#4169E1">绝对路径 -> 别名 -> Bash内部命令 -> 环境变量</font><br/>\~ /.bashrc |
+| ctrl a <br/>ctrl e<br/>ctrl C<br/>ctrl l<br/>ctrl u<br/>ctrl k<br/>ctrl y<br/>ctrl r<br/>ctrl d<br/>ctrl z | 命令开头。<br/>命令结尾。<br/>强制终止。<br/>=clear.<br/>剪切光标之前的内容。<br/>剪切光标之后的内容。<br/>粘贴。<br/>history 中搜索。<br/>退出当前终端。<br/>暂停并放入后台。 |
+| >, >> , 错误命令 2>文件，>>, 命令 > 文件 2>&1 , 命令 &> 文件 | 输出重定向。                                                 |
+| wc 文件，<br/>wc 然后开始敲，然后 ctrl d结束。               | 输入重定向。-c: 统计字节数。 -w: 单词数。 -l: 行数。         |
+| ; , && , \|\|                                                |                                                              |
+| grep                                                         | -i：忽略大小写。<br/>-n: 输出行号。<br/>-v: 取反。<br/>--color=auto 搜索出的关键字用颜色显示。 |
+| w, chvt n                                                    | 看所有终端。切换终端。                                       |
+| bash                                                         | 打开一个子Shell                                              |
 
 #### 13.2.2 通配符
 
@@ -560,37 +594,56 @@ chmod 755 hello.sh
 
 ``set 命令查看所有变量`` ``unset name：删除变量``
 
-<font color="#4169E1">**用户自定义变量**：</font>数字字母下划线。
+<font color="#4169E1">**用户自定义变量**：</font>
 
 1. 默认是字符串类型。
 
-2. 变量赋值时不能有空格。值有空格需要引号。值中可以使用转义符。
+2. 不能被子Shell访问。
 
-3. 变量可以叠加。
-   aa=123
-   aa="\$aa"456
-   aa=\${aa}789
+3. 变量赋值时不能有空格。值有空格需要引号。值中可以使用转义符。
 
-4. 环境变量名建议大写。
+3. 变量可以叠加。 	
+   > aa=123
+   > aa="\$aa"456
+   > aa=\${aa}789
+   
+5. 数字字母下划线，不能以数字开头。环境变量名建议大写。
+
+6. readonly b=5 : 只读变量。不能unset。
 
 <font color="#4169E1">**环境变量**：</font>
-export 变量名=变量值：所有子Shell都可以访问。
+export 变量名=变量值：当前Shell和所有子Shell都可以访问。
+
 env: 查看所有环境变量。
+
 PATH: 系统查找命令的路径。
+
 ``PATH="$PATH":/root`` 例用命令叠加增加了一个path。
+
 PS1: 自定义系统提示符（输入命令时前面的信息)。
+
+/etc/issue: 本地终端欢迎信息。
+
+hostname, hostnamectl  vi /etc/hostname, vi /etc/hosts 配置hostname和IP映射
+
 <font color="#4169E1">**位置参数变量：**</font>
 \$n : n表示数字，\$0是命令本身。两位数用 \${n}. `sum = $(($1+$2))`
+
 \$\* : 所有参数。
+
 \$@ : 所有参数。for循环时当做多个参数。
+
 \$#: 所有参数个数。
 <font color="#4169E1">**预定义变量：**</font>
 \$? : 最后一次命令的返回状态。0正确，非0错误。
+
 \$\$: PID 当前进程ID。
+
 \$ ! : 后台运行最后一个进程ID。命令后面加 &，代表后台执行。（jobs: 查看后台命令序号。Ctrl+z放到后台挂起，bg + %jobnumber）
+
 read: 接受键盘输入。 -p “提示信息”。 -t 秒数。 -n 字符数。-s 隐藏输入的数据。
 
-#### 13.2.4 声明变量类型
+### 13.3 运算符
 
 数值运算三种：
 
@@ -599,23 +652,11 @@ read: 接受键盘输入。 -p “提示信息”。 -t 秒数。 -n 字符数�
          -: 设定类型属性。+：取消变量的类型属性.
 
         -i：integer. -x：声明为环境变量。-p：显示指定变量的被声明的类型。
-2. er: `dd = $(exper $aa+$bb)`
-3. `$(($aa+$bb))`
+2. `expr 1 + 2` ： 计算出结果3。; `dd = $(expr $aa+$bb)`
+3. `$[5 * 2]` or `$((6+8))` ;`$(($aa+$bb))`
 
 变量测试和替换。
 <font color="#cc9900">**此处省略一个复杂的表。**</font>
-
-### 13.3 环境变量
-
-`source 配置文件` or `. 配置文件`：配置文件直接生效。
-
-\~/.bash_history: 历史命令文件。
-
-/etc/issue: 本地终端欢迎信息。
-
-hostname, hostnamectl  vi /etc/hostname, vi /etc/hosts 配置hostname和IP映射
-
-`echo $环境变量` ：打印环境变量
 
 ### 13.4 正则表达式
 
@@ -655,10 +696,20 @@ grep "正则" 文件名
 
 ### 13.6 条件判断
 
-`test -e 文件 or [-e 文件]`: 判断是否存在。用\$?查看结果。 
+test condition or [ condition ]: 然后用\$?查看结果，0就为真。
+
+>`test -e 文件 or [-e 文件]`: 判断是否存在。 
+>
+>[ \$a = hello ] ：echo $? （注意其中所有空格）
+>
+>[ \$a != hello ] 
+
 -r 是否有读权限。
+
 `[文件1 -nt 文件2]`：文件1的修改时间是不是比文件2新。
-`[整数1 -gt 整数2]`: 
+
+`[整数1 -gt 整数2]`: =, -lt, -gt, -eq, -ne, le, -ge
+
 `[-z 字符串]` ： 判断字符串是否为空。 
 
 ### 13.7 if语句

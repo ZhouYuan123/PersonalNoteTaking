@@ -16,6 +16,8 @@ take quite a spill。摔得不轻
 
 work out all the details。
 
+50 percent off. 5折。
+
 ## Phrases
 
 probably best ... 可能是最好的。。。
@@ -53,3 +55,5 @@ kill it 做的极其好
 Take sb on a tour of sth.
 
 shut somebody out 把某人拒之门外
+
+live off somebody 靠某人生活

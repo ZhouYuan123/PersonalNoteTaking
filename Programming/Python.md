@@ -18,13 +18,18 @@
 ### 2.1 安装python解释器
 
 ​    官网：www.python.org
+
 ​    下载：www.python.org/downloads/release/python-381/
+
 Files --> 下载第二个：[Windows x86-64 executable installer](https://www.python.org/ftp/python/3.8.1/python-3.8.1-amd64.exe)
 
 运行： 
 IDLE: 开发环境。new file: 写长的代码
+
 Python: 交互式的。
+
 Python Manuals: 官方手册。
+
 Python module docs: 已经安装的。
 
 ### 2.2 PyCharm
@@ -34,14 +39,14 @@ community 下载这个就可以。
 ## 3. 转义字符
 
 \b，退格=backspace
+
 字符串前面加r或者R，使转义失效。
 
 Unicode表规定什么字符用什么数字。UTF-8决定什么字符用几个字节。
 
 ## 4. 数据类型
 
-**int:** 
-0b: 二进制。0o：八进制。0x: 十六进制。
+**int:** 0b: 二进制。0o：八进制。0x: 十六进制。
 
 **float:**
 
@@ -158,8 +163,12 @@ lst[start:stop:step] # 切片原列表，不包括stop, 三个值都可以省略
 # 判断
 元素 in lst
 元素 not in lst
+
+# 遍历
 for _ in lst:
     print(_)
+for index,value in enumerate(lst):
+    pass
 
 # 增
 lst.append(100)
@@ -194,6 +203,7 @@ new_list=sorted(lst,reverse=True) # 降序
 d={} or dict() # 空字典
 d={'hello':'world','张三':98}
 d=dict(name='hello',age=98)
+d=dict(zip(list1,list2))
 
 # 获取
 d['张三'] # KeyError
@@ -364,6 +374,16 @@ print(f'{name}{age}')
 `print(s.encode(encoding='UTF-8'))` : 一个中文占三个字节
 
 `print(b.decode(encoding='UTF-8'))` : 一个中文占三个字节
+
+### 10.7 方法
+
+| str 方法   |                |
+| ---------- | -------------- |
+| .isdigit() | 是不是数字。   |
+| .find(‘’)  | 未找到返回-1。 |
+|            |                |
+
+
 
 ## 11. 函数
 
@@ -618,8 +638,42 @@ os.startfile('路径') # 打开程序
 
 ### 1. 内置函数
 
+#### 1.1 print
+
 ```python
 print("Hello",end ="") # 默认换行，用end参数来设置你想要的结束符号
+
+# \033[显示方式;字体色;背景色m打印内容\033[0m
+print("\033[0;31;40mHello World\033[0m")
+print("\033[0;31;40m")
+print("Hello World")
+print("\033[0m")
+```
+
+| 显示方式 | 效果         |
+| -------- | ------------ |
+| 0        | 终端默认设置 |
+| 1        | 高亮显示     |
+| 4        | 使用下划线   |
+| 5        | 闪烁         |
+| 7        | 反白显示     |
+| 8        | 不可见       |
+
+| 字体色 | 背景色 | 颜色描述 |
+| ------ | ------ | -------- |
+| 30     | 40     | 黑色     |
+| 31     | 41     | 红色     |
+| 32     | 42     | 绿色     |
+| 33     | 43     | 黄色     |
+| 34     | 44     | 蓝色     |
+| 35     | 45     | 紫红色   |
+| 36     | 46     | 青蓝色   |
+| 37     | 47     | 白色     |
+
+#### 1.2 others
+
+```python
+
 range(stop) # 返回一个[0-stop)的序列，步长为1
 range(start,stop,step)
 input('提示') # 从键盘接收
@@ -648,7 +702,22 @@ eval('1+1')
 # 将字符串当成有效的表达式来求值，并返回计算结果
 # 所谓表达式就是：eval这个函数会把里面的字符串参数的引号去掉，把中间的内容当成Python的代码，eval函数会执行这段代码并且返回执行结果
 
-
 ```
+
+### 2. 命名规范
+
+| Type                       | Public             | Internal                                                     |
+| -------------------------- | ------------------ | ------------------------------------------------------------ |
+| Modules                    | lower_with_under   | _lower_with_under                                            |
+| Packages                   | lower_with_under   |                                                              |
+| Classes                    | CapWords           | _CapWords                                                    |
+| Exceptions                 | CapWords           |                                                              |
+| Functions                  | lower_with_under() | _lower_with_under()                                          |
+| Global/Class Constants     | CAPS_WITH_UNDER    | _CAPS_WITH_UNDER                                             |
+| Global/Class Variables     | lower_with_under   | _lower_with_under                                            |
+| Instance Variables         | lower_with_under   | _lower_with_under (protected) or __lower_with_under (private) |
+| Method Names               | lower_with_under() | _lower_with_under() (protected) or __lower_with_under() (private) |
+| Function/Method Parameters | lower_with_under   |                                                              |
+| Local Variables            | lower_with_under   |                                                              |
 
 # THE END

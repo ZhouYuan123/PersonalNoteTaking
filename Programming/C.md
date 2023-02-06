@@ -78,6 +78,7 @@ char arr[] = “hello”; or char arr[] = {'a', 'b' ,'c', '\0'};
 ```c
 #include <string.h>
 int len = strlen("abc"); // 3
+// 字符串比较不能使用 == ，使用 strcmp() 函数。
 ```
 
 `??)` : 三字母词，等于 ]
@@ -138,8 +139,6 @@ int main()
 ```
 
 
-
-
 ## NOTE:
 
 ### 1. visual studio快捷键
@@ -149,16 +148,20 @@ int main()
 | Ctrl k-> Ctrl c<br />Ctrl k-> Ctrl u | 注释<br />取消注释 |
 |                                      |                    |
 ### 2. 内置函数
-| printf("Hello World");<br />printf(“%d\n”, sizeof(a)); | <stdio.h>, <br />%d：整数<br />%f: float<br />%lf: double<br />%s: 字符串<br />%p: 地址 |
-| ------------------------------------------------------ | ------------------------------------------------------------ |
-| scanf(“%d %d”，&a, &b);                                | 输入函数，scanf_s是VS自带的。不能读空格。                    |
-| getchar()                                              | 获取缓冲区                                                   |
-|                                                        |                                                              |
+| printf("Hello World");<br />printf(“%d\n”, sizeof(a));       | <stdio.h>, <br />%d：整数<br />%f: float<br />%lf: double<br />%s: 字符串<br />%p: 地址 |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| scanf(“%d %d”，&a, &b);                                      | 输入函数，scanf_s是VS自带的。不能读空格。                    |
+| getchar();                                                   | 获取缓冲区                                                   |
+| Sleep(n);                                                    | <windows.h>                                                  |
+| system("cls");                                               | 清屏                                                         |
+| int rand(void);<br />void srand(unsigned int seed)<br />time(NULL) | <stdlib.h> 返回 [0-0xfff]<br />seed决定rand()值<br /><time.h> 返回时间戳，可以(unsigned int)time(NULL); |
+| sqrt()                                                       | 开平方。                                                     |
+|                                                              |                                                              |
 ### 3. 
 
 `~` : 所有二进制位取反。整数在内存中存的是补码。
 
-`, ` : 逗号操作符，从左向右一次执行，赋值时会使用最后一个表达式的值
+`, ` : 逗号操作符，从左向右依次执行，赋值时会使用最后一个表达式的值
 
 数组的数组名就是地址。
 
