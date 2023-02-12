@@ -99,12 +99,25 @@
 
 自己新建一个.gitignore  --> 提交这个文件进库
 
-```.gitignore
-setting.properties //不追踪这个文件了
-*.b // 忽略所有.b结尾的
-!a.b // a.b 除外
-/TODO // 只忽略根目录下TODO文件
-/**/ab // 一个星表示一层目录，两个星表示所有层的目录
+```shell
+# 注释以井号开头
+# 不追踪这个文件了
+setting.properties 
+
+# 星号“*” ：匹配多个字符。忽略所有.b结尾的
+*.b 
+
+# a.b 除外
+!a.b
+
+# 问号“?”：匹配除 ‘/’外的任意一个字符；
+
+# 问号“?”：匹配除 ‘/’外的任意一个字符。test.i文件、test.o文件被忽略
+*.[io]
+
+# 只忽略根目录下TODO文件
+/TODO 
+/**/ab # 一个星表示一层目录，两个星表示所有层的目录
 ```
 
 ## 6. 分支
@@ -332,6 +345,10 @@ graph LR;
 	C --> |"git reset [--mixed] cmitID [fN]"| A
 	C --> |"git reset --hard cmitID [fN]"| D
 ```
+
+## 16. pull request
+
+
 
 ## NOTE: 
 

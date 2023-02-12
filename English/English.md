@@ -18,6 +18,12 @@ work out all the details。
 
 50 percent off. 5折。
 
+I'm the first in line.
+
+It might take some of the heat off me.
+
+Chances are he's gonna be this broken shell of a man. 很有可能他就是那种内心破碎的男子。
+
 ## Phrases
 
 probably best ... 可能是最好的。。。

@@ -4,15 +4,16 @@
 
 ### 1.1 基础知识
 
-冯诺依曼体系结构：
-输入，输出，存储，运算和控制 (Central Processing Unit)。
+冯诺依曼体系结构：输入，输出，存储，运算和控制 (Central Processing Unit)。
 
 摩尔定律，安第-比尔定律，反摩尔定律。
 
 TB PB EB ZB YB
 
 URI： 统一资源标识符（Uniform Resource Identifier）
+
 URL: URL是URI的一个子集，统一资源定位符，uniform resource locator。URL是URI概念的一种实现方式。只要能唯一表示资源的就是URI，在URI的基础上给出其资源的访问方式的就是URL。
+
 http: 超文本传输协议（Hyper Text Transfer Protocol)。
 
 软件：数据和指令的集合。
@@ -22,23 +23,29 @@ CLI: Command Line Interface
 
 ### 1.2 常见DOS命令
 
-|        |             |
-| ------ | ----------- |
-| md     | 创建目录        |
-| rd     | 删除目录        |
-| del    | 删除文件        |
+| 命令     |                        |
+| -------- | ---------------------- |
+| md       | 创建目录               |
+| rd       | 删除目录               |
+| del      | 删除文件               |
 | del 目录 | 提示是否删除目录下文件 |
 
 ### 1.3 历史
 
 机器语言，汇编语言，高级语言。
+
 SUN (Stanford University Network)
 
 > <font color="#000000">1991年，Green项目, Oak。</font>
+>
 > <font color="#000000">1994年，Oak适合于互联网。</font>
+>
 > <font color="#000000">1995年，开发。</font>
+>
 > <font color="#000000">1996年，JDK1.0</font>
+>
 > <font color="#000000">2004年，JDK1.5，为突出版本的重要性，更名为JDK5.0。</font>
+>
 > <font color="#000000">2014年，JDK8.0。</font>
 
 <font color="#cc9900">**舍弃了C的：指针，运算符重载，多重继承（接口代替）**</font>
@@ -63,14 +70,16 @@ true, false, null不是关键字。保留字： goto, const.
 
 #### 2.1.1 基本数据类型
 
-byte 		byte b = 128;// 编译不通过
-short 	2byte
-int      	4byte
-long 		8byte
-float 		4byte 表示范围比long要大
-double 	8byte
-char 		2byte  '\u0043' Unicode值是一个字符，CodeChars.pdf所有字符集。有且一个字符。a:97， A:65。默认值是0或者‘\u0000’
-boolean   Java规范中，没有明确指出boolean的大小。在《Java虚拟机规范》给出了4个字节，和boolean数组1个字节的定义，具体还要看虚拟机实现是否按照规范来，所以1个字节、4个字节都是有可能的。
+|         | 大小                                                         |
+| ------- | ------------------------------------------------------------ |
+| byte    | byte b = 128;// 编译不通过                                   |
+| short   | 2 byte                                                       |
+| int     | 4 byte                                                       |
+| long    | 8 byte                                                       |
+| float   | 4 byte 表示范围比long要大                                    |
+| double  | 8 byte                                                       |
+| char    | 2 byte  '\u0043' Unicode值是一个字符，CodeChars.pdf所有字符集。有且一个字符。a:97， A:65。默认值是0或者‘\u0000’ |
+| boolean | Java规范中，没有明确指出boolean的大小。在《Java虚拟机规范》给出了4个字节，和boolean数组1个字节的定义，具体还要看虚拟机实现是否按照规范来，所以1个字节、4个字节都是有可能的。 |
 
 #### 2.1.2 数组
 
@@ -85,8 +94,11 @@ new int \[2\]\[\]，一维元素默认是null。
 ### 2.2 进制
 
 二进制 （binary）, 0b或者0B开头。
+
 十进制 （decimal）。
+
 八进制 （octal）, 0开头。
+
 十六进制 （hex）, 0x或者0X开头。
 
 ### 2.3 运算符
@@ -103,7 +115,9 @@ num1 = num1 ^ num2;
 
 switch 表达式类型：byte，short，char, int, 枚举(1.5)，String(1.7)
 
-## 3. 可变个数形参
+## 3. 面向对象
+
+### 3.1 可变个数形参
 
 JDK 5.0新增。参数可以是0至多个
 
@@ -121,7 +135,22 @@ void method(String [] strs){
 // 4和7不能构成重载
 ```
 
+### 3.2 访问权限修饰符
 
+| 修饰符    | 类内部 | 同一个包 | 不同包的子类 | 同一个工程 |
+| --------- | ------ | -------- | ------------ | ---------- |
+| private   | √      |          |              |            |
+| default   | √      | √        |              |            |
+| protected | √      | √        | √            |            |
+| public    | √      | √        | √            | √          |
+
+### 3.3 JavaBean
+
+满足的条件：
+
+1. 类是公共的。
+2. 有一个无参的公共构造器。
+3. 有属性和对应的get, set方法。
 
 ## NOTE: 
 

@@ -89,13 +89,7 @@ int len = strlen("abc"); // 3
 
 `\x12`: 跟两个十六进制数字
 
-## 5. 循环
-
-1. while
-2. do while
-2. for 
-
-## 6. 常见关键字
+## 5. 常见关键字
 
 | 关键字            |                                                              |
 | ----------------- | ------------------------------------------------------------ |
@@ -105,13 +99,13 @@ int len = strlen("abc"); // 3
 | typedef 原名 新名 | 类型重定义                                                   |
 | static            | 修饰局部变量，只初始化一次，方法结束不销毁。<br />修饰全局变量，只能在自己所在源文件使用，切断外部链接。<br />修饰函数，只能在自己所在源文件使用，切断外部链接。 |
 
-## 7. 指针
+## 6. 指针
 
 指针变量。
 
 大小：所有类型指针大小相同。
 
-## 8. 结构体
+## 7. 结构体
 
 ```c
 struct Stu
@@ -123,9 +117,14 @@ struct Stu s = { "zs" , 20};
 s.name;
 ```
 
-## 9. 流程控制
+## 8. 流程控制
 
-switch （整型表达式）
+1. switch （整型表达式）
+2. goto: 别用。不能跨函数跳转。
+3. 循环
+   1. while
+   2. do while
+   3. for 
 
 ```c
 int main()
@@ -136,7 +135,20 @@ int main()
         putchar(ch); // 在终端输出
     retrun 0;
 }
+flag:
+	goto flag;
 ```
+
+## 9. 函数
+
+<font color="#4169E1">**==库函数==**</font>
+
+网站：www.cplusplus.com/reference, http://en.cppreference.com
+
+SDK: MSDN
+
+<font color="#4169E1">**==自定义函数==**</font>
+
 
 
 ## NOTE:
@@ -147,7 +159,7 @@ int main()
 | Ctrl + L                             | 删除一行           |
 | Ctrl k-> Ctrl c<br />Ctrl k-> Ctrl u | 注释<br />取消注释 |
 |                                      |                    |
-### 2. 内置函数
+### 2. 库函数
 | printf("Hello World");<br />printf(“%d\n”, sizeof(a));       | <stdio.h>, <br />%d：整数<br />%f: float<br />%lf: double<br />%s: 字符串<br />%p: 地址 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | scanf(“%d %d”，&a, &b);                                      | 输入函数，scanf_s是VS自带的。不能读空格。                    |
@@ -156,7 +168,9 @@ int main()
 | system("cls");                                               | 清屏                                                         |
 | int rand(void);<br />void srand(unsigned int seed)<br />time(NULL) | <stdlib.h> 返回 [0-0xfff]<br />seed决定rand()值<br /><time.h> 返回时间戳，可以(unsigned int)time(NULL); |
 | sqrt()                                                       | 开平方。                                                     |
-|                                                              |                                                              |
+| system()<br />system("shutdown -s -t 60")                    | 执行系统命令<br />60s后关机, shutdown -a取消关机。           |
+| memset()                                                     | 设置内存，可以用来修改数组。                                 |
+| strcap(desArray, srcArray);                                  | 复制字符串。<string.h>                                       |
 ### 3. 
 
 `~` : 所有二进制位取反。整数在内存中存的是补码。
