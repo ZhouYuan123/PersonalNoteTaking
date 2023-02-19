@@ -694,9 +694,11 @@ grep "正则" 文件名
 
 >-F: 指定分隔符
 >
->-V: 
+>-v: 定义一个变量
 >
->内置变量： FS, BEGIN, END
+>内置变量： FS, BEGIN, END, FILENAME, NR, NF 
+>
+>​	`ifconfig | awk '/^$/ {print "空行："NR}'` : 输出空行行号。
 >
 >`BEGIN{}` : 在所有数据读取行之前执行。
 
