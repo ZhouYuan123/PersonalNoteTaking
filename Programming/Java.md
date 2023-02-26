@@ -23,8 +23,9 @@ CLI: Command Line Interface
 
 ### 1.2 常见DOS命令
 
+
 | 命令     |                        |
-| -------- | ---------------------- |
+| ---------- | ------------------------ |
 | md       | 创建目录               |
 | rd       | 删除目录               |
 | del      | 删除文件               |
@@ -66,22 +67,23 @@ true, false, null不是关键字。保留字： goto, const.
 
 ## 2. 数据类型
 
-### 2.1 数据类型
+Java方法的参数传递机制只有一种，就是值(地址值)传递。
 
-#### 2.1.1 基本数据类型
+### 2.1 基本数据类型
 
-|         | 大小                                                         |
-| ------- | ------------------------------------------------------------ |
-| byte    | byte b = 128;// 编译不通过                                   |
-| short   | 2 byte                                                       |
-| int     | 4 byte                                                       |
-| long    | 8 byte                                                       |
-| float   | 4 byte 表示范围比long要大                                    |
-| double  | 8 byte 。10.0 == 10 ？true.                                  |
-| char    | 2 byte  '\u0043' Unicode值是一个字符，CodeChars.pdf所有字符集。有且一个字符。a:97， A:65。默认值是0或者‘\u0000’。 (A == 65)? 是 true. |
+
+|         | 大小                                                                                                                                                                         |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| byte    | byte b = 128;// 编译不通过                                                                                                                                                   |
+| short   | 2 byte                                                                                                                                                                       |
+| int     | 4 byte                                                                                                                                                                       |
+| long    | 8 byte                                                                                                                                                                       |
+| float   | 4 byte 表示范围比long要大                                                                                                                                                    |
+| double  | 8 byte 。10.0 == 10 ？true.                                                                                                                                                  |
+| char    | 2 byte  '\u0043' Unicode值是一个字符，CodeChars.pdf所有字符集。有且一个字符。a:97， A:65。默认值是0或者‘\u0000’。 (A == 65)? 是 true.                                      |
 | boolean | Java规范中，没有明确指出boolean的大小。在《Java虚拟机规范》给出了4个字节，和boolean数组1个字节的定义，具体还要看虚拟机实现是否按照规范来，所以1个字节、4个字节都是有可能的。 |
 
-#### 2.1.2 数组
+### 2.2 数组
 
 `int [] arr = {1, 2, 3, 4, 5}`: 可以省略等号右边的 new int []
 
@@ -91,29 +93,7 @@ new int \[2\]\[3\]，一维元素默认是地址值。
 
 new int \[2\]\[\]，一维元素默认是null。
 
-#### 2.1.3 包装类
-
-```java
-Object o1 = true ? new Integer(1) : new Double(2.0);
-System.out.println(o1);	// 1.0
-
-Object o2;
-if(true)
-    o2 = new Integer(1); 
-else
-    o2 = new Double(2.0);
-System.out.println(o2);	// 1
-
-// 自动装箱
-Integer a = 127;
-Integer b = 127;
-System.out.println(a == b);	// true
-Integer a1 = 128;
-Integer b1 = 128;
-System.out.println(a1 == b1); // false
-```
-
-### 2.2 进制
+### 2.3 进制
 
 二进制 （binary）, 0b或者0B开头。
 
@@ -123,7 +103,7 @@ System.out.println(a1 == b1); // false
 
 十六进制 （hex）, 0x或者0X开头。
 
-### 2.3 运算符
+### 2.4 运算符
 
 `>>>` : 无符号右移，没有 `<<<`
 
@@ -145,13 +125,13 @@ JDK 5.0新增。参数可以是0至多个
 
 ```java
 void method(String str){
-    
+  
 } 
 void method(String ... strs){
-    
+  
 } 
 void method(String [] strs){
-    
+  
 } 
 // 1和4优先调用1
 // 4和7不能构成重载
@@ -159,12 +139,13 @@ void method(String [] strs){
 
 ### 3.2 访问权限修饰符
 
+
 | 修饰符    | 类内部 | 同一个包 | 不同包的子类 | 同一个工程 |
-| --------- | ------ | -------- | ------------ | ---------- |
-| private   | √      |          |              |            |
-| default   | √      | √        |              |            |
-| protected | √      | √        | √            |            |
-| public    | √      | √        | √            | √          |
+| ----------- | -------- | ---------- | -------------- | ------------ |
+| private   | √     |          |              |            |
+| default   | √     | √       |              |            |
+| protected | √     | √       | √           |            |
+| public    | √     | √       | √           | √         |
 
 ### 3.3 JavaBean
 
@@ -193,13 +174,31 @@ instanceof  操作数为null则返回false。
 
 默认初始化 --> 显示初始化/代码块中赋值 --> 构造器中初始化。
 
-### 3.5 Object
+### 3.5 枚举
 
-`==` 左右类型不一致，编译错误。
+```java
+class Season {
+    private final String seasonName;
+    private final String seasonDesc;
+    
+    private Season(String seasonName, String seasonDesc){
+        this.seasonName = seasonName;
+        this.seasonDesc = seasonDesc;
+    }
+    
+    public static final Season SPRING = new Season("春", "");
+}
 
-`x.equals(null)` : 永远false。
-
-`x.equals(和x不同类型)` : 永远false。
+enum Season { // JDK1.5 继承 java.lang.Enum
+    private final String seasonName;
+    private final String seasonDesc;
+    
+    SPRING("春", "");
+}
+Season.values();
+valueof("名字"); 
+// 可以实现接口让每个实例重写接口方法。
+```
 
 ### 3.6 单元测试
 
@@ -211,33 +210,34 @@ main方法可以作为一个普通静态方法。
 
 JDK7: 只能
 
->全局常量：public static final 的
+> 全局常量：public static final 的
 >
->抽象方法：public abstract 的
+> 抽象方法：public abstract 的
 
 JDK8: 可以
 
->静态方法：public static 只能通过接口调用。
+> 静态方法：public static 只能通过接口调用。
 >
->默认方法：public default. 
+> 默认方法：public default.
 >
 >> 如果父类和接口方法相同，默认优先调用父类。
 >>
 >> 实现了相同方法的多个接口，必须要显示重写。
 >>
 >> 接口方法调用，接口名.super.方法名。
+>>
 
 ### 3.8 内部类
 
 成员内部类：
 
->创建：
+> 创建：
 >
->静态：Outer.Inner i = new Outer.Inner();
+> 静态：Outer.Inner i = new Outer.Inner();
 >
->非静态： Outer.Inner i = new Outer().Inner();
+> 非静态： Outer.Inner i = new Outer().Inner();
 >
->参数区分： this.name，Outer.this.name;
+> 参数区分： this.name，Outer.this.name;
 
 局部内部类：
 
@@ -250,8 +250,6 @@ Error: JVM都无法解决的问题，不编写代码进行处理。 OOM, StackOv
 Exception: 需要进行异常处理 (运行时异常一般开发中也不作try catch处理)。e的两个方法，getMessage()，printStackTrace().
 
 自定义exception需要serialVersionUID。
-
-
 
 ```mermaid
 graph LR;
@@ -273,28 +271,227 @@ graph LR;
 	D-->M[ArithmeticException];
 ```
 
+### 3.10 Annotation
+
+编译时会检查。
+
+**==自定义注解==**
+
+```java
+public @interface MyAnnotation {
+    String value(); // 属性
+    String value2() default "hello"; // 属性
+}
+@MyAnnotation(value = "hello")
+```
+
+**==元注解==**
+
+`@Retention` : 指定生命周期。
+
+`@Target` : 指定可以被修饰的元素。
+
+`@Documented` : javadoc时保留注解。 
+
+`@Inherited` : 具有继承性。
+
+`@Repeatable` 可重复注解， JDK1.8。
+
+类型注解： JDK1.8。
+
 ## 4. 多线程
 
+**程序：** program。为完成特定任务，用某种语言编写的一组指令的集合。即指一段静态的代码，静态对象。
+
+**进程：** process。是程序的一次执行过程，或是正在运行的一个程序。是一个动态过程：生命周期。
+
+**线程：** thread。是一个程序内部的一条执行路径。
+
+> 作为调度和执行的单位，每个线程拥有独立的运行栈和程序计数器(pc)。
+>
+> 一个进程中的多个线程共享相同的内存单元。
+
+### 4.1 创建
+
+```java
+extends Thread{
+    @Override
+	run(){
+        // 重写run方法，然后 start()调用
+        // 一个线程只能start()一次。
+        Thread.currentThread().getName();
+    }  
+}
+
+implements Runnable{
+    @Override
+	run(){
+        // 重写run方法，然后new Thread(this).start()调用   
+    }  
+}
+```
+
+### 4.2 方法
 
 
-## NOTE: 
+| 方法                         |                                                 |
+| ------------------------------ | ------------------------------------------------- |
+| getPriority();setPriority(); | MAX_PRIORITY: 10MIN_PRIORITY: 1NORM_PRIORITY: 5 |
+|                              |                                                 |
+|                              |                                                 |
 
-### 1. Eclipse 快捷方式
+## 4. 常见类
 
-|                  |                |
-| ---------------- | -------------- |
-| Shift + Enter    | 快速新建下一行 |
-| Ctrl + 1 + Enter | 接收变量名     |
-|                  |                |
+### 2.1 包装类
 
-1. eclipse设置
-   1. 在workspace根目录 `.metadata` 中
-2. java方法的参数传递机制只有一种，就是值传递。
+```java
+Object o1 = true ? new Integer(1) : new Double(2.0);
+System.out.println(o1);	// 1.0
+
+Object o2;
+if(true)
+    o2 = new Integer(1); 
+else
+    o2 = new Double(2.0);
+System.out.println(o2);	// 1
+
+// 自动装箱
+Integer a = 127;
+Integer b = 127;
+System.out.println(a == b);	// true
+Integer a1 = 128;
+Integer b1 = 128;
+System.out.println(a1 == b1); // false
+```
+
+### 2.2 String
+
+```java
+String a = "abc"; // 字面量。内存中会用同一个(方法区中字符串常量池)。
+String b = "a" + "bc"; // 字面量。
+String c = a + "bc"; // 变量参与，堆中new对象。 a += "bc” 同理。
+String d = a.intern() // 使用常量池中。
+  
+byte[] bytes = a.getBytes();
+String e = Arrays.toString(bytes);
+
+StringBuilder // 线程不安全 append(null), "null"
+```
+
+### 2.3 Date
+
+```java
+System.currentTimeMillis(); // 时间戳
+Date date = new Date(); // JDK1.0
+date.getTime(); // 等于System.currentTimeMillis();
+
+SimpleDateFormat sdf = new SimpleDateFormat(); // 有参构造: yyyy-MM-dd hh:mm:ss
+String str = sdf.format(date);
+date = sdf.parse(str);
+
+Calendar c = Calendar.getInstance(); // JDK1.1
+c.get(Calendar.n); // 返回当前时间对应的想要的信息。 一月是0，周日是1。
+c.getTime(); // 返回Date
+
+LocalDate ld = LocalDate.now(); // 日期 JDK1.8
+LocalTime ld = LocalTime.now(); // 时间
+LocalDateTime ld = LocalDateTime.now(); 
+LocalDateTime.of(2020,10,1); // 指定时间(没有偏移量)
+ld.getDayOfMonth();
+
+Instant i = Instant.now();
+i.toEpochMilli();
+
+DateTimeFormatter isoDate = DateTimeFormatter.ISO_DATE;
+```
+
+### 2.4 Compare
+
+```java
+implements Comparable {
+    @Override
+	compareTo(String anotherString){
+        // 默认从小到大排序，大于返回正数。
+    } 
+}
+
+new Comparator(){
+	@Override
+	public int compare(Object o1, Object o2) {
+		// TODO
+	}
+}
+```
+
+### 2.5 Math
+
+`System` 类 获取环境参数信息。
+
+`Math` 类 数学计算。
+
+`BigInteger`  与`BigDecimal`
+
+### 2.6 Object
+
+`==` 左右类型不一致，编译错误。
+
+`x.equals(null)` : 永远false。
+
+`x.equals(和x不同类型)` : 永远false。
+
+## 5. 集合
+
+```mermaid
+graph LR;
+	A[Collection]
+	B[Map];
+	AA[List];
+	AB[Set];
+	A-->AA;
+	A-->AB;
+	AA-->ArrayList;
+	AA-->LinkedList;
+	AA-->Vector;
+    AB-->HashSet;
+    HashSet-->LinkedHashSet;
+    AB-->TreeSet;
+```
+
+### 5.1 Collection
+
+for each： 本质是应用iterator。
+
+ArrayList：线程不安全。底层存储Object[] elementData;
+
+Vector：线程安全。底层存储Object[] elementData;
+
+LinkedList：
+
+HashSet: 可以存储null值。
+
+TreeSet: 按照指定属性进行排序。
+
+## NOTE:
+
+### 1. Eclipse
+
+1. 在workspace根目录 `.metadata` 中
 
 ### 2. IDEA
 
-| 目录                                               |                                        |
-| -------------------------------------------------- | -------------------------------------- |
+```mermaid
+graph LR;
+ A[IDEA]; B[Eclipse]
+ A-->B;
+ C[project] --> D[workspace];
+ E[module] --> F[project];
+```
+
+JetBrains
+
+
+| 目录                                               | UItimate                               |
+| ---------------------------------------------------- | ---------------------------------------- |
 | \User\AppData\Roaming\JetBrains\IntelliJIdea2022.2 | 配置文件 (eclipse每个ws配置都是分开的) |
 |                                                    |                                        |
 |                                                    |                                        |
