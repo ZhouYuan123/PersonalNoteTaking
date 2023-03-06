@@ -19,6 +19,7 @@ http: 超文本传输协议（Hyper Text Transfer Protocol)。
 软件：数据和指令的集合。
 
 GUI: Graphical  User Interface
+
 CLI: Command Line Interface
 
 ### 1.2 常见DOS命令
@@ -408,14 +409,14 @@ DateTimeFormatter isoDate = DateTimeFormatter.ISO_DATE;
 ### 2.4 Compare
 
 ```java
-implements Comparable {
+implements Comparable { // 自然排序
     @Override
 	compareTo(String anotherString){
         // 默认从小到大排序，大于返回正数。
     } 
 }
 
-new Comparator(){
+new Comparator(){ // 定制排序
 	@Override
 	public int compare(Object o1, Object o2) {
 		// TODO
@@ -439,6 +440,18 @@ new Comparator(){
 
 `x.equals(和x不同类型)` : 永远false。
 
+### 2.7 Collections
+
+| 方法                               |                      |
+| ---------------------------------- | -------------------- |
+| reverse(List)·                     | 反转                 |
+| shuffle();                         | 重排                 |
+| int frequency(Collection, Object); | 指定元素出现次数     |
+| copy(List, List);                  | 必须是size相等       |
+| synchronizedList(List)             | 返回SynchronizedList |
+
+
+
 ## 5. 集合
 
 ```mermaid
@@ -455,6 +468,11 @@ graph LR;
     AB-->HashSet;
     HashSet-->LinkedHashSet;
     AB-->TreeSet;
+    B-->HashMap;
+    HashMap-->LinkedHashMap;
+    B-->TreeMap;
+    B-->Hashtable;
+    Hashtable-->Properties;
 ```
 
 ### 5.1 Collection
@@ -465,11 +483,175 @@ ArrayList：线程不安全。底层存储Object[] elementData;
 
 Vector：线程安全。底层存储Object[] elementData;
 
-LinkedList：
+LinkedList：双向链表。
 
-HashSet: 可以存储null值。
+HashSet: 可以存储null值。数组中的链表，JDK7头插法，JDK8尾插法。
 
-TreeSet: 按照指定属性进行排序。
+TreeSet: 按照指定属性进行排序。只能存储相同类型对象。必须实现任意一种排序，返回0认为是相同数据，去重。
+
+### 5.2 Map
+
+Hashtable：JDK1.0
+
+HashMap: 可以存储null键，null值。 数组 + 链表 + 红黑树（JDK1.8）
+
+LinkedHashMap：遍历效率高于HashMap。
+
+TreeMap：红黑树。
+
+Properties： key和value都是String. 常用来处理配置文件。
+
+```java
+public class HashMap {
+    Node<K,V>[] table; // 数组
+    static class Node<K,V> implements Map.Entry<K,V> {
+        final int hash;
+        final K key;
+        V value;
+        Node<K,V> next; // 链表。数组长度 > 64且链表长度 > 8 时, 采用红黑树TreeNode.
+    }
+}
+static class Entry<K,V> extends HashMap.Node<K,V> {
+    Entry<K,V> before, after;
+    Entry(int hash, K key, V value, Node<K,V> next) {
+    	super(hash, key, value, next);
+    }
+}
+
+Properties prop = new Properties();
+prop.load(new FileInputStream("path"));
+String name = prop.getProperty("name");
+```
+
+### 5.3 泛型
+
+**==泛型类==**
+
+不同泛型的对象不能互相赋值。
+
+异常类不能是泛型。catch中也不能是泛型。
+
+```java
+public class Order<T>{ 
+    T t;
+}
+public class Sub extends Order{ 
+	// 默认泛型，Object
+}
+public class Sub extends Order<Integer>{ 
+	// 指明泛型，不再是泛型类
+}
+public class Sub<T> extends Order<T>{ 
+	// 泛型类
+}
+T[] arr = (T[]) new Object[10];
+// <?>：通配符。
+List<?> list = null; // 不能添加任何数据。可以用来接收其他list和读取其内容。
+List<? extends A> list = null; // 不能写。
+List<? super A> list = null; // 写A及其子类。
+```
+
+**==泛型方法==**
+
+```java
+public <E> List<E> method(E e){
+    
+}
+```
+
+## 6. IO流
+
+字节流(8 bit) : InputStream，OutputStream
+
+字符流(16bit): Reader，Writer
+
+```mermaid
+graph LR;
+	A[字节流];
+	B[字符流];
+	C[InputStream]
+	D[OutputStream];
+	E[Reader];
+	F[Writer];
+	A-->C;
+	A-->D;
+	B-->E;
+	B-->F;
+	C-->FileInputStream-->BufferedInputStream;
+	C-->DataInputStream;
+	C-->ObjectInputStream;
+	D-->FileOutputStream-->BufferedOutputStream;
+	D-->PrintStream;
+	D-->DataOutputStream;
+	D-->ObjectOutputStream;
+	E-->BufferedReader;
+	E-->InputStreamReader-->FileReader;
+	F-->BufferedWriter;
+	F-->OutputStreamWriter-->FileWriter;
+	
+	G[Object] --> RandomAccessFile;
+```
+
+```java
+FileReader fr = null;
+File file = new File("path"); // 相对路径是当前 project or module
+try {
+	fr = new FileReader(file);
+	char[] data = new char[5]; //byte [] data = new byte [5]; 字节流 
+	int len;
+	while ((len = fr.read(data)) != -1) {
+		for (int i = 0; i < len; i++) {
+			System.out.print(data[i]);
+		}
+	}
+	fr.close();
+} catch (FileNotFoundException e) {
+} catch (IOException e) {
+} finally {
+	if (fr != null) {
+		try {
+			fr.close();
+		} catch (IOException e) {
+		}
+	}
+}
+////
+FileWriter fw = null;                
+File file = new File("he");          
+try {                                
+	fw = new FileWriter(file, false);
+	fw.write("content"); // write(char cbuf[], 0, len)      
+} catch (FileNotFoundException e) {  
+} catch (IOException e) {            
+} finally {                          
+	if (fw != null) {                
+		try {                        
+			fw.close();              
+		} catch (IOException e) {    
+		}                            
+	}                                
+}                                    
+```
+
+<font color=blue>**==字符集==**</font> 
+
+ASCII: 美国标准信息交换码。用一个字节的7位表示。
+
+ISO8859-1: 拉丁码表。欧洲码表。用一个字节的8位表示。
+
+GB2312: 中文表码表。最多两个字节。
+
+GBK: GB2312的升级。最多两个字节。
+
+Unicode: 国际标准码。融合人类所有字符。所有文字都用两个字节表示。
+
+UTF-8，UTF-16: 变长的编码方式。1-4位字节。
+
+<font color=blue>**==NIO. 2==**</font> 
+
+`java.nio.file` : Paths, Files.
+
+<font color=blue>**==网络编程==**</font> 
 
 ## NOTE:
 

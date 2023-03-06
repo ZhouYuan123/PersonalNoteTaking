@@ -65,3 +65,5 @@ shut somebody out 把某人拒之门外
 live off somebody 靠某人生活
 
 get personal with somebody 针对某人
+
+over what 关于什么

@@ -7,9 +7,9 @@
 
 拥有难以置信的非线性分支管理系统。
 
-集中式版本控制系统（DVCS), 分布式版本控制系统（DVCS）。
+集中式版本控制系统（Centralized Version Control Systems), 分布式版本控制系统（Distributed Version Control Systems）。
 
-### 1.1 GIT, GitHub 与 GitLab
+**==GIT, GitHub 与 GitLab==**
 
 * Git是一个版本控制软件
 
@@ -21,17 +21,35 @@
 
   SVN只有一个版本库(commit ID 可以自增)(本地只有代码), Git有多个版本库 （commit ID是一个摘要值，这个值通过sha1计算出出来的）。  本地建立版本库，会有一个全量变化而不是增量(SVN)的变化。
 
-### 1.2 安装 
+## 2. 安装与配置
 
 地址： https://git-scm.com/downloads
 
-`git --version` ：查看安装的Git版本
+**==帮助==**
 
-`git config --list` : 查看config信息。
+`git help [config]`		or		`git [config] --help`		or		`man git-[config]`
 
-## 2. 创建Git本地库
+`git add -h` : -h：只显示可用选项
 
-  which git：git在什么地方。
+user.name与user.email的设置。
+
+```shell
+git config --global user.name "John Doe"
+git config --global user.email johndoe@example.com
+```
+
+1. /etc/gitconfig (系统）, git config --system
+2. ~/.gitconfig (用户) , git config --global
+3. .git/config (仓库) , git config --local
+
+| 命令                                                         |                                                              |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| git --version                                                | 查看安装的Git版本                                            |
+| git config                                                   | 打开使用方式说明                                             |
+| git config --list [--show-origin]<br />git config [--system] -l <br/>git config user.name | 查看config信息。配置所在文件。<br />看config所有信息<br />看config中的user.name的值。 |
+| git config --local user.name '李四'<br />git config --local unset user.name | 配置<br />取消                                               |
+
+## 3. 创建本地库
 
 1. 新建一个文件夹。
 2. git init: 创建了当前文件夹的git仓库。
@@ -40,84 +58,80 @@
 
 3. git clone 地址 [自定义名字]：新建了一个文件夹的git仓库。
 
-## 3. .git目录
+**==.git目录==**
 
-| .git 中的目录or文件 |                                                           |
-| ------------------- | --------------------------------------------------------- |
-| /hooks              |                                                           |
-| /info               | 包含全局性排除文件                                        |
-| /logs               | 日志                                                      |
-| /objects            | Git 数据库。<br />树对象，总是覆盖。<br />提交对象，      |
-| /refs               | 表示一系列的引用，保存包含`heads`、`remote`、`tags`等目录 |
-| /refs/heads         | 保存了分支以及其对应的提交对象(对象文件值存hash值)。      |
-| config              | 保存了本地仓库的配置信息                                  |
-| description         | 仓库信息                                                  |
-| HEAD                | 指向当前正在工作的分支, 例如ref: refs/heads/test          |
-| index               | 存储的是暂存区内容                                        |
+| 目录or文件  |                                                           |
+| ----------- | --------------------------------------------------------- |
+| /hooks      |                                                           |
+| /info       | 包含全局性排除文件                                        |
+| /logs       | 日志                                                      |
+| /objects    | Git 数据库。<br />树对象，总是覆盖。<br />提交对象，      |
+| /refs       | 表示一系列的引用，保存包含`heads`、`remote`、`tags`等目录 |
+| /refs/heads | 保存了分支以及其对应的提交对象(对象文件值存hash值)。      |
+| config      | 保存了本地仓库的配置信息                                  |
+| description | 仓库信息                                                  |
+| HEAD        | 指向当前正在工作的分支, 例如ref: refs/heads/test          |
+| index       | 存储的是暂存区内容                                        |
 
-## 4. Git 常用命令
+## 4. Git 基础
 
-### 4.1 配置
-
-   user.name与user.email的设置。
-
-1. /etc/gitconfig （电脑）, git config --system
-2. ~/.gitconfig (用户) , git config --global
-3. .git/config  (特定项目) , git config --local
-
-| 命令                                                         |                                                 |
-| ------------------------------------------------------------ | ----------------------------------------------- |
-| git config                                                   | 打开使用方式说明                                |
-| git config [--system] -l <br/>git config user.name           | 看config所有信息<br />看config中的user.name的值 |
-| git config --local user.name '李四'<br />git config --local unset user.name | 配置<br />取消                                  |
-
-### 4.2 工作区域
+### 4.1 工作区域
 
 | 命令                                                    |                                                              |
 | :------------------------------------------------------ | ------------------------------------------------------------ |
 | git init                                                | 初始化一个空的git库在当前目录。（如果.git被删除，就不是一个GIT管理的仓库）<br />工作区域：工作区。<br />状态：untracked or modified |
 | git add<br/>git add \* : 提交所有，越过gitignore        | 库中生成git对象 --> 进入staged : <br />工作区域：暂存区。<br />状态：staged |
-| git commit <br />or<br />git commit -a (跳过暂存区操作) | 进入版本库：<br />工作区域：Git 版本库<br />状态：committed  |
+| git commit <br />or<br />git commit -a (跳过暂存区操作) | 进入版本库: (每一次运行提交操作，都是对项目作一次快照)<br />工作区域：Git 版本库<br />状态：committed |
 | git rm <br />rm<br/>git rm --cached                     | 删除文件，在暂存区<br />删除文件，在工作区<br />变为untracked file. |
 | git mv 原文件名 新文件名 / mv                           |                                                              |
 | git log -n                                              | 看最近n条提交                                                |
 | git log --pretty=oneline<br />git log --oneline         | 每个commit显示到一行                                         |
 | git log --pretty=format ....                            | 自定义格式                                                   |
+| git status -s                                           | -s: 状态简览                                                 |
 
-### 4.3 查看改动
+### 4.2 查看改动
 
-| diff命令                                                     |                            |
-| ------------------------------------------------------------ | -------------------------- |
-| git diff                                                     | 工作区和暂存区             |
-| git diff HEAD                                                | 工作区和版本库             |
-| git diff --cached [commit_ID]<br />git diff --staged （1.6.1以上） | 暂存区和版本库             |
-| git blame 文件名                                             | 快速查看文件是被谁修改的。 |
-| git show --raw [HEAD]                                        | 查看修改的文件列表。       |
-| git show [HEAD]                                              | 查看修改的文件内容。       |
+| diff命令                                                     |                              |
+| ------------------------------------------------------------ | ---------------------------- |
+| git diff                                                     | 工作区和暂存区               |
+| git diff HEAD                                                | 工作区和版本库               |
+| git diff --cached [commit_ID]<br />git diff --staged （1.6.1以上） | 暂存区和版本库               |
+| git difftool [--tool-help]                                   | 系统支持哪些 Git Diff 插件。 |
+| git blame 文件名                                             | 快速查看文件是被谁修改的。   |
+| git show --raw [HEAD]                                        | 查看修改的文件列表。         |
+| git show [HEAD]                                              | 查看修改的文件内容。         |
 
 ## 5. .gitignore
 
 自己新建一个.gitignore  --> 提交这个文件进库
+
+1. 可以使用标准的 glob 模式匹配，它会递归地应用在整个工作区中。
+
+   >所谓的 glob 模式是指 shell 所使用的简化了的正则表达式。 星号（`*`）匹配零个或多个任意字符；`[abc]` 匹配任何一个列在方括号中的字符 （这个例子要么匹配一个 a，要么匹配一个 b，要么匹配一个 c）； 问号（`?`）只匹配一个任意字符；如果在方括号中使用短划线分隔两个字符， 表示所有在这两个字符范围内的都可以匹配（比如 `[0-9]` 表示匹配所有 0 到 9 的数字）。 使用两个星号（`**`）表示匹配任意中间目录，比如 `a/**/z` 可以匹配 `a/z` 、 `a/b/z` 或 `a/b/c/z` 等。
+
+2. 匹配模式可以以（`/`）开头防止递归。
+
+1. 匹配模式可以以（`/`）结尾指定目录。
 
 ```shell
 # 注释以井号开头
 # 不追踪这个文件了
 setting.properties 
 
-# 星号“*” ：匹配多个字符。忽略所有.b结尾的
+# 忽略所有.b结尾的
 *.b 
 
-# a.b 除外
+# 跟踪所有a.b，即便你在前面忽略了 .b 文件
 !a.b
 
-# 问号“?”：匹配除 ‘/’外的任意一个字符；
+# 只忽略当前目录下的 TODO 文件，而不忽略 subdir/TODO
+/TODO
+
+# 忽略任何目录下名为 build 的文件夹
+build/
 
 # 问号“?”：匹配除 ‘/’外的任意一个字符。test.i文件、test.o文件被忽略
 *.[io]
-
-# 只忽略根目录下TODO文件
-/TODO 
-/**/ab # 一个星表示一层目录，两个星表示所有层的目录
 ```
 
 ## 6. 分支
