@@ -343,7 +343,7 @@ implements Runnable{
 
 ## 4. 常见类
 
-### 2.1 包装类
+### 4.1 包装类
 
 ```java
 Object o1 = true ? new Integer(1) : new Double(2.0);
@@ -365,7 +365,7 @@ Integer b1 = 128;
 System.out.println(a1 == b1); // false
 ```
 
-### 2.2 String
+### 4.2 String
 
 ```java
 String a = "abc"; // 字面量。内存中会用同一个(方法区中字符串常量池)。
@@ -379,7 +379,7 @@ String e = Arrays.toString(bytes);
 StringBuilder // 线程不安全 append(null), "null"
 ```
 
-### 2.3 Date
+### 4.3 Date
 
 ```java
 System.currentTimeMillis(); // 时间戳
@@ -406,7 +406,7 @@ i.toEpochMilli();
 DateTimeFormatter isoDate = DateTimeFormatter.ISO_DATE;
 ```
 
-### 2.4 Compare
+### 4.4 Compare
 
 ```java
 implements Comparable { // 自然排序
@@ -424,7 +424,7 @@ new Comparator(){ // 定制排序
 }
 ```
 
-### 2.5 Math
+### 4.5 Math
 
 `System` 类 获取环境参数信息。
 
@@ -432,7 +432,7 @@ new Comparator(){ // 定制排序
 
 `BigInteger`  与`BigDecimal`
 
-### 2.6 Object
+### 4.6 Object
 
 `==` 左右类型不一致，编译错误。
 
@@ -440,7 +440,7 @@ new Comparator(){ // 定制排序
 
 `x.equals(和x不同类型)` : 永远false。
 
-### 2.7 Collections
+### 4.7 Collections
 
 | 方法                               |                      |
 | ---------------------------------- | -------------------- |
@@ -449,8 +449,6 @@ new Comparator(){ // 定制排序
 | int frequency(Collection, Object); | 指定元素出现次数     |
 | copy(List, List);                  | 必须是size相等       |
 | synchronizedList(List)             | 返回SynchronizedList |
-
-
 
 ## 5. 集合
 
@@ -652,6 +650,66 @@ UTF-8，UTF-16: 变长的编码方式。1-4位字节。
 `java.nio.file` : Paths, Files.
 
 <font color=blue>**==网络编程==**</font> 
+
+TCP, UDA, URL，Socket
+
+## 7. 反射
+
+特征：动态性。
+
+java.lang.Class类  任何运行时类都可以作为Class的一个实例。
+
+```java
+// 4种方式都是同一个运行时类。只要数组类型和维度一样，就是同一个Class
+Class clazz = Person.class;
+Class clazz = p.getClass();
+Class clazz = Class.forName("java.lang.Person");
+ClassLoader cl = Test.class.getClassLoader();
+Class clazz = cl.loadClass("java.lang.Person");
+
+clazz.getResourceAsStream(String path); 
+cl.getResource(fileName); 
+
+// 新建对象
+Person p = clazz.newInstance(); // 本质使用构造器。
+
+// 属性
+Field [] fs = clazz.getFields(); // 当前类和父类public的
+Field [] fs = clazz.getDeclaredFields(); // 当前类所有声明的属性
+int mod = f.getModifiers(); // 权限修饰符。可以Modifier.toString(int mod)查看。
+Class type = f.getType(); // 数据类型。
+String name = f.getName(); // 变量名。
+
+Field  f = clazz.getField("属性名字");
+f.setAccessible(true);
+f.set(p, 123);
+
+// 方法
+Method [] ms = clazz.getMethods(); // 当前类和父类public的
+Method [] ms = clazz.getDeclaredMethods(); // 当前类所有声明的方法
+Annotation[] as = m.getAnnotations(); 
+int mod = m.getModifiers(); // 权限修饰符。可以Modifier.toString(int mod)查看。
+m.getReturnType().getName();
+m.getName();
+Parameter [] ps = m.getParameters();
+Classs [] pts = m.getParameterTypes();
+m.getExceptionTypes();
+
+Method m = clazz.getDeclaredMethod(String name, Class<?>... parameterTypes);
+m.setAccessible(true);
+m.invoke(p, "参数"); // 返回值就是方法返回值。
+
+// 构造器
+Constructor[] cs = clazz.getConstructors();
+Constructor<T> c = clazz.getConstructor(Class<?>... parameterTypes);
+c.setAccessible(true);
+("强转")c.newInstance("参数");
+
+// 父类
+Class<? super T> c = clazz.getSuperclass();
+Type t = clazz.getGenericSuperclass(); // 泛型父类
+Class<?>[] c = clazz.getInterfaces(); // 获取接口
+```
 
 ## NOTE:
 

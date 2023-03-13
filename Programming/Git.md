@@ -9,7 +9,7 @@
 
 集中式版本控制系统（Centralized Version Control Systems), 分布式版本控制系统（Distributed Version Control Systems）。
 
-**==GIT, GitHub 与 GitLab==**
+<font color=blue>**==GIT, GitHub 与 GitLab==**</font>
 
 * Git是一个版本控制软件
 
@@ -25,7 +25,7 @@
 
 地址： https://git-scm.com/downloads
 
-**==帮助==**
+<font color=blue>**==帮助==**</font>
 
 `git help [config]`		or		`git [config] --help`		or		`man git-[config]`
 
@@ -58,7 +58,7 @@ git config --global user.email johndoe@example.com
 
 3. git clone 地址 [自定义名字]：新建了一个文件夹的git仓库。
 
-**==.git目录==**
+<font color=blue>**==.git目录==**</font>
 
 | 目录or文件  |                                                           |
 | ----------- | --------------------------------------------------------- |
@@ -163,7 +163,7 @@ master：指向的是提交。
 | git status --graph                                          | 。                                                           |
 | git reset HEAD^<br/>git reset HEAD~1<br/>git reset commitID | ^代表回退版本个数。<br/>1: 代表第一个提交<br/>git checkout commitID: 可以创建一个游离的分支。 |
 | git reflog                                                  | git的操作日志。                                              |
-| git remote [-v]                                             | 查看远程仓库. -v 详细                                        |
+| git remote [-v]                                             | 查看本地设置的远程库别名. -v 详细                            |
 
 ## 7. 标签
 
