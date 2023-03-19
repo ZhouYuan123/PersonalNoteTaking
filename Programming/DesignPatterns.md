@@ -1,45 +1,65 @@
-## 动态代理
+### 动态代理
+
+1. 静态代理
+2. 动态代理 (JDK 代理)
+3. Cglib代理
 
 ```java
-public class JdkProxySubject implements InvocationHandler{
-    //引入要代理的真实对象
-    private RealSubject realSubject;
-    
-    //用构造器注入目标方法，给我们要代理的真实对象赋初值
-    public JdkProxySubject(RealSubject realSubject){
-       this.realSubJect=realSubject;
-    }
-    
-    //实现接口的方法
-    @Override
-    public Object invoke(Object proxy, Method method, Object[] args)throws Throwable{
-        System.out.println("before");
-        Object result = null;
-        try{
-        //当代理对象调用真实对象的方法时，其会自动的跳转到代理对象关联的handler对象的invoke方法来进行调用
-       		result=method.invoke(realSubject, args);
-        }catch(Exception e){
-        	System.out.println("ex:"+e.getMessage());
-        	throw e; 
-        }finally{
-            System.out.println("after");
-        }
-        return result;
-    }
+// 被代理类
+public class Renter implements Person{
+	@Override
+	public void rentHouse() {
+		System.out.println("租客租房成功！");
+	}
 }
-public class Client{
-  public static void main(String[] args){
-    // 使用Proxy构造对象参数
-    // java泛型需要转换一下
-   	// 第一个参数getClassLoader()，我们这里使用Client这个类的ClassLoader对象来加载我们的代理对象
-    // 第二个参数表示我要代理的是该真实对象，这样我就能调用这组接口中的方法了
-    // 第三个参数handler，我们这里将这个代理对象关联到了上方的 InvocationHandler这个对象上
-    Subject subject = 
-       (Subject)java.lang.reflect.Proxy.newProxyInstance(Client.class.getClassLoader(),
-                new Class[]{Subject.class},new JdkProxySubject(new RralSubject()));
-    // 调用方法
-     subject.test;
-  }
+
+public class RenterInvocationHandler<T> implements InvocationHandler{
+	//被代理类的对象
+	private T target;
+	public RenterInvocationHandler(T target){
+		this.target = target;
+	}
+	/**
+     * proxy: 动态代理对象
+     * method：正在执行的方法
+     * args：调用目标方法时传入的实参
+     */
+	@Override
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		//代理过程中插入其他操作
+		System.out.println("租客和中介交流");
+		Object result = method.invoke(target, args);
+		return result;
+	}
 }
+
+public class ProxyTest {
+	public static void main(String[] args) {
+		//创建被代理的实例对象
+		Person renter = new Renter();
+		//创建InvocationHandler对象
+		InvocationHandler renterHandler = new RenterInvocationHandler<Person>(renter);
+		//创建代理对象,代理对象的每个执行方法都会替换执行Invocation中的invoke方法
+		Person renterProxy = (Person) Proxy.newProxyInstance(
+            Person.class.getClassLoader(), new Class<?>[]{Person.class}, renterHandler);
+		renterProxy.rentHouse();
+		
+		//也可以使用下面的方式创建代理类对象，Proxy.newProxyInstance其实就是对下面代码的封装
+		/*try {
+			//使用Proxy类的getProxyClass静态方法生成一个动态代理类renterProxy 
+			Class<?> renterProxyClass = Proxy.getProxyClass(Person.class.getClassLoader(), new Class<?>[]{Person.class});
+			//获取代理类renterProxy的构造器，参数为InvocationHandler
+			Constructor<?> constructor = renterProxyClass.getConstructor(InvocationHandler.class);
+			//使用构造器创建一个代理类实例对象
+			Person renterProxy = (Person)constructor.newInstance(renterHandler);
+			renterProxy.rentHouse();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+	}
+
+}
+
 ```
 

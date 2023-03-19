@@ -1,5 +1,7 @@
 ## Java 8
 
+2014年3月18日。<font color=red>**LTS (Long-Term-Support)**</font>
+
 ### 1. Lambda
 
 函数式接口：只有一个方法的接口。可以使用注解`@FunctionalInterface`标识.
@@ -89,8 +91,9 @@ Arrays.stream(arr);
 Stream<Integer> stream = Stream.of(1, 2, 3, 4, 5, 6);
 //创建 stream方式四: 创建无限流
 // public static<T> Stream<T> iterate(final T seed, final UnaryOperator<T> f)
-//遍历前10个偶数
-Stream.iterate( seed:0, t -> t + 2).limit(10).forEach(System.out::println);
+//遍历前5个偶数
+Stream.iterate(0, t -> t + 2).limit(5).forEach(System.out::println);//0 2 4 6 8
+// 指定类型 IntStream.iterate(...)
 ```
 
 <font color=blue>**2. Stream 中间操作**</font>
@@ -107,7 +110,7 @@ stream.limit(3).forEach(System.out::println);
 // 跳过前三个元素
 stream.skip(3).forEach(System.out::println);
 // 去除重复
-stream.distinct.forEach(System.out::println);
+stream.distinct().forEach(System.out::println);
 ```
 
 **映射**
@@ -167,7 +170,14 @@ Optional<Double> sumMoney = salaryStream.reduce(Double::sum);
 ```java
 // collect(collector c)一将流转换为其他形式。接收一个 Collector接口的实现，用于给Stream中元素做汇总的方法
 List<Employee> employees = EmployeeData.getEmployees();
-employees.stream().filter(e -> e.getsalary() > 6000).collect(Collectors.tolist()):
+employees.stream().filter(e -> e.getsalary() > 6000).collect(Collectors.toList()):
+
+// javagosql
+Stream.of("java", "go", "sql").collect(Collectors.joining());
+// java, go, sql
+Stream.of("java", "go", "sql").collect(Collectors.joining(", "));
+// 【java, go, sql】 prefix and suffix
+Stream.of("java", "go", "sql").collect(Collectors.joining(", ", "【", "】"));
 ```
 
 | 方法           | 返回类型             | 作用                                   |
@@ -192,8 +202,474 @@ employees.stream().filter(e -> e.getsalary() > 6000).collect(Collectors.tolist()
 | ifPresent(Consumer<? **super** T> action)          | 执行action          |
 | ifPresentOrElse(Consumer<? **super** T>, Runnable) |                     |
 
+### 5. 接口方法
+
+JDK 7: 只能
+
+> 全局常量：public static final 的
+>
+> 抽象方法：public abstract 的
+
+JDK 8: 可以
+
+> 静态方法：public static 只能通过接口调用。
+>
+> 默认方法：public default.
+>
+> > 如果父类和接口方法相同，默认优先调用父类。
+>
+> > 实现了相同方法的多个接口，必须要显示重写。
+>
+> > 接口方法调用，接口名.super.方法名。
+
+### 6. try
+
+```java
+// 自动关闭流
+try(InputStreamReader reader = new InputStreamReader(System.in)){
+
+} catch (IOException e) {
+    e.printStackTrace();
+}
+```
+
 ## Java 9
 
+2017年9月21日。
 
+1. 目录改变
+
+   > /jre : 被移除 
+   >
+   > /src.zip --> /lib/src.zip
+   >
+
+2. modularity
+
+```java
+// 创建 module-info.java
+module name{
+    exports packagepath;
+}
+module name{
+    requires packagepath;
+}
+```
+
+3. jShell命令
+
+   可以让java像脚本一样运行。
+
+   jshell --> 开启命令行模式。
+
+   > /help: 查看可用命令。
+   >
+   > /edit: 查看已经编辑。
+   >
+   > /imports: 查看已经导入
+   >
+   > /open: 类似脚本语言 
+
+4. 接口中可以定义private方法。
+
+5. 钻石操作符：匿名内部类可以省略指定泛型。
+
+6. try 语句自动关闭流
+
+```java
+// 可以在try外面实例化, reader此时是final
+InputStreamReader reader = new InputStreamReader(System.in);
+try(reader){
+
+} catch (IOException e) {
+    e.printStackTrace();
+}
+```
+
+7. String变更。`char[] value --> byte[] value`
+8. 只读集合。
+
+```java
+// JDK 9之前
+Collections.unmodifiablelist(list); // contains: 调用入参list的contains方法
+Arrays.asList(); // contains入参可以为空
+// JDK 9
+List.of() // contains的入参 Objects.requireNonNull(o);
+```
+
+9. Input Stream加强。
+
+```java
+ClassLoader cl = this.getClass().getClassLoader();
+try (InputStream is = cl.getResourceAsStream("hello.txt");
+    OutputStream os = new FileOutputStream("src\\hello1.txt")) {
+    is.transferTo(os); // 把输入流中的所有数据直接自动地复制到输出流中
+} catch (IOException e) { 
+    e.printStackTrace();
+}
+```
+
+10. 增强Stream API
+
+```java
+// takeWhile(Predicate<? super T>) 一旦出现不满足就结束，后面数据丢弃。
+List<Integer> list = Arrays.asList(45,43, 76，87，42，77，90， 73，67，88);
+list.stream().takeWhile(x -> x < 50).forEach(System.out::println);// 45,43
+// dropWhile(Predicate<? super T>) 一旦出现不满足就结束，后面数据全保留。
+// of(T... t), 可以包含null值，可以多个null值，但不能单个null值。
+Stream.of(1，2,3,null);
+// ofNullable(T t), 可以单个null值。
+Stream.of(null); // .count()是0，打印空“”
+// 中间多了一个Predicate<? super T> hasNext参数的重载方法。
+Stream.iterate(0, x -> x < 7, x -> x + 2).limit(5).forEach(System.out::println);//0 2 4 6
+```
+
+11. Optional类中stream()的使用
+
+    ```java
+    List<String> list = new ArrayList<>();
+    list.add("Tom");list.add("Jerry");list.add("Tim");
+    Optional<List<String>> optional = Optional.ofNullable(list);
+    Stream<List<String>> stream = optional.stream();
+    stream.flatMap(x -> x.stream()).forEach(System.out::printIn); // Tom Jerry Tim
+    ```
+    
+12. Javascript 引擎升级：Nashorn
+
+12. 禁止变量取名直接就是`_`, 编译报错。
+
+## Java 10
+
+2018年3月21日。
+
+1. 局部变量类型推断。
+
+```java
+var num = 10;
+for(var i : list){
+    
+}
+```
+
+2. `List.copyOf()` : 
+
+```java
+//示例1:
+var list1 = List.of("Java", "python","c");
+var copy1 = List.copyof(list1);
+System.out.println(list1 == copy1); // true
+//示例2:
+var list2 = new ArrayLis<String>();
+var copy2 = List.copyof(Iist2);
+System.out.printn(list2 == copy2); // false
+// 本身就是只读集合，没有必要再新创建集合。
+```
+
+## Java 11
+
+2018年9月26日。<font color=red>**LTS (Long-Term-Support)**</font>
+
+1. String 增强
+
+```java
+"   ".isBlank(); // true, \t \n 都是blank
+"   ".strip(); // 去除blank, \t \n 都是blank
+"".stripTrailing();
+"".stripLeading();
+"".repeat(n); // 复制次数。
+"".ines.count();
+
+readString();
+writeString();
+Path path = Files.writeString(Files.createTempFile("test", ".txt"), "This was posted on JD");
+String s = Files.readString(path);
+```
+
+2. Optional增强
+
+```java
+isEmpty();
+```
+
+3. lambda参数可以加注解。
+4. 全新的http客户端API。
+5. 可以直接 `java Hello.java` 执行文件。
+6. 废弃 Nashorn。
+7. ZGC
+7. 反射内部类。getNestHost()、getNestMembers() 和 isNestmateOf()。
+7. 新的 Collection.toArray(IntFunction<T[]> generator) 方法
+
+```java
+// 在 Java 11 之前，Collection 接口提供了两个 toArray() 方法来将集合转换为数组。
+// 返回一个 Object 数组
+List<String> list = List.of("foo", "bar", "baz");
+Object[] strings1 = list.toArray();
+
+//  toArray() 方法需要一个请求类型的数组。如果此数组至少与集合一样大，则元素将存储在此数组中 (strings2a)。否则，将创建所需大小的新数组 (strings2b)。
+String[] strings2a = list.toArray(new String[list.size()]);
+String[] strings2b = list.toArray(new String[0]);
+
+// Java 11 开始，我们还可以编写以下代码：
+String[] strings = list.toArray(String[]::new);
+```
+
+10. Path.of()
+
+```java
+// Relative path foo/bar/baz
+Path.of("foo/bar/baz");
+Path.of("foo", "bar/baz");
+Path.of("foo", "bar", "baz");
+
+// Absolute path /foo/bar/baz
+Path.of("/foo/bar/baz");
+Path.of("/foo", "bar", "baz");
+Path.of("/", "foo", "bar", "baz");
+// 要定义绝对路径，在 Linux 和 macOS 上，第一部分必须以“/”开头，Windows 上以驱动器号开头，例如 “C:”。
+```
+
+## Java 12
+
+2019年3月19日。
+
+1. switch改动.
+
+```java
+int dayNumber = switch (day) {
+ case MONDAY, FRIDAY, SUNDAY -> 6;
+ case TUESDAY                -> 7;
+ case THURSDAY, SATURDAY     -> 8;
+ case WEDNESDAY              -> 9;
+ default                      -> throw new IllegalStateException("Huh? " + day);
+}
+```
+2. String
+
+```java
+String result = "foo\nbar\nbar2".indent(4);
+// 调用 indent 方法会自动添加一个换行符号\n，
+public <R> R transform(Function<? super String, ? extends R> f);
+String.transform(StringUtils::toCamelCase)；
+```
+3. Files
+
+```java
+Files.mismatch(Path, Path);
+// 返回一个 long 值，这个值表示第一处不匹配的字节位置。如果返回-1，说明两个文件相等
+```
+4. NumberFormat
+
+```java
+// 例子：3.6M比3,600,000容易读得多
+// Java 12 引入了一个叫做 NumberFormat.getCompactNumberInstance(Locale, NumberFormat.Style)的静态方法。用于创建紧凑数字表示形式，
+NumberFormat fmt = NumberFormat.getCompactNumberInstance(Locale.US, NumberFormat.Style.SHORT);
+String result = fmt.format(1000); // 1k
+```
+
+## Java 13
+
+2019年9月17日。
+
+1. switch 
+
+```java
+// yield与return的区别在于，yield只会跳出switch块，return是跳出当前方法或循环。
+final DayOfWeek day = DayOfWeek.SATURDAY;
+final String typeOfDay = switch (day) {
+    case MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY -> {
+        System.out.println("Working Day: " + day);
+        yield "Working Day";
+    }
+    case SATURDAY, SUNDAY -> {
+        System.out.println("Day Off: " + day);
+        yield "Day Off";
+    }
+};
+// "Day Off"
+```
+```java
+// Java13 预览版: Text Block
+String json2 = """
+        {
+          "wechat": "hellokanshan",
+          "wechatName": "看山",
+          "mp": "kanshanshuo",
+          "mpName": "看山的小屋"
+        }
+        """;
+```
+
+## Java 14
+
+2020年3月17日。
+
+1. instanceof
+
+```java
+if (!(obj instanceof String str)) {
+    .. str.contains(..)..// 不必再声明str对象进行强制类型转换
+} else {
+    .. str....
+}		
+		
+if (obj instanceof String str && str.length() > 5) {.. str.contains(..)..}
+if (obj instanceof String str || str.length() > 5) {.. str.contains(..)..}
+```
+2. record
+
+```java
+public class Test {
+    public static void main(String[] args) {
+        test();
+    }
+    // record 是一种全新的类型，它本质上是一个 final 类，
+    // 同时所有的属性都是 final 修饰，它会自动编译出 public get hashcode 、equals、toString 等方法，减少了代码编写量。
+    private static void test() {
+        Cat c1 = new Cat("tomcat", 1);
+        Cat c3 = new Cat("tomcat", 1);
+        Cat c2 = new Cat("jerry", 2);
+        System.out.println(c1);
+        System.out.println(c2);
+        System.out.println(c1 == c3); // true
+    }
+}
+record Cat(String name, Integer age) {
+}
+
+// 在 java.lang.Class 中引入了下面两个新方法：
+RecordComponent[] getRecordComponents()
+boolean isRecord()   
+```
+3. Text block
+
+```java
+// 其一，用\表示换行。其二，是用\s表示一个空格
+// 不使用文本块
+String literal = "two escape sequences first is for newlines " +
+"and, second is to signify white space " +
+"or single space.";
+ 
+// 使用 \ 看起来像这样：实际内容是在同一行
+String text = """
+                two escape sequences first is for newlines \
+                and, second is to signify white space \
+                or single space.\
+                """;
+```
+
+## Java 15
+
+2020年9月15日。
+
+1. 权限控制
+
+```java
+public abstract sealed class Person permits Employee, Manager {
+    //...
+}
+final class Employee extends Person {
+}
+
+non-sealed class Manager extends Person {
+}
+// 任何继承密封类的类本身必须被声明为final、non-sealed的或sealed的。这可以确保类的层次结构保持在有限的范围内被编译器识别
+if (person instanceof Employee) {
+    return ((Employee) person).getEmployeeId();
+} else if (person instanceof Manager) {
+    return ((Manager) person).getSupervisorId();
+}
+// 如果没有一个密封的类，编译器就不能合理地确定所有可能的子类都被我们的 if-else 语句所覆盖。如果末尾没有 else 子句，编译器可能会发出警告，表明我们的逻辑没有涵盖所有的情况。
+```
+
+2. `TreeMap` 新引入了下面这些方法：
+   - `putIfAbsent()`
+   - `computeIfAbsent()`
+   - `computeIfPresent()`
+   - `compute()`
+   - `merge()`
+
+## Java 16
+
+2021年3月16日。
+
+1. 使用反射执行接口中的默认实现方法
+2. DateTimeFormatter 的一个新成员是日周期符号 "B"，它提供了一个上午/下午格式的替代方案。
+
+```java
+LocalTime date = LocalTime.now();
+DateTimeFormatter formatter = DateTimeFormatter.ofPattern("B h:m");
+System.out.println(date.format(formatter)); // 下午 1:01
+```
+
+3. Stream.toList()
+
+```java
+List<String> lst = Arrays.asList("1", "2", "3");
+// before jdk 16
+List<Integer> ints = lst.stream().map(Integer::parseInt).collect(Collectors.toList());
+// jdk 16+
+List<Integer> ints = lst.stream().map(Integer::parseInt).toList();
+```
+
+## Java 17
+
+2021年9月14日。<font color=red>**LTS (Long-Term-Support)**</font>
+
+1. 随机生成器RandomGenerator
+   1. `SplittableRandomGenerator`
+   2. `JumpableRandomGenerator`
+   3. `LeapableRandomGenerator`
+   4. `ArbitrarilyJumpableRandomGenerator`
+
+2. switch （预览）
+
+```java
+// Old code
+static String formatter(Object o) {
+    String formatted = "unknown";
+    if (o instanceof Integer i) {
+        formatted = String.format("int %d", i);
+    } else if (o instanceof Long l) {
+        formatted = String.format("long %d", l);
+    } else if (o instanceof Double d) {
+        formatted = String.format("double %f", d);
+    } else if (o instanceof String s) {
+        formatted = String.format("String %s", s);
+    }
+    return formatted;
+}
+
+// New code
+static String formatterPatternSwitch(Object o) {
+    return switch (o) {
+        case Integer i -> String.format("int %d", i);
+        case Long l    -> String.format("long %d", l);
+        case Double d  -> String.format("double %f", d);
+        case String s  -> String.format("String %s", s);
+        default        -> o.toString();
+    };
+}
+// 对于 null 值的判断也进行了优化。
+// Old code
+static void testFooBar(String s) {
+    if (s == null) {
+        System.out.println("oops!");
+        return;
+    }
+    switch (s) {
+        case "Foo", "Bar" -> System.out.println("Great");
+        default           -> System.out.println("Ok");
+    }
+}
+
+// New code
+static void testFooBar(String s) {
+    switch (s) {
+        case null         -> System.out.println("Oops");
+        case "Foo", "Bar" -> System.out.println("Great");
+        default           -> System.out.println("Ok");
+    }
+}
+```
 
 # END

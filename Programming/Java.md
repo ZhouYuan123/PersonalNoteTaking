@@ -42,7 +42,7 @@ SUN (Stanford University Network)
 >
 > <font color="#000000">1994年，Oak适合于互联网。</font>
 >
-> <font color="#000000">1995年，开发。</font>
+> <font color="#000000">1995年，Oak 被重新命名为“Java”，在SunWorld上得到展示。</font>
 >
 > <font color="#000000">1996年，JDK1.0</font>
 >
@@ -175,6 +175,83 @@ instanceof  操作数为null则返回false。
 
 默认初始化 --> 显示初始化/代码块中赋值 --> 构造器中初始化。
 
+```java
+// Note：Java子类访问父类私有变量的思考
+
+// 父类Parent，包含私有变量name和age；
+public class Parent {
+    private String name;
+	private int age;
+	public Parent() {
+
+	}
+	public User(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+	public String getName() {
+		return name;
+	}
+	public int getage() {
+		return age;
+	}
+}
+
+// 子类C
+public class Child extends Parent {
+	public Child() {
+
+	}
+	public Manager(String name, int age) {
+		super(name, age);
+	}
+
+	private String name;
+	private int age;
+
+	public void show(){
+		System.out.println("我是"+this.name+",我有"+this.age+"岁");
+		System.out.println("我是"+this.getName()+",我有"+this.getage()+"岁");
+		System.out.println("我是"+super.getName()+",我有"+super.getage()+"岁");
+	}
+}
+
+public class Test {
+
+	public static void main(String[] args) {
+		Child c = new Child("c",1);
+		c.show();
+	}
+}
+
+// 结果如下:
+我是null,我有0岁---1
+我是c,我有1岁------2
+我是c,我有1岁------3
+
+Summary: 新建子类时，会先在堆中新建一个父类，父类的变量和方法，以及子类独有的变量和方法，二者共同组成了子类空间。
+所以，新建子类后，父类中的private变量虽然不能被子类继承，但却是真实存在的，只是不可被直接访问，只能间接使用。
+
+// 不过，如果在子类中重写getter方法，结果2就发生了改变。
+@Override
+public String getName() {
+	return name;
+}
+
+@Override
+public int getage() {
+	return age;
+}
+
+/*****************************************************************/
+
+我是null,我有0岁------1
+我是null,我有0岁------2
+我是c,我有1岁---------3
+
+因为现在本类Manager中已经有了getter()方法，所以方法内直接调用本类的两个name,age变量，因此结果2返回的是两个初始值。
+```
+
 ### 3.5 枚举
 
 ```java
@@ -207,28 +284,7 @@ main方法可以作为一个普通静态方法。
 
 @Test 快速fix：Current project --> build path --> add libraries --> JUnit --> JUnit4 （org.junit.Test）
 
-### 3.7 interface
-
-JDK7: 只能
-
-> 全局常量：public static final 的
->
-> 抽象方法：public abstract 的
-
-JDK8: 可以
-
-> 静态方法：public static 只能通过接口调用。
->
-> 默认方法：public default.
->
->> 如果父类和接口方法相同，默认优先调用父类。
->>
->> 实现了相同方法的多个接口，必须要显示重写。
->>
->> 接口方法调用，接口名.super.方法名。
->>
-
-### 3.8 内部类
+### 3.7 内部类
 
 成员内部类：
 
@@ -244,7 +300,7 @@ JDK8: 可以
 
 局部内部类的方法中如果调用该方法的局部变量，此局部变量需要是final。
 
-### 3.9 异常
+### 3.8 异常
 
 Error: JVM都无法解决的问题，不编写代码进行处理。 OOM, StackOverflowError.
 
@@ -272,7 +328,7 @@ graph LR;
 	D-->M[ArithmeticException];
 ```
 
-### 3.10 Annotation
+### 3.9 Annotation
 
 编译时会检查。
 

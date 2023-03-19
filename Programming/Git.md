@@ -53,7 +53,7 @@ git config --global user.email johndoe@example.com
 
 1. 新建一个文件夹。
 2. git init: 创建了当前文件夹的git仓库。
-   1. **.get目录下：管理了git。**
+   1. **.get目录下：管理了git。**（如果.git被删除，就不是一个GIT管理的仓库）
    2. git init --bare 创建一个裸库，原 .git 目录下的文件在当前目录下
 
 3. git clone 地址 [自定义名字]：新建了一个文件夹的git仓库。
@@ -73,23 +73,80 @@ git config --global user.email johndoe@example.com
 | HEAD        | 指向当前正在工作的分支, 例如ref: refs/heads/test          |
 | index       | 存储的是暂存区内容                                        |
 
-## 4. Git 基础
+## 4. 文件状态周期
 
 ### 4.1 工作区域
+```mermaid
+graph LR;
+    A((未改动)); B((工作区)); C((暂存区)); D((版本库));
+    A -->|modify|B -->|git add|C --> |git commit|D;
+    C -->|git reset HEAD|B;
+    B -->|git checkout|A
+```
 
-| 命令                                                    |                                                              |
-| :------------------------------------------------------ | ------------------------------------------------------------ |
-| git init                                                | 初始化一个空的git库在当前目录。（如果.git被删除，就不是一个GIT管理的仓库）<br />工作区域：工作区。<br />状态：untracked or modified |
-| git add<br/>git add \* : 提交所有，越过gitignore        | 库中生成git对象 --> 进入staged : <br />工作区域：暂存区。<br />状态：staged |
-| git commit <br />or<br />git commit -a (跳过暂存区操作) | 进入版本库: (每一次运行提交操作，都是对项目作一次快照)<br />工作区域：Git 版本库<br />状态：committed |
-| git rm <br />rm<br/>git rm --cached                     | 删除文件，在暂存区<br />删除文件，在工作区<br />变为untracked file. |
-| git mv 原文件名 新文件名 / mv                           |                                                              |
-| git log -n                                              | 看最近n条提交                                                |
-| git log --pretty=oneline<br />git log --oneline         | 每个commit显示到一行                                         |
-| git log --pretty=format ....                            | 自定义格式                                                   |
-| git status -s                                           | -s: 状态简览                                                 |
+工作区：状态：untracked or modified
 
-### 4.2 查看改动
+暂存区：状态：staged
+
+版本库：状态：committed
+
+| add               | 工作区 --> 暂存区       |
+| ----------------- | ----------------------- |
+| git add file_name |                         |
+| git add .         | 提交所有改动            |
+| git add \*        | 提交所有，越过gitignore |
+|                   |                         |
+
+| commit                          | 暂存区 --> 版本库                  |
+| ------------------------------- | ---------------------------------- |
+| git commit                      | (每一次提交，都是对项目作一次快照) |
+| git commit -v                   | 额外diff 输出呈现在编辑器中。      |
+| git commit -a                   | 跳过暂存区操作。                   |
+| git commit --amend              | 覆盖提交，不仅仅是提交的message    |
+| git config --global core.editor | 自定义编辑器。                     |
+|                                 | 退出编辑器时，Git 会丢弃注释行。   |
+
+| remove                   |                          |
+| ------------------------ | ------------------------ |
+| rm                       | 从工作区删除文件。       |
+| git rm                   | 从暂存区删除文件。       |
+| git rm --cached          | 从暂存区删除，本地保留。 |
+| git mv file_from file_to |                          |
+
+### 4.2 查看状态
+
+`git status [-s] 或 [--short]`
+
+```shell
+$ git status -s
+M   README
+MM 	Rakefile
+A  	lib/git.rb
+M  	lib/simplegit.rb
+?? 	LICENSE.txt
+
+# 左边暂存区，右边工作区
+# 新添加到暂存区中的文件前面有 `A `标记，修改过的文件前面有 M 标记。
+# `??`： 新添加的未跟踪文件
+```
+
+| log                                             |                                |
+| :---------------------------------------------- | ------------------------------ |
+| git log -n                                      | 看最近n条提交                  |
+| git log  -p 或 --patch                          | 显示提交的内容差异             |
+| git log --stat [--shortstat]                    | 列出被修改过的文件及内容修改量 |
+| git log --pretty=oneline<br />git log --oneline | 每个commit显示到一行           |
+| git log --pretty=format:"%h - %an, %ar : %s"    | 自定义格式                     |
+| git log --graph                                 | 展示分支、合并历史             |
+| git log --relative-date                         | 显示相对时间                   |
+| git log --since=2.weeks                         | 过滤时间                       |
+| git log --author=name                           | 过滤作者                       |
+| git log --grep=str                              | 过滤comments                   |
+| git log -S function_name                        | 只显示修改了该字符串的提交。   |
+| git log file_path                               | 文件修改历史                   |
+| git log --no-merges                             | 不显示merge提交                |
+
+### 4.3 查看改动
 
 | diff命令                                                     |                              |
 | ------------------------------------------------------------ | ---------------------------- |
@@ -134,13 +191,27 @@ build/
 *.[io]
 ```
 
+一个项目可以有多个gitignore 文件，例如子目录下可以有额外的 .gitignore。
+
+**Note:** GitHub 有一个十分详细的针对数十种项目及语言的 .gitignore 文件列表: https://github.com/github/gitignore 
+
 ## 6. 分支
+
+| git仓库                       |                                  |
+| ----------------------------- | -------------------------------- |
+| git remote                    | 列出远程服务器的简写。例：origin |
+| git remote [-v]               | 简写与其对应的 URL。             |
+| git remote add short_name url | 添加一个新的远程 Git 仓库。      |
+| git push short_name branch    | 推送到远程仓库。                 |
+| git remote show short_name    | 查看远程仓库信息。               |
+| git remote rename pb paul     |                                  |
+| git remote remove short_name  | 移除仓库。                       |
 
 SVN分支是重量级，git分支只是创建了指针。
 
-分支：指向最新提交对象的一个指针，一个commit对象链。每个commit有个parent commit。
+分支本质：本质上仅仅是指向提交对象的可变指针。
 
-分支本质：其实就是一个提交对象, 所有分支都有可能被HEAD所引用。
+创建分支：创建了一个可以移动的新的指针。
 
 HEAD: 是一个指针。 默认指向master分支，切换分支时其实就是让HEAD指向不同的分支，每次有新的提交时HEAD都会带着当前指向的分支一起往前移动。
 
@@ -154,7 +225,8 @@ master：指向的是提交。
 | git checkout brname                                         | 切换分支。HEAD指向当前分支。也可以git checkout -,  回刚刚的分支。切换分支会改变工作目录中的文件为当前分支的，之前untracked文件会保留， 没有add的文件会无法切换。 |
 | git checkout -b brname                                      | 创建并且切换。                                               |
 | git branch -d brname                                        | 删除分支。只能删除另一个分支。没有merge无法删除。<br/>-D：强制删除。 |
-| git merge 另一个分支                                        | 把另一个分支的内容合并过来。自动merge时，fast-forward, 删除分支时会丢掉分支信息。 |
+| git merge hotfix                                            | 把另一个分支的内容合并过来。删除分支时会丢掉分支信息。三方合并时会创建一个新的commit。（两个分支末端以及公共祖先） |
+| git mergetool                                               | 可视化工具。                                                 |
 | git branch --merged                                         | 已经合并的分支。git branch --no-merged: 还没有被合并的。     |
 | git branch -v                                               | 显示最近一条commit。                                         |
 | git branch -vv                                              | 查看本地分支对应的远程分支。                                 |
@@ -163,7 +235,9 @@ master：指向的是提交。
 | git status --graph                                          | 。                                                           |
 | git reset HEAD^<br/>git reset HEAD~1<br/>git reset commitID | ^代表回退版本个数。<br/>1: 代表第一个提交<br/>git checkout commitID: 可以创建一个游离的分支。 |
 | git reflog                                                  | git的操作日志。                                              |
-| git remote [-v]                                             | 查看本地设置的远程库别名. -v 详细                            |
+|                                                             |                                                              |
+
+**Note:** 当你试图合并两个分支时， 如果顺着一个分支走下去能够到达另一个分支，那么 Git 在合并两者的时候， 只会简单的将指针向前推进（指针右移），因为这种情况下的合并操作没有需要解决的分歧——这就叫做 “快进（fast-forward）”。
 
 ## 7. 标签
 
@@ -182,6 +256,19 @@ master：指向的是提交。
 `git push origin --delete tag v1.0.1` ：删除远程标签。
 
 `git push origin :refs/tags/标签名 ` ：删除远程标签。
+
+## 8. 别名
+
+vi ~/.gitconfig  git 别名
+
+设置别名：`git config --global alias.co checkout`
+
+取消别名：`git unstage fileA`
+
+如果执行的是外部命令，而不是一个 Git 子命令，可以在命令前面加入 ! 符号。
+
+`git config --global alias.名字 '!命令'`
+
 
 ## 8. GitHub
 
@@ -206,13 +293,12 @@ master：指向的是提交。
 | 命令                                                         |                                  |
 | ------------------------------------------------------------ | -------------------------------- |
 | git gui                                                      | 打开图形化界面                   |
-| git config --global alias.名字 原名字<br />git config --global alias.名字 '!命令'<br />vi ~/.gitconfig | git 别名                         |
 | git push --set-upstream origin develop （跟8.3相同，但是推荐这个） | 将本地分支变为远程               |
 | git checkout -b develop origin/develop 或者<br />git checkout --track origin/develop | 创建一个本地分支跟远程的分支对应 |
 | git push origin --delete 名字                                | 删除远程分支                     |
 | git push origin 本地名：远端名                               | git push 完整写法                |
 | git gc                                                       |                                  |
-| git remove --cache                                           | 从暂存区删除，本地保留。         |
+|                                                              |                                  |
 
 ### 9.2  stash
 
