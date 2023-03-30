@@ -95,7 +95,6 @@ graph LR;
 | git add file_name |                         |
 | git add .         | 提交所有改动            |
 | git add \*        | 提交所有，越过gitignore |
-|                   |                         |
 
 | commit                          | 暂存区 --> 版本库                  |
 | ------------------------------- | ---------------------------------- |
@@ -104,7 +103,8 @@ graph LR;
 | git commit -a                   | 跳过暂存区操作。                   |
 | git commit --amend              | 覆盖提交，不仅仅是提交的message    |
 | git config --global core.editor | 自定义编辑器。                     |
-|                                 | 退出编辑器时，Git 会丢弃注释行。   |
+
+**Note:** 退出编辑器时，Git 会丢弃注释行。
 
 | remove                   |                          |
 | ------------------------ | ------------------------ |
@@ -115,7 +115,7 @@ graph LR;
 
 ### 4.2 查看状态
 
-`git status [-s] 或 [--short]`
+`git status [-s] 或 [--short] [--graph] `
 
 ```shell
 $ git status -s
@@ -197,15 +197,34 @@ build/
 
 ## 6. 分支
 
-| git仓库                       |                                  |
-| ----------------------------- | -------------------------------- |
-| git remote                    | 列出远程服务器的简写。例：origin |
-| git remote [-v]               | 简写与其对应的 URL。             |
-| git remote add short_name url | 添加一个新的远程 Git 仓库。      |
-| git push short_name branch    | 推送到远程仓库。                 |
-| git remote show short_name    | 查看远程仓库信息。               |
-| git remote rename pb paul     |                                  |
-| git remote remove short_name  | 移除仓库。                       |
+<font color=blue>**== 仓库 ==**</font>
+
+| git仓库                       |                                                       |
+| ----------------------------- | ----------------------------------------------------- |
+| git remote                    | 列出远程仓库的简写。例：origin。“origin” 并无特殊含义 |
+| git remote -v                 | 简写与其对应的 URL。                                  |
+| git remote add short_name url | 添加一个新的远程 Git 仓库。                           |
+| git push short_name branch    | 推送到远程仓库。                                      |
+| git remote show short_name    | 查看远程仓库信息。                                    |
+| git remote rename pb paul     |                                                       |
+| git remote remove short_name  | 移除仓库。                                            |
+| git fetch \<origin>           | 同步远程仓库数据                                      |
+
+<font color=blue>**== 远程跟踪分支 ==**</font>
+
+> 远程跟踪分支是远程分支状态的引用。它们是你无法移动的本地引用。一旦你进行了网络通信， Git 就会为你移动它们以精确反映远程仓库的状态。请将它们看做书签， 这样可以提醒你该分支在远程仓库中的位置就是你最后一次连接到它们的位置。例如， `origin/master` 。
+
+> 当克隆一个仓库时，它通常会自动地创建一个跟踪 `origin/master` 的 `master` 分支。 
+
+> 当抓取到新的远程跟踪分支时，本地不会自动生成一份可编辑的副本（拷贝）。 这种情况下，不会有一个新的本地分支——只有一个不可以修改的 `origin/master` 指针。
+
+> 从一个远程跟踪分支检出一个本地分支会自动创建所谓的“跟踪分支”（它跟踪的分支叫做“上游分支”）。 跟踪分支是与远程分支有直接关系的本地分支。`-u` 或 `--set-upstream-to` 选项运行 `git branch` 来显式地设置。
+
+```console
+$ git branch -u origin/master
+```
+
+<font color=blue>**== 分支 ==**</font>
 
 SVN分支是重量级，git分支只是创建了指针。
 
@@ -215,15 +234,14 @@ SVN分支是重量级，git分支只是创建了指针。
 
 HEAD: 是一个指针。 默认指向master分支，切换分支时其实就是让HEAD指向不同的分支，每次有新的提交时HEAD都会带着当前指向的分支一起往前移动。
 
-master：指向的是提交。
+master：指向的是提交。master 分支并不是一个特殊分支，是因为 git init 命令默认创建它。
 
 | 命令                                                        |                                                              |
 | ----------------------------------------------------------- | ------------------------------------------------------------ |
 | git branch                                                  | 查看本地所有分支。                                           |
 | git branch brname [commitID]                                | 创建分支。只是更新指针的指向，轻量级。                       |
-| git branch brname commitID                                  | 新建分支。                                                   |
 | git checkout brname                                         | 切换分支。HEAD指向当前分支。也可以git checkout -,  回刚刚的分支。切换分支会改变工作目录中的文件为当前分支的，之前untracked文件会保留， 没有add的文件会无法切换。 |
-| git checkout -b brname                                      | 创建并且切换。                                               |
+| git checkout -b brname [origin/master]                      | 创建并且切换。[ 将本地分支与远程分支设置为不同的名字 ]       |
 | git branch -d brname                                        | 删除分支。只能删除另一个分支。没有merge无法删除。<br/>-D：强制删除。 |
 | git merge hotfix                                            | 把另一个分支的内容合并过来。删除分支时会丢掉分支信息。三方合并时会创建一个新的commit。（两个分支末端以及公共祖先） |
 | git mergetool                                               | 可视化工具。                                                 |
@@ -232,10 +250,27 @@ master：指向的是提交。
 | git branch -vv                                              | 查看本地分支对应的远程分支。                                 |
 | git branch -r                                               | 查看远程分支。                                               |
 | git branch -a                                               | 显示所有分支包括远程分支。                                   |
-| git status --graph                                          | 。                                                           |
 | git reset HEAD^<br/>git reset HEAD~1<br/>git reset commitID | ^代表回退版本个数。<br/>1: 代表第一个提交<br/>git checkout commitID: 可以创建一个游离的分支。 |
 | git reflog                                                  | git的操作日志。                                              |
-|                                                             |                                                              |
+| git push origin --delete master                             | 删除分支。                                                   |
+| git push origin branch                                      |                                                              |
+
+**分支合并：**合并了 idea 和 v2 分支之后的提交历史。当你新建和合并分支的时候，所有这一切都只发生在你本地的 Git 版本库中 —— 没有与服务器发生交互。
+
+```mermaid
+graph TD
+	idea-->C13([C 13])-->C12([C 12])-->C10([C 10])-->C9([C 9])-->C3([C 3])-->C1([C 1])-->C0([C 0]);
+	master-->C10([C 10]);
+	bugfix-->C6([C 6])-->C5([C 5])-->C4([C 4])-->C2([C 2])-->C1([C 1]);
+	bugfixV2-->C11([C 11])-->C8([C 8])-->C7([C 7])-->C4([C 4]);
+```
+```mermaid
+graph TD
+	idea-->C13([C 13]);
+	master-->C14([C 14])-->C13([C 13])-->C12([C 12])-->C10([C 10])-->C9([C 9])-->C3([C 3])-->C1([C 1])-->C0([C 0]);
+	C14 -->C11([C 11])-->C8([C 8])-->C7([C 7])-->C4([C 4])-->C2([C 2])-->C1([C 1]);
+	bugfixV2-->C11([C 11]);
+```
 
 **Note:** 当你试图合并两个分支时， 如果顺着一个分支走下去能够到达另一个分支，那么 Git 在合并两者的时候， 只会简单的将指针向前推进（指针右移），因为这种情况下的合并操作没有需要解决的分歧——这就叫做 “快进（fast-forward）”。
 
@@ -435,6 +470,15 @@ git write-tree : 将暂存区的tree写入/objects
 <font color="#cc9900"> **git add = git hash-object -w 文件名 + git udate-index ...**</font>
 
 <font color="#cc9900"> **git commit = git write-tree + git commit-tree**</font>
+
+```mermaid
+graph LR
+	A[<b>98ca9</b><br>commit size<br>tree <b>92ec2</b><br>parent <b>cmtID</b>] 
+	--> 
+	B[<b>92ec2</b><br>tree size<br>blob <b>5b1d3</b> file_name]
+	-->
+	C[<b>5b1d3</b><br>blob size<br>content]
+```
 
 ## 15. 撤回
 ​				**fN: fileName**

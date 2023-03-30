@@ -134,7 +134,7 @@ list.stream().map(str -> str.toupperCase()).forEach(System.out::printIn);
 
 ```java
 // sorted()一自然排序
-List<Integer> list = Arrays.asList(12, 43, 65，34, 87, 0,-98, 7);
+List<Integer> list = Arrays.asList(12, 43, 65, 34, 87, 0,-98, 7);
 list.stream().sorted().forEach(System.out::println);
 // sorted(Comparator com)一-定制排序
 ```
