@@ -258,14 +258,14 @@ master：指向的是提交。master 分支并不是一个特殊分支，是因�
 **分支合并：**合并了 idea 和 v2 分支之后的提交历史。当你新建和合并分支的时候，所有这一切都只发生在你本地的 Git 版本库中 —— 没有与服务器发生交互。
 
 ```mermaid
-graph TD
+graph RL
 	idea-->C13([C 13])-->C12([C 12])-->C10([C 10])-->C9([C 9])-->C3([C 3])-->C1([C 1])-->C0([C 0]);
 	master-->C10([C 10]);
 	bugfix-->C6([C 6])-->C5([C 5])-->C4([C 4])-->C2([C 2])-->C1([C 1]);
 	bugfixV2-->C11([C 11])-->C8([C 8])-->C7([C 7])-->C4([C 4]);
 ```
 ```mermaid
-graph TD
+graph RL
 	idea-->C13([C 13]);
 	master-->C14([C 14])-->C13([C 13])-->C12([C 12])-->C10([C 10])-->C9([C 9])-->C3([C 3])-->C1([C 1])-->C0([C 0]);
 	C14 -->C11([C 11])-->C8([C 8])-->C7([C 7])-->C4([C 4])-->C2([C 2])-->C1([C 1]);
@@ -407,6 +407,51 @@ graph LR;
 ```
 
 ## 13. Git rebase
+
+<font color=blue>**merge**</font>
+
+```mermaid
+graph RL
+dev[dev] --> C4((C4)) --> C2((C2)) --> C1((C1)) 
+master[master] --> C3((C3)) --> C2
+```
+`git merge dev`
+
+```mermaid
+graph RL
+dev[dev] --> C4((C4)) --> C2((C2)) --> C1((C1)) 
+master[master] --> C5((C5)) --> C3((C3))--> C2
+C5((C5)) --> C4
+```
+<font color=blue>**rebase**</font>
+
+提取在 C4 中引入的补丁和修改，然后在 C3 的基础上应用一次。
+
+`git checkout dev`
+
+`git rebase master`
+
+```mermaid
+graph RL
+dev[dev] --> C4((C4')) --> C3((C3)) --> C2((C2)) --> C1((C1)) 
+master[master] --> C3
+```
+进行一次快进合并。
+
+`git checkout master`
+
+`git merge dev`
+
+```mermaid
+graph RL
+dev[dev] --> C4((C4')) --> C3((C3)) --> C2((C2)) --> C1((C1)) 
+master[master] --> C4
+```
+ C4' 和C5一模一样，区别是提交历史更加整洁。
+
+`git rebase --onto master server client` : 取出 `client` 分支，找出它从 `server` 分支分歧之后的补丁， 然后把这些补丁在 `master` 分支上重放一遍，让 `client` 看起来像直接基于 `master` 修改一样。
+
+**NOTE :** 如果将已经提交至某个仓库的，并且其他人也已经从该仓库拉取到的提交进行变基并再次推送，会有问题发生。
 
 **<u>合并分支：</u>**
 
