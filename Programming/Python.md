@@ -24,6 +24,7 @@
 Files --> 下载第二个：[Windows x86-64 executable installer](https://www.python.org/ftp/python/3.8.1/python-3.8.1-amd64.exe)
 
 运行： 
+
 IDLE: 开发环境。new file: 写长的代码
 
 Python: 交互式的。
@@ -35,6 +36,15 @@ Python module docs: 已经安装的。
 ### 2.2 PyCharm
 
 community 下载这个就可以。
+
+### 2.3 Hello World
+
+```python
+#!/usr/bin/python
+print("Hello World")
+```
+
+**node：**关于脚本第一行的的解释，只对 Linux/Unix 用户适用，用来指定本脚本用什么解释器来执行。有这句的，加上执行权限后，可以直接用 ./ 执行，不然会出错，因为找不到 python 解释器。
 
 ## 3. 转义字符
 
@@ -313,7 +323,7 @@ s1.symmetric_difference(s2) or s1^ s2 # 取对称差集
 
 ### 10.2 字符串处理
 
-|                                                              |                                          |
+| 方法                                                         |                                          |
 | ------------------------------------------------------------ | ---------------------------------------- |
 | .index('')                                                   | 找不到，ValueError                       |
 | .find('')                                                    | 找不到，返回 -1                          |
@@ -329,11 +339,29 @@ s1.symmetric_difference(s2) or s1^ s2 # 取对称差集
 | isidentifier()                                               | 是不是合法标识符                         |
 | isspace()                                                    | 是不是空白字符，包括\t \n \r             |
 | isalpha()                                                    | 是否由全字母组成                         |
+| .isdigit()                                                   | 是不是数字。                             |
 | isdecimal()                                                  | 是否全部由十进制数字组成                 |
 | isnumeric()                                                  | 是否全部由数字组成 （123四）true         |
 | isalnum()                                                    | 是否由数字和字母组成                     |
 | replace('Pythoin', 'Java')<br />replace('Pythoin', 'Java', 指定次数) | 用Java替换Python                         |
 | '\|'.join(lst)，'*'.join(t)，                                | lst转为字符串用指定字符拼接              |
+
+```python
+# 使用zfill方法：给字符串或者数字前面补0，例如123，补足5位，显示为00123;
+n="123"
+s=n.zfill(5)
+print(s) # 00123
+
+# 字符串里的不一定需要是数字，其余字符也可以：
+n="xyz"
+s=n.zfill(5)
+print(s) # 00xyz
+
+# 对于纯数字，不能用zfill，可以参考C语言中的方法：
+n=123
+s="%05d"%n
+print(s) # 00123
+```
 
 ### 10.3 字符串的比较
 
@@ -374,16 +402,6 @@ print(f'{name}{age}')
 `print(s.encode(encoding='UTF-8'))` : 一个中文占三个字节
 
 `print(b.decode(encoding='UTF-8'))` : 一个中文占三个字节
-
-### 10.7 方法
-
-| str 方法   |                |
-| ---------- | -------------- |
-| .isdigit() | 是不是数字。   |
-| .find(‘’)  | 未找到返回-1。 |
-|            |                |
-
-
 
 ## 11. 函数
 
@@ -673,7 +691,6 @@ print("\033[0m")
 #### 1.2 others
 
 ```python
-
 range(stop) # 返回一个[0-stop)的序列，步长为1
 range(start,stop,step)
 input('提示') # 从键盘接收

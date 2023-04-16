@@ -271,6 +271,14 @@ class Season {
         this.seasonDesc = seasonDesc;
     }
     
+    public String getSeasonDeac() {
+        return seasonDeac;
+    }
+
+    public String getSeasonName() {
+        return seasonName;
+    }
+    
     public static final Season SPRING = new Season("春", "");
 }
 
@@ -280,9 +288,62 @@ enum Season { // JDK1.5 继承 java.lang.Enum
     
     SPRING("春", "");
 }
-Season.values();
-valueof("名字"); 
+
+name(); //返回此枚举常量的名称，与其枚举声明中声明的完全相同。
+Season.values(); // 返回枚举类型的对象数组。该方法可以很方便地遍历所有的枚举值。
+valueof("名字"); // 字符串必须是枚举类对象的“名字”。如不是，运行时异常: IllegalArgumentException。
+
 // 可以实现接口让每个实例重写接口方法。
+interface info {
+	void show();
+}
+enum Season implements info{
+    SPRING ("春天","春意暖暖"),
+    SUMMER ("夏天","夏意"),
+    AUTUMN ("秋天","秋意"),
+    WINTER ("冬天","冬意");
+
+    private final String seasonName;
+    private final String seasonDesc;
+
+    private Season(String seasonName,String seasonDesc){
+    	this.seasonDesc = seasonDesc;
+    	this.seasonName = seasonName;
+    }
+
+    @Override
+    public void show() {
+        System.out.println("这是一个季节");
+    }
+}
+
+// 让枚举类的对象分别去实现接口中的抽象方法
+enum Season implements info{
+    SPRING ("春天","春意暖暖"){
+        @Override
+        public void show() {
+            System.out.println("这是第一个季节");
+        }
+    },
+    SUMMER ("夏天","夏意"){
+        @Override
+        public void show() {
+            System.out.println("这是第二个季节");
+        }
+    },
+    AUTUMN ("秋天","秋意"){
+        @Override
+        public void show() {
+            System.out.println("这是第三个季节");
+        }
+    },
+    WINTER ("冬天","冬意"){
+        @Override
+        public void show() {
+            System.out.println("这是第四个季节");
+        }
+    };
+}
 ```
 
 ### 3.6 单元测试
@@ -445,6 +506,11 @@ byte[] bytes = a.getBytes();
 String e = Arrays.toString(bytes);
 
 StringBuilder // 线程不安全 append(null), "null"
+    
+// 支持正则语法
+public String replaceAll(String regex, String replacement);
+public boolean matches(String regex);
+public String[] split(String regex);
 ```
 
 ### 4.3 Date
@@ -499,6 +565,11 @@ new Comparator(){ // 定制排序
 `Math` 类 数学计算。
 
 `BigInteger`  与`BigDecimal`
+
+```java
+Random r = new Random();
+int number = r.nextInt(10);// [0-10)
+```
 
 ### 4.6 Object
 
@@ -577,6 +648,8 @@ public class HashMap {
         Node<K,V> next; // 链表。数组长度 > 64且链表长度 > 8 时, 采用红黑树TreeNode.
     }
 }
+
+// LinkedHashMap
 static class Entry<K,V> extends HashMap.Node<K,V> {
     Entry<K,V> before, after;
     Entry(int hash, K key, V value, Node<K,V> next) {
@@ -587,6 +660,12 @@ static class Entry<K,V> extends HashMap.Node<K,V> {
 Properties prop = new Properties();
 prop.load(new FileInputStream("path"));
 String name = prop.getProperty("name");
+
+Iterator<Map.Entry<Integer, Integer>> it = map.entrySet().iterator();
+while (it.hasNext ()) {
+    Map.Entry<Integer, Integer> entry = it.next();
+    // entry.getKey() + entry.getValue();
+}
 ```
 
 ### 5.3 泛型
@@ -699,7 +778,7 @@ try {
 }                                    
 ```
 
-<font color=blue>**==字符集==**</font> 
+<font color=blue>**== 字符集 ==**</font> 
 
 ASCII: 美国标准信息交换码。用一个字节的7位表示。
 
@@ -713,11 +792,11 @@ Unicode: 国际标准码。融合人类所有字符。所有文字都用两个�
 
 UTF-8，UTF-16: 变长的编码方式。1-4位字节。
 
-<font color=blue>**==NIO. 2==**</font> 
+<font color=blue>**== NIO. 2 ==**</font> 
 
 `java.nio.file` : Paths, Files.
 
-<font color=blue>**==网络编程==**</font> 
+<font color=blue>**== 网络编程 ==**</font> 
 
 TCP, UDA, URL，Socket
 
@@ -778,6 +857,132 @@ Class<? super T> c = clazz.getSuperclass();
 Type t = clazz.getGenericSuperclass(); // 泛型父类
 Class<?>[] c = clazz.getInterfaces(); // 获取接口
 ```
+
+## 8. 正则
+
+Java正则转义字符两个斜杠 `\\`。
+
+### 8.1 基本语法
+
+<font color=blue>**== 元字符-字符匹配符 ==**</font> 
+
+| 符号  | 示例            | 解释                          |
+| ----- | --------------- | ----------------------------- |
+| []    | [efgh]          | 匹配括号中的任意一个字符      |
+| [^]   | [^abc]          | 除a、b、c之外的任意1个字符    |
+| -     | [A-Z]           | 任意单个大写字母              |
+| .     |                 | 匹配除\n以外的任何字符        |
+| \\\\d |                 | 匹配单个数字字符，相当于[0-9] |
+| \\\\D |                 | 单个非数字字符，相当于\[^0-9] |
+| \\\w  |                 | 相当于[0-9a-zA-Z]             |
+| \\\W  |                 | 相当于\[^0-9a-zA-Z]           |
+| \\\s  |                 | 匹配空白字符(空格,制表符等)   |
+| \\\S  |                 | 匹配非空白                    |
+|       | [\u0391-\uffe5] | 汉字区间                      |
+
+```java
+String regStr ="(?i)abc"; // 匹配 abc 字符串[不区分大小写]
+/*
+ *(?i)abc 	表示abc都不区分大小写
+ *a(?i)bc 	表示bc不区分大小写
+ *a((?i)b)c 表示只有b不区分大小写
+ *Pattern pat = Pattern.compile(regEx, Pattern.CASE INSENSITIVE)
+ */
+```
+
+**note: ** `[?./]` 中的符号代表符号本身，没有特殊含义。
+
+<font color=blue>**== 元字符-选择匹配符 ==**</font>
+
+| 符号 | 示例        | 解释         |
+| ---- | ----------- | ------------ |
+| \|   | han\|韩\|寒 | 匹配其中一个 |
+
+ <font color=blue>**== 元字符-限定符 ==**</font>
+
+| 符号  | 示例   | 解释                  |
+| ----- | ------ | --------------------- |
+| *     | (abc)* | 0次或多次             |
+| +     | [abc]+ | 1次或多次             |
+| ？    |        | 0次或1次              |
+| {n}   |        | n次。(字符不重复匹配) |
+| {n,}  |        | 大于等于3             |
+| {n,m} |        | n到m (贪婪匹配)       |
+
+**note:** `?`: 当此字符紧随任何其他限定符 (*、+、?、{n}、{n,m})之后时，匹配模式是"非贪心的”。"非贪心的”模式匹配搜索到的、尽可能短的字符串，而默认的"贪心的”模式匹配搜索到的、尽可能长的字符串。例如，在字符串"oooo"中，"o+?"只匹配单个"o"，而”o+"匹配所有"o"。 
+
+<font color=blue>**== 元字符-定位符 ==**</font>
+
+| 符号  | 示例    | 解释                               |
+| ----- | ------- | ---------------------------------- |
+| ^     | ^[0-9]  | 整个字符串必须符合指定开头         |
+| $     | [a-z]$  | 指定结束字符                       |
+| \\\\b | han\\\b | 匹配在边界的字符串(空格和结束之前) |
+| \\\\B | han\\\B | 非边界的                           |
+
+ <font color=blue>**== 分组 ==**</font>
+
+| 符号        | 示例                       | 解释                                                         |
+| ----------- | -------------------------- | ------------------------------------------------------------ |
+| (pattern)   | (\\\d\\\d)(\\\d\\\d)       | 非命令分组。<br />matcher.group(0)：全部<br />matcher.group(1)：第一组<br />matcher.group(2)：第二组 |
+| (?\<name>)  | (?\<g1>\\\d\\\d)(\\\d\\\d) | matcher.group("g1")                                          |
+| (?:pattern) | industr(?:y\|ies)          | 非捕获分组。无法用group()获取。                              |
+| (?=pattern) |                            | 非捕获匹配。                                                 |
+| (?!pattern) |                            | 非捕获匹配。                                                 |
+
+**note:** 
+
+1. 匹配 pattern 但不捕获该匹配的子表达式，即它是一个非捕获匹配，不存储供以后使用的匹配。这对于用”or”字符(|)组合模式部件的情况很有用。例如，"industr(?:y|ies)是比industrylindustries' 更经济的表达式。
+2. 它是一个非捕获匹配。例如，"Windows(?=95|98|NT|2000)匹配Windows 2000"中的"Windows"，但不匹配"Windows 3.1"中的Windows"。
+3. 该表达式匹配不处于匹配 pattern 的字符串的起始点的搜索字符串。它是个非捕获匹配。例如，"Windows(?!95198|NT|2000)'匹配Windows 3.1"中的"Windows”，但不匹配"Windows 2000"中的Windows。
+
+> 捕获组是通过从左至右计算其开括号来编号。例如，在表达式((A)(B(C)))，有四个这样的组：
+> ((A)(B(C)))
+> (A)
+> (B(C))
+> (C)
+
+### 8.2 反向引用
+
+反向引用: 圆括号的内容被捕获后，可以在这个括号后被使用，从而写出一个比较实用的匹配模式。
+
+这种引用既可以是在正则表达式内部，也可以是在正则表达式外部，内部反向引用`\\分组号`，外部反向引用 `$分组号`。
+
+1. 匹配两个连续的相同数字: `(\\d)\\1`
+2. 匹配五个连续的相同数字: `(\\d)\\1{4}`
+3. 匹配个位与千位相同，十位与百位相同的数, 例如 5225，1551:  `(\\d)(\\d)\\2\\1`
+4. 去掉重复的字 "我我要学学学学编程java!" 
+
+```java
+pattern = Pattern.compile("(.)\\1+");
+matcher = pattern.matcher(content);
+content = matcher.replaceAll("$1");
+```
+
+### 8.3 正则类
+
+```java
+Pattern p = Pattern.compile(regStr);
+Matcher m = p.matcher(content);
+while(m.find()){
+    String c = content.substring(m.start()， m.end());
+}
+// 字符串整体匹配。
+boolean b = Pattern.matches(regStr, content); 
+```
+
+| Matcher                   |                                                              |
+| ------------------------- | ------------------------------------------------------------ |
+| int start()               | 返回以前匹配的初始索引。                                     |
+| int end()                 | 返回最后匹配字符之后的偏移量。                               |
+| boolean matches()         | 整体匹配。                                                   |
+| int start(int group)      | 返回在以前的匹配操作期间，由给定组所捕获的子序列的初始索引。 |
+| end(int group)            | 返回在以前的匹配操作期间，由给定组所捕获子序列的最后字符之后的偏移量。 |
+| find()                    | 尝试查找与该模式匹配的输入序列的下一个子序列。类似next的用法。 |
+| String replaceAll(repStr) | 替换模式与给定替换字符串相匹配的输入序列的每个子序列。       |
+|                           |                                                              |
+
+
 
 ## NOTE:
 
