@@ -61,8 +61,6 @@ int main()
 | 0      | 八进制   |
 | 0x或0X | 十六进制 |
 
-
-
 ### 2.2 构造类型
 
 #### 2.2.1 数组
@@ -90,6 +88,22 @@ int main()
 `int arr[3][4] = {1,2,3,4,5,6,7,8,9,10,11,12};` : 自动三行四列。
 
 `int arr[][4] = {{1,2},{3,4},{4,5}};` : 不完全初始化。// 行(3)可以省略，列(4)不行。
+
+```c
+// 可能程序死循环 
+#include <stdio.h>
+int main()
+{
+	int i=0;
+    int arr[] = {1,2,3,4,5,6,7,8,9,10};
+    for(i=0;i<12;i++)
+    {
+    	arr[i] = 0; // arr[11] 地址 = i地址
+        printf("Hello World\n");   
+    }
+	return 0;    
+}
+```
 
 ## 3. 变量与常量
 
@@ -175,6 +189,10 @@ char arr[] = {'b', 'i', 't'}; 	// 三个元素。strlen(arr) 结果是随机值,
 2. 不同类型指针决定了：解引用的权限有多大。
 3. 不同类型指针决定了：指针+1跳过的字节数量 (步长)。
 
+>void * : 就是指向任何类型的指针，在编译的时候不会确定其指向的类型，是在程序中进行指向的
+>
+>void*仅仅包含地址信息。int *不仅仅包含地址信息，还包含类型信息。
+
 野指针：
 
 1. 指针没有初始化。
@@ -193,34 +211,110 @@ p[2] == *(p+2)
 
 **NOTE:** 允许指向数组元素的指针与指向数组最后一个元素后面的那个内存位置的指针比较，但是不允许与指向第一个元素之前的那个内存位置的指针进行比较。
 
-<font color=blue>**== 指针数组 ==**</font>
+<font color=blue>**== 指针类型 ==**</font>
+
+**指针数组：**存放指针的数组
 
 `int * parr[5];` ：存放五个指针。
 
-<font color=blue>**== 数组指针 ==**</font>
+**数组指针：** 指向数组的指针
 
-`int (*parr)[10] = &arr;` : 指针`parr`指向有十个元素的数组，元素类型是int.
+`int (*parr)[10] = &arr;` : 指针`parr`指向有十个元素的数组，数组元素类型是int.
 
-`int (*parr[10])[5];` ：有十个`parr`元素的数组, `parr` 指向有五个元素的数组，元素类型是int。
+`int (*parr[10])[5];` ：有十个元素的数组, 每个元素类型是`int (*)[5]` （数组指针数组）
+
+**函数指针：** 
+
+`void (*p)(int,int) = &方法名/方法名`  : 调用的时候可以 (*p)(3, 5);或者p(3, 5);
+
+```java
+//代码1
+(*(void (*)())0)(); // void (*)() - 函数指针类型
+//代码2
+void (*signal(int, void(*)(int)))(int);
+//1. signal 和()先结合，说明signal是函数名
+//2. signal函数的第一个参数的类型是int，第二个参数的类型是函数指针，该函数指针，指向一个参数为int，返回类型是void的函数
+//3. siqnal函数的返回类型也是一个函数指针，该函数指针，指向一个参数为int，返回类型是void的函数
+// signal是一个函数的声明 
+//4. 等于 void(*) (int) signal(int, void(*) (int))，但该写法语法不支持。
+//typedef - 对类型进行重定义
+typedef void(*pfun_t) (int); //对void(*) (int)的函数指针类型重命名为pfun_t
+typedef unsigned int uint;
+pfun_t signal(int, pfun t);
+```
+
+**函数指针数组：** 存放函数指针的数组
+
+`void (*p[2])(int,int) = {方法名1, 方法名2}`  : 去掉`p[2]` 就是数组中元素类型。
+
+```c
+// 应用：这样的功能的语句称为转移表
+int (*pfArr[5]) (int, int) = { NULL, Add, Sub, Mul, Div };
+int x = 0;
+int y = 0;
+int ret = 0;
+printf("请选择:>");
+scanf("%d", &input); 
+printf("请输入2个操作数>:");
+scanf("%d %d", &x, &y);
+ret = (pfArr[input])(x, y); 
+printf("ret = %d\n", ret);
+```
+
+**函数指针数组的指针：**
+
+`void (* (*p)[2])(int, int)`:`(*p)` 代表是个指针，指向`[2]`数组，数组中每个元素`void (*)(int, int)`
+
+**Note** : 数组去掉名字就是数据类型。
 
 ## 7. 结构体
 
+<font color=blue>**== 定义结构体变量三种方式 ==**</font>
+
 ```c
+// 1、先定义结构体类型再定义结构体变量
 struct Stu
 {
     char name[20];
     int age;
 }
-struct Stu s = { "zs" , 20};
+struct Stu s = { "zs" , 20}; // 定义并初始化
 s.name;
 struct Stu * sp = &s;
 sp -> name;
+// 2、定义结构体类型的同时定义结构体变量
+struct Stu
+{
+    char name[20];
+    int age;
+}stu1,stu2;
+// 3、直接定义结构体变量
+struct
+{
+    char name[20];
+    int age;
+}stu1,stu2;
 ```
 
 ## 8. 流程控制
 
 1. switch （整型表达式）
+
+   ```c
+   int input = 0;
+   switch (input)
+   {
+   case 1:
+       break;
+   case 2:
+       break;
+   default:
+   	break;        
+   }
+   ```
+
 2. goto: 别用。不能跨函数跳转。
+
 3. 循环
    1. while
    2. do while
@@ -246,6 +340,8 @@ for (i = 0; i < 10; i++) {
 
 ## 9. 函数
 
+### 9.1 函数分类
+
 <font color="#4169E1">**==库函数==**</font>
 
 网站：www.cplusplus.com/reference, http://en.cppreference.com
@@ -257,6 +353,30 @@ SDK: MSDN
 不写返回值类型默认为int。
 
 可以在方法里函数声明。
+
+### 9.2 库函数
+
+<font color="#4169E1">**== qsort() ==**</font>
+
+```c
+struct Stu
+{
+	char name[20];
+	int age;
+}
+int sort_by_age(const void* e1, const void* e2)
+{
+    // 升序
+    return ((struct Stu*)e1)->age - ((struct Stu*)e2)->age;
+}
+void test2()
+{
+    struct Stu s[3] = { {"zhangsan", 30}, {"lisi"，34), {"wangwu"，20) } };
+    int sz = sizeof(s) / sizeof(s[0]);
+    //按照年龄来排序
+    qsort(s, sz, sizeof(s[0]), sort_by_age);
+}
+```
 
 ## 10. 内存
 
@@ -380,6 +500,7 @@ F5停到断点之后，调试 --> 窗口
 | assert()                                                     | 断言                                                         |
 | char * gets(char * str)                                      | 接收有空格字符串。                                           |
 | pow()                                                        | \<math.h>                                                    |
+|                                                              |                                                              |
 ### 2. 标准库类型
 
 | name   |              |

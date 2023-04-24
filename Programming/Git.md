@@ -158,6 +158,19 @@ M  	lib/simplegit.rb
 | git show --raw [HEAD]                                        | 查看修改的文件列表。         |
 | git show [HEAD]                                              | 查看修改的文件内容。         |
 
+### 4.4 stash
+
+| git 存储                      |                          |
+| ----------------------------- | ------------------------ |
+| git stash list                | 查看存储。               |
+| git stash show [stash@{2}]    | 查看哪些修改。           |
+| git stash show [stash@{2}] -p | 查看修改内容。           |
+| git stash [save '注释']       | 不会存储 untracked files |
+| git stash apply [stash@{2}]   | 默认栈顶。               |
+| git stash drop [stash@{2}]    | 丢弃。                   |
+| git stash clear               |                          |
+| git stash pop [stash@{1}]     |                          |
+
 ## 5. .gitignore
 
 自己新建一个.gitignore  --> 提交这个文件进库
@@ -236,24 +249,27 @@ HEAD: 是一个指针。 默认指向master分支，切换分支时其实就是�
 
 master：指向的是提交。master 分支并不是一个特殊分支，是因为 git init 命令默认创建它。
 
-| 命令                                                        |                                                              |
-| ----------------------------------------------------------- | ------------------------------------------------------------ |
-| git branch                                                  | 查看本地所有分支。                                           |
-| git branch brname [commitID]                                | 创建分支。只是更新指针的指向，轻量级。                       |
-| git checkout brname                                         | 切换分支。HEAD指向当前分支。也可以git checkout -,  回刚刚的分支。切换分支会改变工作目录中的文件为当前分支的，之前untracked文件会保留， 没有add的文件会无法切换。 |
-| git checkout -b brname [origin/master]                      | 创建并且切换。[ 将本地分支与远程分支设置为不同的名字 ]       |
-| git branch -d brname                                        | 删除分支。只能删除另一个分支。没有merge无法删除。<br/>-D：强制删除。 |
-| git merge hotfix                                            | 把另一个分支的内容合并过来。删除分支时会丢掉分支信息。三方合并时会创建一个新的commit。（两个分支末端以及公共祖先） |
-| git mergetool                                               | 可视化工具。                                                 |
-| git branch --merged                                         | 已经合并的分支。git branch --no-merged: 还没有被合并的。     |
-| git branch -v                                               | 显示最近一条commit。                                         |
-| git branch -vv                                              | 查看本地分支对应的远程分支。                                 |
-| git branch -r                                               | 查看远程分支。                                               |
-| git branch -a                                               | 显示所有分支包括远程分支。                                   |
-| git reset HEAD^<br/>git reset HEAD~1<br/>git reset commitID | ^代表回退版本个数。<br/>1: 代表第一个提交<br/>git checkout commitID: 可以创建一个游离的分支。 |
-| git reflog                                                  | git的操作日志。                                              |
-| git push origin --delete master                             | 删除分支。                                                   |
-| git push origin branch                                      |                                                              |
+| 命令                                                         |                                                              |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| git branch                                                   | 查看本地所有分支。                                           |
+| git branch brname [commitID]                                 | 创建分支。只是更新指针的指向，轻量级。                       |
+| git checkout brname                                          | 切换分支。HEAD指向当前分支。也可以git checkout -,  回刚刚的分支。切换分支会改变工作目录中的文件为当前分支的，之前untracked文件会保留， 没有add的文件会无法切换。 |
+| git checkout -b brname [origin/master]                       | 或者git checkout --track origin/develop<br />创建并且切换。[ 将本地分支与远程分支设置为不同的名字 ] |
+| git branch -d brname                                         | 删除分支。只能删除另一个分支。没有merge无法删除。<br/>-D：强制删除。 |
+| git merge hotfix                                             | 把另一个分支的内容合并过来。删除分支时会丢掉分支信息。三方合并时会创建一个新的commit。（两个分支末端以及公共祖先） |
+| git mergetool                                                | 可视化工具。                                                 |
+| git branch --merged                                          | 已经合并的分支。git branch --no-merged: 还没有被合并的。     |
+| git branch -v                                                | 显示最近一条commit。                                         |
+| git branch -vv                                               | 查看本地分支对应的远程分支。                                 |
+| git branch -r                                                | 查看远程分支。                                               |
+| git branch -a                                                | 显示所有分支包括远程分支。                                   |
+| git reset HEAD^<br/>git reset HEAD~1<br/>git reset commitID  | ^代表回退版本个数。<br/>1: 代表第一个提交<br/>git checkout commitID: 可以创建一个游离的分支。 |
+| git reflog                                                   | git的操作日志。                                              |
+| git push origin --delete 分支名                              | 删除分支。                                                   |
+| git push origin 本地名 [: 远端名]                            | git push 完整写法                                            |
+| git gui                                                      | 打开图形化界面                                               |
+| git push --set-upstream origin develop （跟8.3相同，但是推荐这个） | 将本地分支变为远程                                           |
+| git gc                                                       |                                                              |
 
 **分支合并：**合并了 idea 和 v2 分支之后的提交历史。当你新建和合并分支的时候，所有这一切都只发生在你本地的 Git 版本库中 —— 没有与服务器发生交互。
 
@@ -304,8 +320,36 @@ vi ~/.gitconfig  git 别名
 
 `git config --global alias.名字 '!命令'`
 
+## 9. git协议
 
-## 8. GitHub
+### 9.1 四种协议
+
+1. 本地协议（Local protocol）： 其中的远程版本库就是同一主机上的另一个目录。
+2. HTTP 协议：
+
+>`git clone https://example.com/gitproject.git`
+>
+>可以使用用户名／密码授权是一个很大的优势。
+>
+>在一些服务器上，架设 HTTPS 协议的服务端会比 SSH 协议的棘手一些。
+
+3. SSH 协议
+
+>大多数环境下服务器已经支持通过 SSH 访问。
+>
+>`git clone ssh://[user@]server/project.git`
+>
+>或者使用一个简短的 scp 式的写法：`git clone [user@]server:project.git` 如果不指定可选的用户名，那么 Git 会使用当前登录的用的名字。
+>
+>SSH 协议的缺点在于它不支持匿名访问 Git 仓库。
+
+4. Git 协议:
+
+>Git 协议是 Git 使用的网络传输协议里最快的。
+>
+>Git 协议缺点是缺乏授权机制。
+
+### 9.2 GitHub
 
 1. 在GitHub创建仓库。
 
@@ -320,33 +364,6 @@ vi ~/.gitconfig  git 别名
 `git branch -u 地址/分支`： 本地分支跟踪远程分支。
 
 或者用SSH通过秘钥链接。
-
-## 9.进阶命令
-
-### 9.1 命令
-
-| 命令                                                         |                                  |
-| ------------------------------------------------------------ | -------------------------------- |
-| git gui                                                      | 打开图形化界面                   |
-| git push --set-upstream origin develop （跟8.3相同，但是推荐这个） | 将本地分支变为远程               |
-| git checkout -b develop origin/develop 或者<br />git checkout --track origin/develop | 创建一个本地分支跟远程的分支对应 |
-| git push origin --delete 名字                                | 删除远程分支                     |
-| git push origin 本地名：远端名                               | git push 完整写法                |
-| git gc                                                       |                                  |
-|                                                              |                                  |
-
-### 9.2  stash
-
-| git 存储                      |                          |
-| ----------------------------- | ------------------------ |
-| git stash list                | 查看存储。               |
-| git stash show [stash@{2}]    | 查看哪些修改。           |
-| git stash show [stash@{2}] -p | 查看修改内容。           |
-| git stash [save '注释']       | 不会存储 untracked files |
-| git stash apply [stash@{2}]   | 默认栈顶。               |
-| git stash drop [stash@{2}]    | 丢弃。                   |
-| git stash clear               |                          |
-| git stash pop [stash@{1}]     |                          |
 
 ## 10. submodule
 

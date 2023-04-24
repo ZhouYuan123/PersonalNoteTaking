@@ -429,46 +429,6 @@ public @interface MyAnnotation {
 
 类型注解： JDK1.8。
 
-## 4. 多线程
-
-**程序：** program。为完成特定任务，用某种语言编写的一组指令的集合。即指一段静态的代码，静态对象。
-
-**进程：** process。是程序的一次执行过程，或是正在运行的一个程序。是一个动态过程：生命周期。
-
-**线程：** thread。是一个程序内部的一条执行路径。
-
-> 作为调度和执行的单位，每个线程拥有独立的运行栈和程序计数器(pc)。
->
-> 一个进程中的多个线程共享相同的内存单元。
-
-### 4.1 创建
-
-```java
-extends Thread{
-    @Override
-	run(){
-        // 重写run方法，然后 start()调用
-        // 一个线程只能start()一次。
-        Thread.currentThread().getName();
-    }  
-}
-
-implements Runnable{
-    @Override
-	run(){
-        // 重写run方法，然后new Thread(this).start()调用   
-    }  
-}
-```
-
-### 4.2 方法
-
-
-| 方法                         |                                                 |
-| ------------------------------ | ------------------------------------------------- |
-| getPriority();setPriority(); | MAX_PRIORITY: 10MIN_PRIORITY: 1NORM_PRIORITY: 5 |
-|                              |                                                 |
-|                              |                                                 |
 
 ## 4. 常见类
 
@@ -937,9 +897,13 @@ String regStr ="(?i)abc"; // 匹配 abc 字符串[不区分大小写]
 3. 该表达式匹配不处于匹配 pattern 的字符串的起始点的搜索字符串。它是个非捕获匹配。例如，"Windows(?!95198|NT|2000)'匹配Windows 3.1"中的"Windows”，但不匹配"Windows 2000"中的Windows。
 
 > 捕获组是通过从左至右计算其开括号来编号。例如，在表达式((A)(B(C)))，有四个这样的组：
+>
 > ((A)(B(C)))
+>
 > (A)
+>
 > (B(C))
+>
 > (C)
 
 ### 8.2 反向引用
@@ -965,7 +929,7 @@ content = matcher.replaceAll("$1");
 Pattern p = Pattern.compile(regStr);
 Matcher m = p.matcher(content);
 while(m.find()){
-    String c = content.substring(m.start()， m.end());
+    String c = content.substring(m.start(), m.end());
 }
 // 字符串整体匹配。
 boolean b = Pattern.matches(regStr, content); 
@@ -980,9 +944,6 @@ boolean b = Pattern.matches(regStr, content);
 | end(int group)            | 返回在以前的匹配操作期间，由给定组所捕获子序列的最后字符之后的偏移量。 |
 | find()                    | 尝试查找与该模式匹配的输入序列的下一个子序列。类似next的用法。 |
 | String replaceAll(repStr) | 替换模式与给定替换字符串相匹配的输入序列的每个子序列。       |
-|                           |                                                              |
-
-
 
 ## NOTE:
 
