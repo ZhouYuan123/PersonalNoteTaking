@@ -55,6 +55,14 @@ graph BT
 	B[Shell] -->|继承|A[Display] 
 ```
 
+<font color=blue>**== 监视器 ==**</font>
+
+```java
+Monitor monitor = display.getPrimaryMonitor(); // getMonitors(); 多个监视器
+monitor.getClientArea(); 	//  整个桌面大小
+monitor.getBounds();		//	可以显示窗口的区域(除去任务栏)
+```
+
 
 
 ### 4. 布局 Layout
@@ -77,6 +85,45 @@ graph BT
 SWT使用单线程模式。
 
 需要手动释放创建的资源，释放父资源时，所有子资源会被一起释放 (Disposing the parent disposes the children)。
+
+### 7. 多线程
+
+只有UI 线程可以操作Display, 否则异常。
+
+Display维护了一个自定义的事件队列，这个队列就是用来供后台线程和UI线程同步的。后台线程用Runnable对象将绘图操作包装起来，然后将对象插入事件队列中，这样Display执行消息循环时就会执行这些操作了。
+
+> Display.syncExec(Runnable runnable)
+>
+> > 同步调用。调用这个方法会通知UI线程在下一次事件循环时执行runnable参数的run方法。调用这个方法的线程将被阻塞到runnable执行完成为止。如果参数是null，调用这个函数会唤醒休眠中的UI线程。
+>
+> Display.asyncExec(Runnable runnable)
+>
+> > 异步调用。调用这个方法会通知UI线程在下一次事件循环时执行runnable参数的run方法。调用这个方法的线程不会被阻塞，而且在runnable执行完成后不会得到通知。如果参数是nul1，调用这个函数会唤醒休眠中的UI线程。
+
+```java
+button.addSelectionListener(new SelectionAdapter() {
+	public void widgetSelected(final SelectionEvent e){
+        Thread thread = new Thread() {
+            public void run(){
+                try{
+					Thread.sleep(10000);
+                } catch (InterruptedException el) {
+                    el.printStackTrace();
+                }
+                display.syncExec(new Runnable() {
+					public void run(){
+						button.setText("Execution Done");
+                    }
+                }
+            }
+        }
+        thread.start();
+    }
+}
+// 执行这段代码可以发现，单击按钮后，界面不再出现停止响应的状况，而且10秒钟后按钮的文字同样变化了。
+```
+
+
 
 ## 3. JFACE
 

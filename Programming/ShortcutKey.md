@@ -36,7 +36,7 @@
 | 打开方法实现处              |                                      | Ctrl + alt + b   |                       |               |                                      |
 | 显示文档内容                | F2                                   | Ctrl + Q         |                       |               |                                      |
 |                             |                                      |                  |                       |               |                                      |
-| 快速修复                    | Ctrl + 1                             |                  |                       |               |                                      |
+| 快速修复                    | Ctrl + 1                             | alt + enter      |                       |               |                                      |
 | 批量导包                    | Ctrl + shift + o                     |                  |                       |               |                                      |
 | 单行注释                    | Ctrl + /                             |                  |                       |               | Ctrl k-> Ctrl c<br />Ctrl k-> Ctrl u |
 | 多行注释/取消               | Ctrl + shfit + / [\\]                |                  |                       |               |                                      |

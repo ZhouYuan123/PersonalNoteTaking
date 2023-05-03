@@ -205,6 +205,8 @@ char arr[] = {'b', 'i', 't'}; 	// 三个元素。strlen(arr) 结果是随机值,
 
 <font color=blue>**== 指针运算 ==**</font>
 
+指针类型决定了指针的运算。
+
 `指针-指针 = 指针之间的元素个数` ：前提是在同一片内存中。
 
 p[2] == *(p+2)
@@ -470,7 +472,90 @@ https://www.stackoverflow.com
 
 `->` : 
 
-## 12. 调试
+## 12. sizeof 详解
+
+```c
+// sizeof 详解
+int a[] = { 1,2,3,4 };
+printf("%d\n", sizeof(a));				// 16
+printf("%d\n", sizeof(a + 0));			// 4 or 8
+printf("%d\n", sizeof(*a));				// 4
+printf("%d\n", sizeof(a + 1));			// 4 or 8
+printf("%d\n", sizeof(a[1]));			// 4
+
+printf("%d\n", sizeof(&a));				// 4 or 8
+printf("%d\n", sizeof(*&a));			// 16 [*& 抵消了]
+printf("%d\n", sizeof(&a + 1));			// 4 or 8
+printf("%d\n", sizeof(&a[0]));			// 4 or 8
+printf("%d n", sizeof(&a[0] + 1));		// 4 or 8
+
+char arr[] = {'a','b','c','d','e','f'};
+printf("%d\n", sizeof(arr)); 			// 6
+printf("%d\n", sizeof(arr + 0));		// 4 or 8
+printf("%d\n", sizeof(*arr));			// 1
+printf("%d\n", sizeof(arr[1]));			// 1
+printf("%d\n", sizeof(&arr));			// 4 or 8
+printf("%d\n", sizeof(&arr + 1));		// 4 or 8
+printf("%d\n", sizeof(&arr[0] + 1));	// 4 or 8
+
+printf("%d\n", strlen(arr)); 			// 随机值
+printf("%d\n", strlen(arr + 0));		// 随机值
+printf("%d\n", strlen(*arr));			// error
+printf("%d\n", strlen(arr[1]));			// error
+printf("%d\n", strlen(&arr));			// 随机值
+printf("%d\n", strlen(&arr + 1));		// 随机值 - 6
+printf("%d\n", strlen(&arr[0] + 1));	// 随机值 - 1
+
+char arr[] = "abcdef";					// 0 就是 \0
+printf("%d\n", sizeof(arr)); 			// 7
+printf("%d\n", sizeof(arr + 0));		// 4 or 8
+printf("%d\n", sizeof(*arr));			// 1
+printf("%d\n", sizeof(arr[1]));			// 1
+printf("%d\n", sizeof(&arr));			// 4 or 8 char(*)[7]
+printf("%d\n", sizeof(&arr + 1));		// 4 or 8
+printf("%d\n", sizeof(&arr[0] + 1));	// 4 or 8
+
+printf("%d\n", strlen(arr)); 			// 6
+printf("%d\n", strlen(arr + 0));		// 6
+printf("%d\n", strlen(*arr));			// error
+printf("%d\n", strlen(arr[1]));			// error
+printf("%d\n", strlen(&arr));			// 6
+printf("%d\n", strlen(&arr + 1));		// 随机值 
+printf("%d\n", strlen(&arr[0] + 1));	// 5
+
+char* p = "abcdef";
+printf("%d\n", sizeof(p));				// 4 or 8
+printf("%d\n", sizeof(p + 1));			// 4 or 8
+printf("%d\n", sizeof(*p));				// 1
+printf("%d\n", sizeof(p[0]));			// 1 == *(p+0)
+printf("%d\n", sizeof(&p));				// 4 or 8
+printf("%d\n", sizeof(&p + 1));			// 4 or 8
+printf("%d\n", sizeof(&p[0] + 1));		// 4 or 8
+
+printf("%d\n", strlen(p));				// 6
+printf("%d\n", strlen(p + 1));			// 5
+printf("%d\n", strlen(*p));				// error
+printf("%d\n", strlen(p[0]));			// error
+printf("%d\n", strlen(&p));				// 随机值
+printf("%d\n", strlen(&p + 1));			// 随机值
+printf("%d\n", strlen(&p[0] + 1));		// 5
+
+// 二维数组
+int a[3][4] ={ 0 };
+printf("%d\n", sizeof(a));				// 48
+printf("%d\n", sizeof(a[0][0]));		// 4
+printf("%d\n", sizeof(a[0]));			// 16
+printf("%d\n", sizeof(a[0] + 1));		// 4 第一行第二个元素地址
+printf("%d\n", sizeof(*(a[0] + 1)));	// 4
+printf("%d\n", sizeof(a + 1));			// 4 第二行地址
+printf("%d\n", sizeof(*(a + 1)));		// 16
+printf("%d\n", sizeof(&a[0] + 1));		// 4 第二行地址
+printf("%d\n", sizeof(*(&a[0] + 1)));	// 16
+printf("%d\n", sizeof(*a));				// 16 第一行地址 *(a+0) -> a[0]
+printf("%d\n", sizeof(a[3]));			// 16
+```
+
+## 13. 调试
 
 Release 和 debug 版本。
 
@@ -486,7 +571,7 @@ F5停到断点之后，调试 --> 窗口
 
 | name                                                         |                                                              |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| printf("Hello World");<br />printf(“%d\n”, sizeof(a));       | <stdio.h>, <br />%d：整数<br />%2d：不够左边用空格填充<br />%-2d：不够右边用空格填充<br />%f: float<br />%lf: double<br />%c: 字符<br />%s: 字符串<br />%p: 地址<br />%u: 无符号整型。 |
+| printf("Hello World");<br />printf(“%d\n”, sizeof(a));       | <stdio.h>, <br />%d：十进制整数<br />%x: 十六进制<br />%2d：不够左边用空格填充<br />%-2d：不够右边用空格填充<br />%f: float<br />%lf: double<br />%c: 字符<br />%s: 字符串<br />%p: 地址<br />%u: 无符号整型。 |
 | scanf(“%d %d”，&a, &b);                                      | 输入函数，scanf_s是VS自带的。不能读空格。                    |
 | getchar();                                                   | 获取缓冲区                                                   |
 | Sleep(n);                                                    | <windows.h>                                                  |
