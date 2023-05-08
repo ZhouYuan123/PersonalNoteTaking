@@ -47,7 +47,7 @@ git config --global user.email johndoe@example.com
 | git --version                                                | 查看安装的Git版本                                            |
 | git config                                                   | 打开使用方式说明                                             |
 | git config --list [--show-origin]<br />git config [--system] -l <br/>git config user.name | 查看config信息。配置所在文件。<br />看config所有信息<br />看config中的user.name的值。 |
-| git config --local user.name '李四'<br />git config --local unset user.name | 配置<br />取消                                               |
+| git config --local user.name '李四'<br />git config --local --unset user.name | 配置<br />取消                                               |
 
 ## 3. 创建本地库
 

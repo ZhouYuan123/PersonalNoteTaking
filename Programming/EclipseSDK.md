@@ -22,6 +22,8 @@ Swing：将所有的控件都“画”了出来。这使得Swing可以完全控�
 
 SWT使用了JNI技术。JNI(Java Native Interface)是Sun公司为Java语言设计的用来与C/C++程序交互的技术。JNI封装在SWT内部。
 
+**NOTE：**SWT提供了一个org.eclipseswtawt.SWT_AWT类，SWT_AWT桥。实现在SWT中使用Swing。
+
 ### 2. SWT结构
 
 第一层：SWT外部API
@@ -38,7 +40,7 @@ SWT使用了JNI技术。JNI(Java Native Interface)是Sun公司为Java语言设�
 
 ```java
 // 没有Display，SWT程序就无法和操作系统交互。只允许一个display，否则抛出SWT异常。
-Display display = Display.getDefault(); 
+Display display = Display.getDefault();
 Shell shell = new Shell(display);// 表示一个窗口。子 Shell s2 = new Shell(shell);
 shell.setSize(100，100);
 shell.open();
@@ -52,7 +54,7 @@ display.dispose();
 
 ```mermaid
 graph BT
-	B[Shell] -->|继承|A[Display] 
+	B[Shell] -->|继承|A[Display]
 ```
 
 <font color=blue>**== 监视器 ==**</font>
@@ -61,6 +63,139 @@ graph BT
 Monitor monitor = display.getPrimaryMonitor(); // getMonitors(); 多个监视器
 monitor.getClientArea(); 	//  整个桌面大小
 monitor.getBounds();		//	可以显示窗口的区域(除去任务栏)
+```
+
+#### 3.1 控件
+
+```mermaid
+graph BT;
+	A[Widget];
+	B[Item];	C[Control];
+	D[TableItem]; E[Scrollable]; F[Button]; G[Lable];
+	H[Composite]; I[Text];
+	J[Tree]; 	K[Table]; 	L[Canvas];
+	M[Decorations]; N[Shell];
+	D-->B-->A;
+	J-->H;
+	K-->H;
+	N-->M-->L-->H-->E-->C-->A;
+	I-->E;
+	F-->C;
+	G-->C;
+
+```
+
+
+
+<font color=blue>**== 控件样式 ==**</font>
+
+```java
+Button button = new Button(shell, SWT.BORDER | SWT.PUSH);
+button.setImage(image);
+button.setText("Push Button");
+button.setBounds(20, 10, 150, 25);
+button.getSelection(); // 返回boolean
+// Button Styles:
+ARROW, CHECK, PUSH, RADIO, TOGGLE, FLAT
+UP, DOWN, LEFT, RIGHT, CENTER
+// Control Styles:
+BORDER
+LEFT_TO_RIGHT, RIGHT_TO_LEFT // 图片显示在文字左边，图片显示在文字右边
+
+final Label label = new Label(shell, SWT.BORDER);
+label.setImage(image);
+label.setBounds(10, 10, 120, 50);
+label.setText(""); // text 和 image 只会显示一个。
+// 对Label使用样式SWT.SEPARATOR 可以使控件显示成一根水平或竖直的分隔线 
+// SWT.HORIZONTAL or SWT.VERTICAL
+Label horLine = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.BORDER);
+horLine.setBounds(10, 10, 100, 20);
+
+Text text = new Text(shell, SWT.BORDER);
+// SWT.READONLY 样式，这时文本框的背景色将由默认的白色变为灰色，当鼠标单击文字时仍然可以显示编辑光标，也可以拖动鼠标来选择一片文字，对只读的文本框，仍然可以使用setText来改变它的内容。
+// SWT.PASSWORD 样式，这个样式会使文本框将输入的所有文字都显示成密码字符, 可以用Text.setEchoChar方法来改变默认的密码字符.
+```
+
+<font color=blue>**== 控件继承检查 ==**</font>
+
+<font color=blue>**== 控件的用户数据 ==**</font>
+
+```java
+Text text = new Text(shell, SWT.NONE);
+text.setText("Article Content");
+text.setData("Version", "1.2"); // 不会影响文本框的显示内容
+```
+
+<font color=blue>**== 控件的释放 ==**</font>
+
+因此手动释放控件会导致一系列的问题，如果不是万不得已，最好不要手动释放一个控件，而应该交由SWT系统自动释放它们。
+
+#### 3.2 图形资源
+
+```java
+// Color
+Color color = new Color(Display.getDefault(), 255, 0, 0);
+color.dispose(); // 需要手动释放
+
+Display display = Display.getDefault();
+Color cyanColor = display.getSystemColor(SWT.COLOR_CYAN); // 不能手动释放
+
+// image 1
+Image image = new Image(Display.getDefault(), "c:\lgraphic.bmp");
+
+// image 2
+PaletteData palette = new PaletteData(0xFF, OxFF00, 0xFF0000);
+//设置了RGB三种颜色的掩码
+ImageData imageData = new ImageData(48, 48, 24, palette);
+for(int x = 0; x < 48; x++)
+	for(int y = 0; y < 48; y++)
+		imageData.setPixel(x, y, 0xFF);
+		//将48*48的图像全部设置成红色
+// 或者
+ImageData imageData = new ImageData("D:\\test.bmp");
+Image image = new Image(Display.getDefault(), imageData);
+image.dispose();
+
+// image 3
+Display display = Display.getDefault();
+Image image = display.getSystemImage(SWT.ICON_ERROR);
+button.setImage(image);
+
+// image 4
+Image image = new Image(display, UsingImage.class.getResourceAsStream("img.bmp"));
+
+// Font
+Font sysFont = display.getSystemFont();
+Font createdTahoma = new Font(display, "Tahoma", 10, SWT.BOLD);
+```
+
+<font color=blue>**== Item ==**</font>
+
+```java
+// 系统托盘
+Tray systemTray = display.getSystemTray();  	// 不需要释放
+TrayItem newItem = new TrayItem(systemTray, SWT.NONE); // 需要释放
+newItem.setImage(display.getSystemImage(SWT.ICON ERROR));
+newItem.setToolTipText("Test Tray!");
+
+final Menu menu = new Menu(shell, SWT.POP UP);
+MenuItem item1 = new MenuItem(menu, SWT.PUSH);
+item1.setText("Menu Item 1");
+MenuItem item2 = new MenuItem(menu, SWT.PUSH);
+item2.setText("Menu Item 2");
+// Region
+Display display = Display.getDefault();
+final Shell shell = new Shell(display, SWT.NO_TRIM);
+Region region = new Region(display);
+region.add(new Rectangle(10,10, 10, 100));
+region.add(new Rectangle(10, 100, 100, 10));
+region.add(new Rectangle(10, 10, 100, 10));
+region.add(new Rectangle(100, 10, 10, 100));
+shell.setRegion(region);
+Color color = new Color(null, 255, 0, 0);
+shell.setBackground(color);
+shell.open();
+// 使用SWT.NO_TRIM指明了需要创建的是一个没有边框，没有标题栏的窗口。只有这样的窗口才能用setRegion来指定它的形状。
 ```
 
 

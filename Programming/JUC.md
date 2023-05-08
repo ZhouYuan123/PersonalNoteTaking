@@ -16,7 +16,7 @@
 
 异步: 不需要等待结果返回，就能继续运行。
 
-## 2. 创建
+## 2. 创建和运行
 
 ```java
 // 方法一，直接使用Thread
@@ -74,7 +74,7 @@ t1.start();
 Integer result = task.get(); // 等待线程结果的返回。
 ```
 
-## 3. 查看
+## 3. 查看进程与线程
 
 windows：
 
@@ -96,13 +96,13 @@ Java Virtual Machine Stacks (Java 虚拟机栈)
 
 每个线程启动后，虚拟机就会为其分配一块栈内存。
 
-每个栈由多个栈帧(Frame)组成，对应着每次方法调用时所占用的内存。
-
 每个线程只能有一个活动栈帧，对应着当前正在执行的那个方法。
+
+每个栈由多个栈帧(Frame)组成，对应着每次方法调用时所占用的内存。
 
 栈：
 
->程序计数器
+>程序计数器(Program Counter Register)：作用是记住下一条jvm指令的执行地址，是线程私有的。
 >
 >栈帧：
 >
@@ -110,7 +110,61 @@ Java Virtual Machine Stacks (Java 虚拟机栈)
 >>
 >>返回值地址
 
-### 1.2 方法
+<font color=blue>**== 线程上下文切换(Thread Context Switch) ==**</font>
+
+CPU不再执行当前的线程，转而执行另一个线程的代码。原因:
+
+1. 线程的CPU时间片用完
+2. 垃圾回收
+3. 有更高优先级的线程需要运行
+4. 线程自己调用了 sleep、yield、wait、join、park、synchronized、lock 等方法
+
+当Context Switch 发生时，需要由操作系统保存当前线程的状态，并恢复另一个线程的状态。
+
+* 状态包括程序计数器、虚拟机栈中每个栈顿的信息，如局部变量、操作数栈、返回地址等
+* Context Switch 频繁发生会影响性能
+
+## 5. 常见方法
+
+```java
+/**
+ * 1. 启动一个新线程，在新的线程运行run方法中的代码。
+ * 2. start 方法只是让线程进入就绪，里面代码不一定立刻运行(CPU的时间片还没分给它)。
+ * 3. 每个线程对象的start方法只 能调用一次，如果调用了多次会出现IllegalThreadStateException.
+ */
+start();
+
+/**
+ * 新线程启动后会调用的方法。
+ * 如果在构造Thread 对象时传递了 Runnable 参数，则线程启动后会调用Runnable中的run方法。
+ */
+run();
+
+/**
+ * 1. 让当前线程从Running 进入Timed_Waiting状态。
+ * 2. 其它线程可以使用 interrupt 方法打断正在睡眠的线程，这时sleep 方法会抛出InterruptedException.
+ * 3. 睡眠结束后的线程未必会立刻得到执行。
+ * 4. 建议用TimeUnit的sleep 代替Thread的sleep 来获得更好的可读性。
+ */
+Thread.sleep(ms);
+
+/**
+ * 1. 调用yield会让当前线程从Running进入Runnable 就绪状态，然后调度执行其它线程
+ * 2. 具体的实现依赖于操作系统的任务调度器 (可能没让出去)。
+ */
+yield();
+
+join(); // 等待线程运行结束
+join(long n); // 等待线程运行结束最多等待n毫秒
+getId();	// 获取线程长整型的id
+getName(); // 获取线程名
+setName(String);
+getPriority();
+setPriority(int); // 优先级是1~10的整数，较大的优先级能提高该线程被CPU调度的机率。
+getState(); // 获取线程状态. NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING
+```
+
+
 
 
 | 方法                         |                                                 |

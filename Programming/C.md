@@ -152,7 +152,8 @@ char arr[] = “hello”; or char arr[] = {'a', 'b' ,'c', '\0'};
 
 ```c
 #include <string.h>
-int len = strlen("abc"); // 3，sizeof("abc") 是 4。
+int len = strlen("abc"); 	// 3。
+int size = sizeof("abc"); 	// 4。
 // 字符串比较不能使用 == ，使用 strcmp() 函数。
 char arr[] = "bit";				// 字符串结尾是 '\0'.	四个元素。
 char arr[] = {'b', 'i', 't'}; 	// 三个元素。strlen(arr) 结果是随机值, 因为遇到\0才停止。
