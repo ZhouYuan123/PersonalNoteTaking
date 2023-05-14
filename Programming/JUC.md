@@ -146,7 +146,7 @@ run();
  * 3. 睡眠结束后的线程未必会立刻得到执行。
  * 4. 建议用TimeUnit的sleep 代替Thread的sleep 来获得更好的可读性。
  */
-Thread.sleep(ms);
+Thread.sleep(ms); // while 循环中必须sleep防止cpu占用100%。只需要1ms.
 
 /**
  * 1. 调用yield会让当前线程从Running进入Runnable 就绪状态，然后调度执行其它线程
@@ -154,14 +154,21 @@ Thread.sleep(ms);
  */
 yield();
 
-join(); // 等待线程运行结束
-join(long n); // 等待线程运行结束最多等待n毫秒
-getId();	// 获取线程长整型的id
-getName(); // 获取线程名
+join(); 			// 等待join进来的线程运行结束。
+join(long n); 		// 等待join进来的线程运行结束，最多等待n毫秒
+getId();			// 获取线程长整型的id
+getName(); 			// 获取线程名
 setName(String);
 getPriority();
-setPriority(int); // 优先级是1~10的整数，较大的优先级能提高该线程被CPU调度的机率。
-getState(); // 获取线程状态. NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING
+setPriority(int); 	// 优先级是1~10的整数，较大的优先级能提高该线程被CPU调度的机率。
+getState(); 		// 获取线程状态. NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING
+
+/**
+ * 1. 如果线程处于被阻塞状态，线程将立即退出并抛出一个InterruptedException。
+ * 2. 如果线程处于正常活动状态，那么会将该线程的中断标志设置为 true，但线程仍将继续正常运行。
+ */
+interrupt();
+boolean isInterrupted();   // 打断阻塞线程为false，否则为true
 ```
 
 

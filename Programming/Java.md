@@ -38,17 +38,43 @@ CLI: Command Line Interface
 
 SUN (Stanford University Network)
 
-> <font color="#000000">1991年，Green项目, Oak。</font>
+>1990年，在 Sun计算机公司中，由 Patrick Naughton、MikeSheridan 及James Gosling领导的小组Green Team，开发出的新的程序语言，命名为Oak.
 >
-> <font color="#000000">1994年，Oak适合于互联网。</font>
+>1994年，开发组意识到Oak 非常适合于互联网。
 >
-> <font color="#000000">1995年，Oak 被重新命名为“Java”，在SunWorld上得到展示。</font>
+>1995年，Oak被重新命名为“Java”，Sun正式发布Java和HotJava产品，在SunWorld上Java首次公开亮相。
 >
-> <font color="#000000">1996年，JDK1.0</font>
+>1996年1月23日Sun Microsystems发布了JDK 1.0，约8.3万个网页应用Java技术来制作。
 >
-> <font color="#000000">2004年，JDK1.5，为突出版本的重要性，更名为JDK5.0。</font>
+>1997年，发布JDK 1.1，JavaOne会议召开，创当时全球同类会议规模之最。
 >
-> <font color="#000000">2014年，JDK8.0。</font>
+>1998年，JDK 1.2版本发布。同时，Sun发布了 JsP/Servlet、EJB规范，以及将Java分成了 J2EE、J2SE和J2ME。 这表明了 Java开始向企业、桌而应用和移动设备应用3大领域挺进。
+>
+>1999年，Java分成J2SE、J2EE和J2ME，JSP/Servlet技术诞生。
+>
+>2000年，JDK 1.3发布，Java HotSpot Virtual Machine正式发布，成为Java的默认虚拟机。
+>
+>2002年，JDK 1.4发布，古老的classic虚拟机退出历史舞台。
+>
+>2003年年底，Java平台的scala正式发布，同年Groovy也加入了 Java阵营。
+>
+>2004年，发布里程碑式版本: JDK 1.5，为突出此版本的重要性，更名为JDK 5.0。
+>
+>2005年，J2SE -> JavaSE，J2EE -> JavaEE，J2ME -> JavaME
+>
+>2006年，JDK 6发布。同年，Java开源并建立了 OpenJDK。顺理成章，Hotspot虚拟机也成为了 openJDK中的默认虚拟机。
+>
+>2009年，Oracle公司收购SUN，交易价格74亿美元。
+>
+>2011年，发布JDK 7.0
+>
+>2014年，发布JDK 8.0，是继JDK 5.0以来变化最大的版本
+>
+>2017年，发布JDK 9.0，最大限度实现模块化
+>
+>2018年3月，发布JDK 10.0，版本号也称为18.3
+>
+>2018年9月，发布JDK 11.0，版本号也称为18.9
 
 <font color="#cc9900">**舍弃了C的：指针，运算符重载，多重继承（接口代替）**</font>
 

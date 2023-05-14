@@ -136,6 +136,8 @@ enum Sex					enum Sex
 
 ## 4. 字符串
 
+### 4.1 定义
+
 双引号。
 
 > 隐式最后一个字符是`\0`, 这是字符串的结束标志。
@@ -150,15 +152,6 @@ enum Sex					enum Sex
 
 char arr[] = “hello”; or char arr[] = {'a', 'b' ,'c', '\0'};
 
-```c
-#include <string.h>
-int len = strlen("abc"); 	// 3。
-int size = sizeof("abc"); 	// 4。
-// 字符串比较不能使用 == ，使用 strcmp() 函数。
-char arr[] = "bit";				// 字符串结尾是 '\0'.	四个元素。
-char arr[] = {'b', 'i', 't'}; 	// 三个元素。strlen(arr) 结果是随机值, 因为遇到\0才停止。
-```
-
 `??)` : 三字母词，等于 ]
 
 `\a` : 响铃
@@ -166,6 +159,29 @@ char arr[] = {'b', 'i', 't'}; 	// 三个元素。strlen(arr) 结果是随机值,
 `\123` : 跟一至三个八进制数字
 
 `\x12`: 跟两个十六进制数字
+
+### 4.2 库函数
+
+```c
+#include <string.h>
+
+char arr1[] = "bit";
+char arr2[] = {'b', 'i', 't'};
+
+// size_t strlen(const char * str); 遇到\0才停止。
+int len = strlen("abc"); 	// 3。
+int len = strlen(arr1); 	// 3。
+int len = strlen(arr2); 	// 随机值
+int size = sizeof("abc"); 	// 4。
+int size = sizeof(arr1); 	// 4。
+int size = sizeof(arr2); 	// 3。
+
+// char * strcpy (char * destination, const char * source);
+
+// char * strcat (char * destination, const char * source); 追加
+
+// 字符串比较不能使用 == ，使用 strcmp() 函数。
+```
 
 ## 5. 常见关键字
 
