@@ -176,12 +176,47 @@ int size = sizeof("abc"); 	// 4。
 int size = sizeof(arr1); 	// 4。
 int size = sizeof(arr2); 	// 3。
 
-// char * strcpy (char * destination, const char * source);
+char * strcpy(char * destination, const char * source);
 
-// char * strcat (char * destination, const char * source); 追加
+// 追加，返回目标空间起始地址。
+char * strcat(char * destination, const char * source);
 
-// 字符串比较不能使用 == ，使用 strcmp() 函数。
+// 按位比较字符ASCII码值, 返回 <0,0,>0
+int strcmp(const char * str1, const char * str2);
+
+// 指定copy字符个数。source不够的字符都用'\0'复制过去。
+char * strncpy(char * destination, const char * source, size_t num);
+
+// 追加，返回目标空间起始地址。source不够的按最大数量追加过去。
+char * strncat(char * destination, const char * source, size_t num);
+
+// 比较前n位字符ASCII码值, 返回 <0,0,>0
+int strncmp(const char * str1, const char * str2, size_t num);
+
+// str1是否包含str2
+char * strstr(const char * str1, const char * str2);
+
+// 返回错误码所对应的错误信息。
+char * strerror( int errnum );
+#include <errno.h>
+printf("%s\n", strerror(errno)); // 有错误发生放在全局错误码中
+#include <cstdio.h>
+void perror(const char * str); // str + : + strerror(errno)
+perror("fopen"); // fopen: No such file or directory
+
+/*
+ * sep参数是个字符串，定义了用作分隔符的字符集合
+ * 会修改原str，建议重新copy一份操作
+ *
+ * 找到str中的下一个标记，并将其用\0 结尾，返回一个指向这个标记的指针。
+ * 第一个参数不为NULL，函数将找到str中第一个标记，strtok函数将保存它在字符串中的位置
+ * 第一个参数为 NULL，函数将在同一个字符串中被保存的位置开始，查找下一个标记。
+ * 如果字符串中不存在更多的标记，则返回 NULL 指针。
+ */
+char * strtok(char * str, const char * sep);
 ```
+
+
 
 ## 5. 常见关键字
 
@@ -397,6 +432,17 @@ void test2()
 }
 ```
 
+### 9.3 字符分类函数
+
+```c
+#include <ctype.h>
+int isdigit(int c); // 如果是数字字符返回非0的值，如果不是数字字符，返回0
+int tolower(int c);
+int toupper(int c);
+```
+
+
+
 ## 10. 内存
 
 https://www.stackoverflow.com 
@@ -406,6 +452,13 @@ https://www.stackoverflow.com
 | 局部变量，函数形参，返回值                                   | 动态内存分配的 | 全局变量，静态变量, 字符串常量 |
 | 每次调用方法开辟栈帧空间                                     |                |                                |
 | 局部变量在栈中大端存储。<br />数组地址是随index由低到高变化。 |                |                                |
+
+```c
+// num： 字节个数
+void * memcpy (void * destination, const void *source, size_t num);
+```
+
+
 
 ## 11. 操作符
 

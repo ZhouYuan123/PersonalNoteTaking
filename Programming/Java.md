@@ -64,17 +64,29 @@ SUN (Stanford University Network)
 >
 >2006年，JDK 6发布。同年，Java开源并建立了 OpenJDK。顺理成章，Hotspot虚拟机也成为了 openJDK中的默认虚拟机。
 >
->2009年，Oracle公司收购SUN，交易价格74亿美元。
+>2007年，Java平台迎来了新伙伴Clojure。
 >
->2011年，发布JDK 7.0
+>2008 年，Oracle 收购了 BEA,得到了 JRockit 虚拟机。
+>
+>2009年，Twitter宣布把后台大部分程序从Ruby迁移到scala，这是Java平台的又一次大规模应用。
+>
+>2010年，Oracle公司收购SUN，交易价格74亿美元，获得Java商标和最具价值的HotSpot虚拟机。此时，oracle拥有市场占用率最高的两款虚拟机HotSpot和JRockit，并计划在未来对它们进行I整合: **HotRockit**
+>
+>2011年，发布JDK。在JDK 1.7u4中，正式启用了新的垃圾回收器G1。
 >
 >2014年，发布JDK 8.0，是继JDK 5.0以来变化最大的版本
 >
->2017年，发布JDK 9.0，最大限度实现模块化
+>2017年，发布JDK 9.0，最大限度实现模块化。将G1设置为默认GC，替代CMS。同年，IBM的J9开源，形成了现在的open J9社区。
 >
->2018年3月，发布JDK 10.0，版本号也称为18.3
+>2018年3月，发布JDK 10.0，版本号也称为18.3。发布革命性的ZGC，调整JDK授权许可。
+>
+>同年，Android的Java侵权案判决，Google赔偿oracle计88亿美元
+>
+>同年，Oracle宣告JavaEE成为历史名词，JDBC、JMS、Servlet赠予Eclipse基金会
 >
 >2018年9月，发布JDK 11.0，版本号也称为18.9
+>
+>2019年，JDK12发布，加入RedHat领导开发的shenandoah GC。
 
 <font color="#cc9900">**舍弃了C的：指针，运算符重载，多重继承（接口代替）**</font>
 

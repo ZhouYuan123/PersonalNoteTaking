@@ -165,14 +165,93 @@ getState(); 		// 获取线程状态. NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAIT
 
 /**
  * 1. 如果线程处于被阻塞状态，线程将立即退出并抛出一个InterruptedException。
- * 2. 如果线程处于正常活动状态，那么会将该线程的中断标志设置为 true，但线程仍将继续正常运行。
+ * 2. 如果线程处于正常活动状态，那么会将该线程的中断标志设置为true，但线程仍将继续正常运行。
  */
 interrupt();
-boolean isInterrupted();   // 打断阻塞线程为false，否则为true
+boolean isInterrupted();   // 打断阻塞线程为false，否则为true。不会清除打断标记
+static boolean interrupted(); // 会清除打断标记
 ```
 
+## 6. 终止线程
 
+在一个线程 t1 中如何“优雅”终止线程 t2 ？
 
+>错误思路
+>
+>1. 使用线程对象的 stop()方法停止线程
+>
+>   stop 方法会真正杀死线程，如果这时线程锁住了共享资源，那么当它被杀死后就再也没有机会释放锁，其它线程将永远无法获取锁
+>
+>2. 使用System.exit(int)方法停止线程
+>
+>   目的仅是停止一个线程，但这种做法会让整个程序都停止
+
+**两阶段终止模式 Two Phase Termination**
+
+```java
+class TwoPhaseTermination{
+    private Thread monitor;
+	//启动监控线程
+	public void start() {
+        monitor = new Thread(() -> {
+			while(true) {
+				Thread current = Thread.currentThread();
+                if(current.isInterrupted()) {
+                    log.debug("料理后事");
+					break;
+                }
+				try {
+					Thread.sleep(1000); // 情况1
+                    log.debug(”执行监控记录”); // 情况2
+                } catch (InterruptedException e) {
+					e.printStackTrace();
+                    // 重新设置打断标记
+                    current.interrupt();
+                }
+            }
+        });
+        monitor.start();
+    }
+	// 停止监控线程
+	public void stop() {monitor.interrupt();}
+}
+```
+
+`LockSupport.park();` 可以用interrupt()打断，打断标记, 然后线程继续执行。再次`LockSupport.park();`无效, 需要使用 `interrupted()` 重置打断标记才能再次打断。
+
+不推荐使用的过时方法：stop(), suspend(), resume()
+
+**守护线程：** 默认情况下，Java 进程需要等待所有线程都运行结束，才会结束。有一种特殊的线程叫做守护线程，只要其它非守护线程运行结束了，即使守护线程的代码没有执行完，也会强制结束。`t1.setDaemon(true);` 设置t1线程为当前线程守护线程。
+
+## 7. 线程状态
+
+从 **操作系统** 层面：**五种** 状态
+
+> [初始状态] 仅是在语言层面创建了线程对象，还未与操作系统线程关联
+>
+> [可运行状态] (就绪状指该线程已经被创建 (与操作系统线程关联)，可以由CPU 调度执行
+>
+> [运行状态] 指获取了 CPU 时间片运行中的状态
+>
+> >  当CPU 时间片用完，会从[运行状态] 转换至[可运行状态]，会导致线程的上下文切换
+>
+> [阻塞状态]
+>
+> > 如果调用了阻塞API，如 BIO 读写文件，这时该线程实际不会用到 CPU，会导致线程上下文切换，进入[阻塞状态]
+> >
+> > 等 BIO 操作完毕，会由操作系统唤醒阻塞的线程，转换至[可运行状态)
+> >
+> > 与[可运行状态]的区别是，对[阻塞状态]的线程来说只要它们一直不唤醒，调度器就一直不会考
+> > 虑调度它们
+>
+> [终止状态] 表示线程已经执行完毕，生命周期已经结束，不会再转换为其它状态
+
+从 **Java API** 层面：根据 `Thread.State` 枚举，分为 **六种** 状态
+
+1. **NEW** : 线程刚被创建，但是还没有调用 `start()` 方法
+2. **RUNNABLE** : 当调用了 start()方法之后，Java API层面的 **RUNNABLE** 状态涵盖了操作系统层面的 [可运行状态]、[运行状态] 和 [阻塞状态] (由于 BIO 导致的线程阻塞，在Java 里无法区分，仍然认为是可运行)
+3. **TERMINATED** : 当线程代码运行结束
+4. **BLOCKED**，**WAITING**，**TIMED_WAITING** 都是Java API层面对 [阻塞状态] 的细分
 
 | 方法                         |                                                 |
 | ---------------------------- | ----------------------------------------------- |
