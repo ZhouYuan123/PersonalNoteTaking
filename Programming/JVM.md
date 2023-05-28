@@ -106,6 +106,8 @@ oracle表达了整合两大优秀虚拟机的工作，大致在JDK 8中完成。
 
 2017年左右，IBM发布了开源J9 VM，命名为OpenJ9，交给Eclipse基金会管理，也称为 Eclipse openJ9
 
+**以及：KVM和CDC/CLDC Hotspot，Azul VM，Liquid VM，Apache Harmony，Microsoft JVM，TaobaoJVM, Dalvik VM, Graal VM**
+
 ### 1.2 指令集
 
 Java编译器输入的指令流基本上是一种基于栈的指令集架构。
@@ -149,6 +151,152 @@ Java虚拟机的启动是通过引导类加载器(bootstrap class loader)创建�
 * 除此之外，JNI (Java Native Interface)规范描述了用JNIInvocation API来加载或卸载 Java虚拟机时，Java虚拟机的退出情况
 
 ## 2. 字节码与类加载
+
+### 2.1 类加载器子系统
+
+Jclasslib 插件查看字节码文件。
+
+#### 2.1.1 类加载过程
+
+1. 加载 (Loading)
+
+> 1. 通过一个类的全限定名获取定义此类的二进制字节流
+> 2. 将这个字节流所代表的静态存储结构转化为方法区的运行时数据结构
+> 3. 在内存中生成一个代表这个类的java.lang.class对象，作为方法区这个类的各种数据的访问入口
+
+2. 链接 (Linking)
+
+   验证 (Verification)
+
+> 目的在于确保class文件的字节流中包含信息符合当前虚拟机要求，保证被加载类的正确性，不会危害虚拟机自身安全。
+>
+> 主要包括四种验证，文件格式验证，元数据验证，字节码验证，符号引用验证。 
+
+​      准备 (Preparation)
+
+> 为类变量分配内存并且设置该 <font color=black>**类变量的默认初始值，即零值**</font>。
+>
+> 这里不包含用final修饰的static，因为final在编译的时候就会分配了，准备阶段会显式初始化;
+>
+> 这里不会为实例变量分配初始化，类变量会分配在方法区中，而实例变量是会随着对象一起分配到Java堆中。
+
+​      解析 (Resolution)
+
+> 将常量池内的符号引用转换为直接引用的过程。
+>
+> 事实上，解析操作往往会伴随着JVM在执行完初始化之后再执行。
+>
+> 符号引用就是一组符号来描述所引用的目标。符号引用的字面量形式明确定义在《iava虚拟机规范》的class文件格式中。直接引用就是直接指向目标的指针、相对偏移量或一个间接定位到目标的句柄。
+>
+> 解析动作主要针对类或接口、字段、类方法、接口方法、方法类型等。对应常量池中的CONSTANT_Class_info、CONSTANT_Fieldref_info、CONSTANT_Methodref_info等。
+
+3. 初始化 (Initialization)
+
+> 初始化阶段就是执行类构造器方法\<clinit>()的过程。
+>
+> 此方法不需定义，是javac编译器自动收集 <font color=black>**类中的所有类变量的赋值动作和静态代码块中的语句合并**</font> 而来。
+>
+> 如果没有静态属性和代码块，则没有此方法。
+>
+> 构造器方法中指令按语句在源文件中出现的顺序执行。
+>
+> \<clinit>()不同于类的构造器。(关联: 构造器是虚拟机视角下的\<init>() )
+>
+> 若该类具有父类，JVM会保证子类的\<clinit>() 执行前，父类的\<clinit>()已经执行完毕。
+>
+> 虚拟机必须保证一个类的\<clinit>() 方法在多线程下被同步加锁。
+
+#### 2.1.2 类加载器
+
+JVM支持两种类型的类加载器，分别为引导类加载器 (Bootstrap ClassLoader) 和自定义类加载器 (User-Defined ClassLoader)。所有派生于抽象类ClassLoader的类加载器都划分为自定义类加载器。
+
+// 对于用户自定义类来说: 默认使用系统类加载器进行加载
+
+// Java核心类库使用引导类加载器进行加载的。
+
+**启动类加载器 (引导类加载器，Bootstrap ClassLoader)**
+
+> 这个类加载使用C/C++语言实现的，嵌套在JVM内部。
+>
+> 它用来加载Java的核心库 (JAVA_HOME/Jre/ib/rt.jar、resources.jar或sun.boot.class.path路径下的内容)，用于提供JVM自身需要的类。
+>
+> 并不继承自java.lang.ClassLoader，没有父加载器。
+>
+> 加载扩展类和应用程序类加载器，并指定为他们的父类加载器。
+>
+> 出于安全考虑，Bootstrap启动类加载器只加载包名为java、javax、sun等开头的类。
+
+**扩展类加载器 (Extension ClassLoader)**
+
+> Java语言编写，由sun.misc.Launcher$ExtClassLoader实现
+>
+> 派生于classLoader类
+>
+> 父类加载器为启动类加载器
+>
+> 从java.ext.dirs系统属性所指定的目录中加载类库，或从JDK的安装目录的jjre/lib/ext子目录 (扩展目录)下加载类库。<font color=black>**如果用户创建的JAR放在此目录下，也会自动由扩展类加载器加载。**</font>
+
+**应用程序类加载器 (系统类加载器，AppclassLoader)**
+
+> java语言编写，由sun.misc.Launcher$AppClassLoader实现
+>
+> 派生于classLoader类
+>
+> 父类加载器为扩展类加载器
+>
+> 它负责加载环境变量classpath或系统属性 java.class.path 指定路径下的类库
+>
+> 该类加载是程序中默认的类加载器，一般来说，Java应用的类都是由它来完成加载
+>
+> 通过classLoader#getSystemClassLoader()方法可以获取到该类加载器
+
+**NOTE : ** ClassLoader classLoader = Provider.class.getClassLoader(); 如果是null, 说明是引导类加载器。
+
+**自定义类加载器**
+
+> 隔离加载类
+>
+> 修改类加载的方式
+>
+> 扩展加载源
+>
+> 防止源码泄漏
+
+>用户自定义类加载器实现步骤:
+>
+>1. 继承抽象类java.lang.classLoader类
+>2. 在JDK1.2之前，继承classLoader类并重写loadclass()方法，在JDK1.2之后在findclass()方法中
+>3. 如果没有特殊需求，直接继承URIClassLoader类，这样就可以避免自己去编写findclass()方法及其获取字节码流的方式，使自定义类加载器编写更加简洁。
+
+```java
+public class CustomClassLoader extends Classloader {
+	@Override
+	protected Class<?> findClass(String name) throws ClassNotFoundException {
+		try {
+			byte[] result = getClassFromCustomPath(name);
+			if(result == null){
+				throw new FileNotFoundException();
+            } else {
+				return defineClass(name,result, 0, result.length);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        throw new ClassNotFoundException(name);
+    }
+    private byte[] getClassFromCustomPath(String name){
+		// 从自定义路径中加载指定类: 细节略
+		// 如果指定路径的字节码文件进行了加密，则需要在此方法中进行解密操作.
+        return null;
+    }
+}
+```
+
+
+
+### 2.2 运行时数据区
+
+### 2.3 执行引擎
 
 ## 3. 内存与垃圾回收
 

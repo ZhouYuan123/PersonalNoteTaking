@@ -253,6 +253,24 @@ class TwoPhaseTermination{
 3. **TERMINATED** : 当线程代码运行结束
 4. **BLOCKED**，**WAITING**，**TIMED_WAITING** 都是Java API层面对 [阻塞状态] 的细分
 
+## 8. 多线程
+
+Critical Section: 一段代码块内如果存在对共享资源的多线程读写操作，称这段代码块为临界区。
+
+**synchronized**
+
+```java
+synchronized(对象) // 线程1， 线程2(blocked)
+{
+	临界区
+}
+
+synchronized 在方法上 锁对象是 this (同一对象不同方法互斥)
+synchronized 在静态方法上 锁对象是 Test.class
+```
+
+
+
 | 方法                         |                                                 |
 | ---------------------------- | ----------------------------------------------- |
 | getPriority();setPriority(); | MAX_PRIORITY: 10MIN_PRIORITY: 1NORM_PRIORITY: 5 |

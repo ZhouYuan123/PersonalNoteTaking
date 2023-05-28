@@ -326,23 +326,26 @@ printf("ret = %d\n", ret);
 <font color=blue>**== 定义结构体变量三种方式 ==**</font>
 
 ```c
-// 1、先定义结构体类型再定义结构体变量
+// 1、先定义结构体类型，再定义结构体变量
 struct Stu
 {
     char name[20];
     int age;
+    struct Stu * next; // 结构体自引用
 }
 struct Stu s = { "zs" , 20}; // 定义并初始化
 s.name;
 struct Stu * sp = &s;
 sp -> name;
+
 // 2、定义结构体类型的同时定义结构体变量
 struct Stu
 {
     char name[20];
     int age;
-}stu1,stu2;
-// 3、直接定义结构体变量
+}stu1,stu2; // 全局变量
+
+// 3、直接定义结构体变量 (匿名结构体类型)
 struct
 {
     char name[20];
@@ -441,8 +444,6 @@ int tolower(int c);
 int toupper(int c);
 ```
 
-
-
 ## 10. 内存
 
 https://www.stackoverflow.com 
@@ -454,8 +455,20 @@ https://www.stackoverflow.com
 | 局部变量在栈中大端存储。<br />数组地址是随index由低到高变化。 |                |                                |
 
 ```c
-// num： 字节个数
-void * memcpy (void * destination, const void *source, size_t num);
+// num： 字节个数 (copy数组)
+void * memcpy (void * destination, const void * source, size_t num);
+
+/* copy和被copy是同一数组重叠部分的时候，可以做到不被覆盖 */
+void * memmove (void * destination, const void * source, size_t num);
+
+/* 返回 <0 >0 =0 */
+int memcmp (const void * arr1, const void * arr2, size_t num);
+
+/*
+ * 以字节为单位设置内存
+ * Sets the first num bytes of the block of memory pointed by ptr to the specified value 
+ */
+void * memset (void * ptr, int value, size_t num)
 ```
 
 

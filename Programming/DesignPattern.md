@@ -141,6 +141,8 @@ Vehicle <|.. Car
 
 ### 2.1 单例模式
 
+#### 2.1.1 创建
+
 单例设计模式分类两种
 
 饿汉式: 类加载就会导致该单实例对象被创建
@@ -178,9 +180,79 @@ public class Singleton {
         return instance;
     }
 }
+
+/**
+ * 懒汉式-1:
+ */
+public synchronized static Singleton getInstance() {
+    if(instance == null){
+        instance = new Singleton();
+    }
+    return instance;
+}
+
+/**
+ * 懒汉式-2: 双重检查锁
+ */
+// 2. 防止指令重排
+private static volatile Singleton instance; // null
+public static Singleton getInstance() {
+    if(instance == null) {
+        synchronized (Singleton.class) {
+            if(instance == null) {
+                instance = new Singleton();
+            }
+        }
+    }
+    return instance;
+}
+
+/**
+ * 静态内部类方式
+ *
+ * JVM 在加载外部类的过程中，是不会加载静态内部类的，只有内部类的属性/方法被调用时才会被加载，并初始化其静态属性。静态属性由于被 static 修饰，保证只被实例化一次，并且严格保证实例化顺序。
+	静态内部类单例模式是一种优秀的单例模式，是开源项目中比较常用的一种单例模式。在没有加任何锁的情况下，保证了多线程下的安全，并且没有任何性能影响和空间的浪费。
+ */
+public class Singleton {
+	//私有构造方法
+	private Singleton() {}
+    private static class SingletonHolder {
+        private static final Singleton INSTANCE = new Singleton();
+    }
+	//对外提供静态方法获取该对象
+	public static Singleton getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+}
+
+/**
+ * 枚举
+ */
+public enum Singleton {
+	INSTANCE;
+}
 ```
 
+#### 2.1.2 被破坏解决方案
 
+**序列化、反序列方式破坏单例模式的解决方法**
+
+在Singleton类中添加 readResolve() 方法，在反序列化时被反射调用，如果定义了这个方法，就返回这个方法的值，如果没有定义，则返回新new出来的对象。
+
+**反射方式破解单例的解决方法**
+
+```java
+private static boolean flag = false;
+// 私有构造方法
+private Singleton() {
+	synchronized (Singleton.class){
+        if (flag) {
+            throw new RuntimeException("不能创建多个对象");
+        }
+		flag = true;
+	}
+}
+```
 
 ### 2.2 工厂方法模式
 

@@ -587,6 +587,19 @@ int number = r.nextInt(10);// [0-10)
 | copy(List, List);                  | 必须是size相等       |
 | synchronizedList(List)             | 返回SynchronizedList |
 
+### 4.8 Runtime
+
+```java
+Runtime runtime = Runtime.getRuntime();
+Process process = runtime.exec(command:"ipconfig");
+//调用process对象的获取输入流的方法
+InputStream is = process.getInputstream();
+byte[] arr = new byte[124 * 1024 * 100];
+int len = is.read(arr);
+//将字节数组转换为字符串输出到控制台
+System.out.printIn(new String(arr, 0, len, "GBK"));
+```
+
 ## 5. 集合
 
 ```mermaid
@@ -1005,7 +1018,6 @@ JetBrains
 | 目录                                               | UItimate                               |
 | ---------------------------------------------------- | ---------------------------------------- |
 | \User\AppData\Roaming\JetBrains\IntelliJIdea2022.2 | 配置文件 (eclipse每个ws配置都是分开的) |
-|                                                    |                                        |
 |                                                    |                                        |
 
 `break label 和 continue label 不太一样`
