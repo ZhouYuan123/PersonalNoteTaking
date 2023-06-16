@@ -160,7 +160,13 @@ getId();			// 获取线程长整型的id
 getName(); 			// 获取线程名
 setName(String);
 getPriority();
-setPriority(int); 	// 优先级是1~10的整数，较大的优先级能提高该线程被CPU调度的机率。
+/**
+ * 优先级是1~10的整数，较大的优先级能提高该线程被CPU调度的机率。
+ * MAX_PRIORITY: 10
+ * MIN_PRIORITY: 1
+ * NORM_PRIORITY: 5
+ */
+setPriority(int);
 getState(); 		// 获取线程状态. NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING
 
 /**
@@ -269,13 +275,13 @@ synchronized 在方法上 锁对象是 this (同一对象不同方法互斥)
 synchronized 在静态方法上 锁对象是 Test.class
 ```
 
+## 9. 常见线程安全类
 
+`String` : 不可变类线程安全
 
-| 方法                         |                                                 |
-| ---------------------------- | ----------------------------------------------- |
-| getPriority();setPriority(); | MAX_PRIORITY: 10MIN_PRIORITY: 1NORM_PRIORITY: 5 |
-|                              |                                                 |
-|                              |                                                 |
+`Integer` : 不可变类线程安全
+
+`StringBuffer, Random, Vector, Hashtable, java.utilconcurrent包下的类`
 
 # NOTE
 

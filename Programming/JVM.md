@@ -230,7 +230,7 @@ JVM支持两种类型的类加载器，分别为引导类加载器 (Bootstrap Cl
 
 > Java语言编写，由sun.misc.Launcher$ExtClassLoader实现
 >
-> 派生于classLoader类
+> 派生于ClassLoader类
 >
 > 父类加载器为启动类加载器
 >
@@ -240,7 +240,7 @@ JVM支持两种类型的类加载器，分别为引导类加载器 (Bootstrap Cl
 
 > java语言编写，由sun.misc.Launcher$AppClassLoader实现
 >
-> 派生于classLoader类
+> 派生于ClassLoader类
 >
 > 父类加载器为扩展类加载器
 >
@@ -292,9 +292,74 @@ public class CustomClassLoader extends Classloader {
 }
 ```
 
+#### 2.1.3 ClassLoader
 
+| 方法名称                                             | 描述                                                         |
+| ---------------------------------------------------- | ------------------------------------------------------------ |
+| getParent()                                          | 返回该类加载器的超类加载器                                   |
+| loadClass(String name)                               | 加载名称为name的类，返回结果为java.lang.Class类的实例        |
+| findClass(String name)                               | 查找名称为 name 的类，返回结果为 java.lang.Class 类的实例    |
+| findLoadedClass(String name)                         | 查找名称为name的已经被加载过的类，返回结果为java.lang.Class类的实例 |
+| defineClass(String name, byte[] b, int off, int len) | 把字节数组b中的内容转换为一个Java类，返回结果为java.lang.Class类的实例 |
+| resolveClass(Class<?>c）                             | 连接指定的一个Java类                                         |
+
+**NOTE:** sun.misc.Launcher 它是一个java虚拟机的入口应用
+
+```java
+// 方式一:获取当前类的classLoader
+clazz.getClassLoader();
+// 方式二:获取当前线程上下文的classLoader
+Thread.currentThread().getContextClassLoader();
+// 方式三:获取系统的classLoader
+ClassLoader.getSystemClassLoader();
+// 方式四:获取调用者classLoader
+DriverManager.getCallerClassLoader();
+```
+
+#### 2.1.4 双亲委派机制
+
+```mermaid
+graph BT
+A(自定义类加载器<br>Custom ClassLoader) -->
+B(系统类加载器<br>Application ClassLoader) -->
+|向上委托| C(拓展类加载器<br>Extension ClassLoader) -->
+|向上委托| D(引导类加载器<br>Bootstrap ClassLoader)
+```
+
+> 避免类的重复加载。
+>
+> 保护程序安全，防止核心API被随意篡改。
+>
+> > 自定义类: java.lang.String ,  java.lang.ShkStart
+
+**NOTE:** 沙箱安全机制
+
+自定义string类，但是在加载自定义string类的时候会率先使用引导类加载器加载，而引导类加载器在加载的过程中会先加载idk自带的文件(rt.jar包中java\lang\string.class)，报错信息说没有main方法就是因为加载的是rt.jar包中的string类。这样可以保证对java杨心源代码的保护，这就是沙箱安全机制。
+
+在JVM中表示两个class对象是否为同一个类存在两个必要条件:
+
+1. 类的完整类名必须一致，包括包名。
+2. 加载这个类的ClassLoader (指ClassLoader实例对象) 必须相同。
+
+#### 2.1.5 类初始化
+
+Java程序对类的使用方式分为: 主动使用和被动使用。
+
+主动使用，又分为七种情况:
+
+1. 创建类的实例
+2. 访问某个类或接口的静态变量，或者对该静态变量赋值
+3. 调用类的静态方法
+4. 反射(比如: Class.forName(“com.at.Test"))
+5. 初始化一个类的子类
+6. Java虚拟机启动时被标明为启动类的类
+7. JDK 7 开始提供的动态语言支持: java.lang.invoke.MethodHandle实例的解析结果REF getStatic、REF putStatic、REF invokeStatic句柄对应的类没有初始化，则初始化
+
+除了以上七种情况，其他使用Java类的方式都被看作是对类的被动使用都不会导致类的初始化。
 
 ### 2.2 运行时数据区
+
+**Runtime Data Area**
 
 ### 2.3 执行引擎
 
