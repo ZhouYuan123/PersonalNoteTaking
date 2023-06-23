@@ -313,6 +313,42 @@ private Singleton() {
 
 ### 2.4 原型模式
 
+原型模式的克隆分为浅克隆和深克隆.
+
+> 浅克隆: 创建一个新对象，对于非基本类型属 性，仍指向原有属性所指向的对象的内存地址。
+>
+> 深克隆: 创建一个新对象，属性中引用的其他对象也会被克隆，不再指向原有对象地址。
+
+```java
+class A implements Cloneable {
+
+    @Override
+	public A clone() throws CloneNotSupportedException {
+        // 浅克隆
+        return (A) super.clone();
+        // 深克隆
+        // 每层对象都要 implements Cloneable
+    }
+}
+
+// 深克隆 -- 对象流
+// 每层对象都要 implements Serializable
+//创建对象输出流对象
+Objectoutputstream oos = new objectoutputStream(new FileoutputStream( "d:/a.txt"));
+// 写对象
+oos.writeObject(a1);
+// 释放资源
+oos.close();
+// 创建对象输入流对象
+ObjectInputStream ois = new objectInputStream(new FileInputStream( name: "d:a.txt"));
+// 读取对象
+Citation a2 = (A) ois.readobject();
+// 释放资源
+ois.close();
+```
+
+
+
 ### 2.5 建造者模式
 
 ## 3. 结构型模式
