@@ -67,18 +67,18 @@ git config --global user.email johndoe@example.com
 
 3. git clone 地址 [自定义名字]：新建了一个文件夹的git仓库
 
-| .git目录      |                                         |
-| ----------- | --------------------------------------- |
-| /hooks      |                                         |
-| /info       | 包含全局性排除文件                               |
-| /logs       | 日志                                      |
-| /objects    | Git 数据库。<br />树对象，总是覆盖。<br />提交对象，      |
-| /refs       | 表示一系列的引用，保存包含`heads`、`remote`、`tags`等目录 |
-| /refs/heads | 保存了分支以及其对应的提交对象(对象文件值存hash值)。           |
-| config      | 保存了本地仓库的配置信息                            |
-| description | 仓库信息                                    |
-| HEAD        | 指向当前正在工作的分支, 例如ref: refs/heads/test     |
-| index       | 存储的是暂存区内容                               |
+| .git目录      |                                            |
+| ----------- | ------------------------------------------ |
+| /hooks      |                                            |
+| /info       | 包含全局性排除文件                                  |
+| /logs       | 日志                                         |
+| /objects    | Git 数据库。<br />树对象，总是覆盖。<br />提交对象，         |
+| /refs       | 表示一系列的引用，保存包含`heads`、`remote`、`tags`等目录    |
+| /refs/heads | 保存了分支以及其对应的提交对象(对象文件值存hash值)。              |
+| config      | 保存了本地仓库的配置信息                               |
+| description | 仓库信息                                       |
+| HEAD        | 它是一个指针，指向当前所在的本地分支, 例如ref: refs/heads/test |
+| index       | 存储的是暂存区内容                                  |
 
 ### 3.2 远程库
 
@@ -87,10 +87,10 @@ git config --global user.email johndoe@example.com
 | git remote                    | 列出所有指定的远程仓库的简写。例：origin。“origin” 并无特殊含义 |
 | git remote -v                 | 显示需要读写远程仓库使用的 Git 保存的简写与其对应的 URL        |
 | git remote add short_name url | 添加一个新的远程 Git 仓库。                        |
-| git fetch \<remote>           | 从远程仓库中获得数据. |
+| git fetch \<remote>           | 从远程仓库中获得数据.                             |
 | git push short_name branch    | 推送到远程仓库。                                |
 | git remote show short_name    | 查看远程仓库信息。                               |
-| git remote rename pb paul     |                                         |
+| git remote rename name1 name2 |                                         |
 | git remote remove short_name  | 移除仓库。                                   |
 | git fetch \<origin>           | 同步远程仓库数据                                |
 
@@ -221,8 +221,6 @@ git log -S function_name
    * 问号（`?`）只匹配一个任意字符；
    * 如果在方括号中使用短划线分隔两个字符， 表示所有在这两个字符范围内的都可以匹配（比如 `[0-9]` 表示匹配所有 0 到 9 的数字）。
    * 使用两个星号（`**`）表示匹配任意中间目录，比如 `a/**/z` 可以匹配 `a/z` 、 `a/b/z` 或 `a/b/c/z` 等。
-   
-   > 
 
 2. 匹配模式可以以（`/`）开头防止递归。
 
@@ -292,12 +290,12 @@ master：指向的是提交。master 分支并不是一个特殊分支，是因�
 | git branch                                                  | 查看本地所有分支。                                                                                         |
 | git branch brname [commitID]                                | 创建分支。只是更新指针的指向，轻量级。                                                                               |
 | git checkout brname                                         | 切换分支。HEAD指向当前分支。也可以git checkout -,  回刚刚的分支。切换分支会改变工作目录中的文件为当前分支的，之前untracked文件会保留， 没有add的文件会无法切换。 |
-| git checkout -b brname [origin/master]                      | 或者git checkout --track origin/develop<br />创建并且切换。[ 将本地分支与远程分支设置为不同的名字 ]                          |
+| git checkout -b newbranchname [origin/master]               | 或者git checkout --track origin/develop<br />创建并且切换。[ 将本地分支与远程分支设置为不同的名字 ]                          |
 | git branch -d brname                                        | 删除分支。只能删除另一个分支。没有merge无法删除。<br/>-D：强制删除。                                                          |
-| git merge hotfix                                            | 把另一个分支的内容合并过来。删除分支时会丢掉分支信息。三方合并时会创建一个新的commit。（两个分支末端以及公共祖先）                                      |
+| git merge hotfix                                            | 把另一个分支的内容合并过来。删除分支时会丢掉分支信息。三方合并时会创建一个新的commit。                                                    |
 | git mergetool                                               | 可视化工具。                                                                                            |
-| git branch --merged                                         | 已经合并的分支。git branch --no-merged: 还没有被合并的。                                                          |
-| git branch -v                                               | 显示最近一条commit。                                                                                     |
+| git branch --merged                                         | 已经合并到当前分支的分支。--no-merged: 还没有被合并的。                                    |
+| git branch -v                                               | 显示每个分支最后一次commit。                                                                                 |
 | git branch -vv                                              | 查看本地分支对应的远程分支。                                                                                    |
 | git branch -r                                               | 查看远程分支。                                                                                           |
 | git branch -a                                               | 显示所有分支包括远程分支。                                                                                     |
@@ -309,7 +307,7 @@ master：指向的是提交。master 分支并不是一个特殊分支，是因�
 | git push --set-upstream origin develop （跟8.3相同，但是推荐这个）      | 将本地分支变为远程                                                                                         |
 | git gc                                                      |                                                                                                   |
 
-**分支合并：**合并了 idea 和 v2 分支之后的提交历史。当你新建和合并分支的时候，所有这一切都只发生在你本地的 Git 版本库中 —— 没有与服务器发生交互。
+**分支合并：** 合并了 idea 和 v2 分支之后的提交历史。当你新建和合并分支的时候，所有这一切都只发生在你本地的 Git 版本库中 —— 没有与服务器发生交互。
 
 ```mermaid
 graph RL
@@ -333,8 +331,6 @@ graph RL
 
 标签本身就是一个ID，并且指向一个commit ID。
 
-`git show tagName` : 查看标签。
-
 `git tag [-a] v1.0.1 [-m '内容']` ：新建标签。-a：会强制要求-m，通过-m添加是附注标签。
 
 `git push origin 标签名 ` ：推送到远程。`git push origin --tags` :推送所有标签。
@@ -347,13 +343,47 @@ graph RL
 
 `git push origin :refs/tags/标签名 ` ：删除远程标签。
 
+| tag                     |             |
+| ----------------------- | ----------- |
+| git tag [-l]            | 列出已有标签      |
+| git tag -l "v1.8.5*"    | 匹配模式必须要加 -l |
+| git show tagName        | 查看标签。       |
+| git tag tagName         | 打标签         |
+| git tag tagName 9fceb02 | 补上标签        |
+
+```shell
+# 轻量标签（lightweight)
+$ git tag v1.0
+$ git show v1.0
+commit ca82a6dff817ec66f44342007202690a93763949
+Author: Scott Chacon <schacon@gee-mail.com>
+Date:   Mon Mar 17 21:52:11 2008 -0700
+
+    changed the version number
+
+# 附注标签（annotated)
+$ git tag -a v1.0 -m "my version 1.0"
+$ git show v1.0
+tag v1.0
+Tagger: Ben Straub <ben@straub.cc>
+Date:   Sat May 3 20:19:12 2014 -0700
+
+my version 1.0
+
+commit ca82a6dff817ec66f44342007202690a93763949
+Author: Scott Chacon <schacon@gee-mail.com>
+Date:   Mon Mar 17 21:52:11 2008 -0700
+
+    changed the version number
+```
+
 ## 8. 别名
 
 vi ~/.gitconfig  git 别名
 
 设置别名：`git config --global alias.co checkout`
 
-取消别名：`git unstage fileA`
+取消别名：`git config --global --unset alias.co`
 
 如果执行的是外部命令，而不是一个 Git 子命令，可以在命令前面加入 ! 符号。
 
@@ -611,5 +641,3 @@ ORIG_HEAD: 远程的HEAD.
 FETCH_HEAD: 从远程拉取的HEAD.
 
 # THE END
-
-
