@@ -335,21 +335,70 @@ class A implements Cloneable {
 // 每层对象都要 implements Serializable
 //创建对象输出流对象
 Objectoutputstream oos = new objectoutputStream(new FileoutputStream( "d:/a.txt"));
-// 写对象
-oos.writeObject(a1);
-// 释放资源
-oos.close();
+oos.writeObject(a1); // 写对象
+oos.close(); // 释放资源
 // 创建对象输入流对象
 ObjectInputStream ois = new objectInputStream(new FileInputStream( name: "d:a.txt"));
-// 读取对象
-Citation a2 = (A) ois.readobject();
-// 释放资源
-ois.close();
+Citation a2 = (A) ois.readobject(); // 读取对象
+ois.close(); // 释放资源
+```
+
+### 2.5 建造者模式
+
+建造者 (Builder) 模式角色:
+
+* 抽象建造者类(Builder):
+* 具体建造者类(ConcreteBuilder): 实现 Builder 接口，完成复杂产品的 **各个部件** 的具体创建方法。
+* 产品类 (Product) : 要创建的复杂对象。
+* 指挥者类(Director): 只负责保证对象 **各部分** 完整创建或按某种顺序创建。
+
+```java
+public class Bike {
+	private String frame;//车架
+	private String seat;//车座
+	public String getFrame() {return frame;}
+	public void setFrame(String frame) {this.frame = frame;}
+	public string getSeat() {return seat;}
+	public void setSeat(String seat) {this.seat = seat;}
+}
+public abstract class Builder {
+    protected Bike bike = new Bike();
+	public abstract void buildFrame();
+	public abstract void buildSeat();
+    public abstract Bike createBike();
+}
+public class MobileBuilder extends Builder {}
+public classDirector {
+	public Director(Builder builder) {this.builder = builder;}
+	public Bike construct() {
+        builder.buildFrame();
+        builder.buildSeat();
+        return builder.createBike();
+    }
+}
+```
+
+**NOTE:**
+
+1. 指挥者可以跟抽象建造者结合, 抽象建造者决定构建顺序。
+2. 扩展通过增加具体建造者，其他结构不变。
+
+```java
+// 扩展
+pubic class Phone {
+	private string cpu;
+	private string screen;
+	private string memory;
+	private string mainboard;
+    public phone(string cpu, string sgreen, string memory, string mainboard) {
+        this.cpu = cpu;
+		this.screen = screen;
+		this.memory = memory;this.mainboard = mainboard;
+	}
+}
 ```
 
 
-
-### 2.5 建造者模式
 
 ## 3. 结构型模式
 

@@ -283,6 +283,10 @@ synchronized 在静态方法上 锁对象是 Test.class
 
 `StringBuffer, Random, Vector, Hashtable, java.utilconcurrent包下的类`
 
+## 10. Monitor
+
+
+
 # NOTE
 
 1. windows下CPU时间片约为 15 ms.
