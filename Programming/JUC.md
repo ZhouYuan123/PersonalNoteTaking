@@ -283,8 +283,111 @@ synchronized 在静态方法上 锁对象是 Test.class
 
 `StringBuffer, Random, Vector, Hashtable, java.utilconcurrent包下的类`
 
-## 10. Monitor
+## 10. Java对象头
 
+Java对象头：
+
+<img src="..\imgs\JUC\java_object_head.png" style="zoom:80%;" />
+
+<img src="..\imgs\JUC\java_object_head2.png" style="zoom:80%;" />
+
+<img src="..\imgs\JUC\java_object_head_markword.png" style="zoom:80%;" />
+
+运行时元数据（Mark Word）:
+
+1. 哈希值（Hash Code）: 可以看作是堆中对象的地址
+   1. 对象调用 `hashcode()` 方法，这个对象的偏向锁会被禁用。
+
+2. GC分代年龄（年龄计数器） (用于新生代from/to区晋升老年代的标准, 阈值为15)
+3. 锁状态标志 (用于JDK1.6对synchronized的优化 -> 轻量级锁)
+4. 线程持有的锁
+5. 偏向线程ID (用于JDK1.6对synchronized的优化 -> 偏向锁)
+   1. 如果开启了偏向锁(默认开启)，那么对象创建后，markword 值为 0x05 即最后3位为 101，这时它的thread、epoch、age 都为 0
+   2. 偏向锁是默认是延迟的，不会在程序启动时立即生效，如果想避免延迟，可以加 VM 参数`XX:BiasedLockingStartupDelay=0` 来禁用延迟。（`-XX:-UseBiasedLocking` 禁用偏向锁）
+   3. 如果没有开启偏向锁，那么对象创建后，markword值为0x01即最后3位为001，这时它的 hashcode、age都为0，第一次用到 hashcode 时才会赋值。
+
+6. 偏向时间戳
+
+## 11. 轻量级锁
+
+如果一个对象虽然有多线程访问，但多线程访问的时间是错开的(也就是没有竞争)，那么可以使用轻量级锁来优化。
+
+轻量级锁对使用者是透明的，即语法仍然是synchronized。
+
+```java
+static final Object obj = new Object();
+public static void method1() {
+    synchronized( obj ) {// Lock Record +1, Lock Record 中的 reference 指向 obj
+		method2();
+    }
+}
+public static void method2() {
+    synchronized( obj ) { // 锁重入 创建新的锁记录 Lock Record
+    }
+}
+```
+
+主要是将锁对象的Mark Word更新为指向Lock Record的指针，也就是锁记录。
+
+<img src="D:\myGit\note-taking\imgs\JUC\lightlock.jpg" style="zoom:80%;" />
+
+1. 线程在自己的栈桢中创建锁记录 LockRecord，每个线程都的栈都会包含一个锁记录的结构。
+2. LockRecord 中的 object reference ：让锁记录中 Object reference 指向锁对象，
+3. LockRecord 中的 lock record 地址 00 ：并尝试用cas 换 Object 的 Mark Word，将 Mark Word 的值存入锁记录
+4. 如果cas 替换成功，对象头中存储了锁记录地址和状态  00，表示由该线程给对象加锁
+5. 如果加锁失败了 (对象头中存储了状态  00)，会重入 (创建新的锁记录 LockRecord，cas失败，lock record为null)，或者进入重量级锁 (锁膨胀)。
+
+<img src="D:\myGit\note-taking\imgs\JUC\heavylock.jpg" style="zoom:80%;" />
+
+解锁：
+
+1. 当退出 synchronized代码块(解锁时)如果有取值为 null的锁记录，表示有重入，这时重置锁记录，表示重入计数减一
+2. 当退出 synchronized 代码块(解锁时)锁记录的值不为 ull，这时使用cas 将 Mark Word 的值恢复给对象头
+   1. 成功，则解锁成功。
+   2. 失败，说明轻量级锁进行了锁膨胀或已经升级为重量级锁，进入重量级锁解锁流程。
+
+## 12. 锁膨胀
+
+这时 Thread-1加轻量级锁失败，进入锁膨胀流程，即为 Object 对象申请Monitor 锁，让Object 指向重量级锁地址，然后自己进入Monitor的EntryList BLOCKED
+
+<img src="D:\myGit\note-taking\imgs\JUC\lock_coarsening.jpg" style="zoom:80%;" />
+
+解锁：
+
+当Thread-0 退出同步块解锁时，使用 cas 将 Mak Word 的值恢复给对象头，失败。这时会进入重量级解锁流程，即按照Monitor 地址找到Monitor 对象，设置Owner 为 null，唤醒 EntryList 中 BLOCKED 线程
+
+## 13. 重量级锁
+
+加synchronized的对象关联监视器
+
+<img src="..\imgs\JUC\monitor.jpg" style="zoom:80%;"/>
+
+Monitor (监视器): 由操作系统提供
+
+1. 首先会将synchronized中的锁对象中对象头的MarkWord去尝试指向操作系统提供的Monitor对象，让锁对象中的MarkWord和Monitor对象相关联. 如果关联成功, 将obj对象头中的MarkWord的对象状态从01改为10。
+2. 因为该Monitor没有和其他的obj的MarkWord相关联，所以Thread 2就成为了该Monitor的Owner(所有者)。
+3. 然后，又来了一个Thread1执行synchronized(obj)代码，它首先会检查是否能执行临界区代码，即检查obj是否关联了Monitor，此时已经有关联了, 它就会去看看该Monitor有没有所有者(Owner), 发现有所有者了(Thread 2)；Thread 1也会和该Monitor关联, 该线程就会进入到它的EntryList(阻塞队列)，EntryList是一个列表，若此时Thread 3也执行到synchronized(obj)代码，也会进入阻塞队列。
+4. 当Thread 2执行完临界区代码后, Monitor的Owner(所有者)就空出来了. 此时就会通知Monitor中的EntryList阻塞队列中的线程, 这些线程通过竞争, 成为新的所有者。
+5. Wait Set 中的 Thread-0，Thread-1 是之前获得过锁，但条件不满足进入 WAITING 状态的线程
+
+等待集（Wait Set）: 用于存储等待在条件队列上的线程。线程可以通过调用 wait() 方法使自己进入等待集，等待条件满足时被唤醒。
+
+## 14. 自旋优化
+
+重量级锁竞争的时候，还可以使用自旋来进行优化，如果当前线程自旋成功(即这时候持锁线程已经退出了
+同步块，释放了锁)，这时当前线程就可以避免阻塞。
+
+<img src="D:\myGit\note-taking\imgs\JUC\spin.jpg" style="zoom:80%;" />
+
+* 在Java 6 之后自旋锁是自适应的，比如对象刚刚的一次自旋操作成功过，那么认为这次自旋成功的可能性会高，就多自旋几次;反之，就少自旋甚至不自旋，总之，比较智能。
+* 自旋会占用CPU时间，单核CPU自旋就是浪费，多核CPU自旋才能发挥优势.。
+* Java7之后不能控制是否开启自旋功能。
+
+## 15. 偏向锁
+
+轻量级锁在没有竞争时(就自己这个线程)，每次重入仍然需要执行 CAS操作。
+
+Java 6中引入了偏向锁来做进一步优化: 只有第一次使用CAS 将线程ID设置到对象的 Mark Word头，之后发现这个线程ID是自己的，就表示没有竞争，不用重新 CAS。以后只要不发生竞争，这个对象就归该线程所有。
 
 
 # NOTE

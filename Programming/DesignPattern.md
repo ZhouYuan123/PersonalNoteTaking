@@ -390,27 +390,48 @@ pubic class Phone {
 	private string screen;
 	private string memory;
 	private string mainboard;
-    public phone(string cpu, string sgreen, string memory, string mainboard) {
-        this.cpu = cpu;
-		this.screen = screen;
-		this.memory = memory;this.mainboard = mainboard;
-	}
+    
+    //私有构造方法
+	private Phone(Builder builder){
+        this.cpu = builder.cpu;
+        this.screen = builder.screen;
+        this.memory = builder.memory;
+        this.mainboard = builder.mainboard;
+    }
+    
+    public static final class Builder {
+		private String cpu;
+		private String screen;
+		private String memory;
+		private String mainboard;
+		public Builder cpu(string cpu) {
+            this.cpu = cpu;
+            return this;
+        }
+        public Phone build() {
+            return new Phone(this);
+        }
+    }
 }
+// 链式编程
+Phone phone = new Phone.Builder()
+.cpu("intel")
+.screen("三星屏幕")
+.memory("金士顿内存条")
+.mainboard("华硕")
+.build();
 ```
-
-
 
 ## 3. 结构型模式
 
-## 4. 行为型模式
+### 3.1 代理模式
 
-### 动态代理
-
-1. 静态代理
-2. 动态代理 (JDK 代理)
-3. Cglib代理
+1. 静态代理: 代理类在编译期就生成。
+2. 动态代理 (JDK 代理，必须依赖接口)
+3. CGlib代理
 
 ```java
+// JDK 代理
 // 被代理类
 public class Renter implements Person{
 	@Override
@@ -426,9 +447,10 @@ public class RenterInvocationHandler<T> implements InvocationHandler{
 		this.target = target;
 	}
 	/**
-     * proxy: 动态代理对象
+     * proxy: 动态代理对象。和renterProxy对象是同一个对象，在invoke方法中基本不用
      * method：正在执行的方法
      * args：调用目标方法时传入的实参
+     * 返回值： method的返回值。
      */
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -445,7 +467,13 @@ public class ProxyTest {
 		Person renter = new Renter();
 		//创建InvocationHandler对象
 		InvocationHandler renterHandler = new RenterInvocationHandler<Person>(renter);
-		//创建代理对象,代理对象的每个执行方法都会替换执行Invocation中的invoke方法
+		
+        /*
+        CLassLoader Loader : 类加载器，用于加载代理类。
+        Class<?>[] interfaces: 代理类实现的接口的字节码对象。
+        InvocationHandler h :代理对象的调用处理程序。
+        */
+        //创建代理对象,代理对象的每个执行方法都会替换执行Invocation中的invoke方法
 		Person renterProxy = (Person) Proxy.newProxyInstance(
             Person.class.getClassLoader(), new Class<?>[]{Person.class}, renterHandler);
 		renterProxy.rentHouse();
@@ -464,8 +492,35 @@ public class ProxyTest {
 			e.printStackTrace();
 		}*/
 	}
+}
+```
 
+```java
+// CGlib代理
+// 被代理类
+public class Renter {
+	public void rentHouse() {
+		System.out.println("租客租房成功！");
+	}
 }
 
 ```
+
+
+
+### 3.2 适配器模式
+
+### 3.3 装饰者模式
+
+### 3.4 桥接模式
+
+### 3.5 外观模式
+
+### 3.6 组合模式
+
+### 3.7 享元模式
+
+## 4. 行为型模式
+
+
 
