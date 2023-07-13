@@ -120,13 +120,14 @@ Vehicle <|.. Car
 
 ### 1.3 软件设计原则
 
-1. **开闭原则:** 对扩展开放，对修改关闭。
-2. **里氏代换原则:** 任何基类可以出现的地方，子类一定可以出现。通俗理解: 子类可以扩展父类的功能，但不能改变父类原有的功能。换句话说，子类继承父类时，除添加新的方法完成新增功能外，尽量不要重写父类的方法。
-3. **依赖倒转原则** : 高层模块不应该依赖低层模块，两者都应该依赖其抽象。抽象不应该依赖细节，细节应该依赖抽象。简单的说就是要求对抽象进行编程，不要对实现进行编程，这样就降低了客户与实现模块间的耦合。
-4. **接口隔离原则** : 客户端不应该被迫依赖于它不使用的方法，一个类对另一个类的依赖应该建立在最小的接口上。
-5. **迪米特法则** : 迪米特法则又叫最少知道原则。只和你的直接朋友交谈，不跟"陌生人"说话 (Talk only to your immediate friends and not to strangers)。其含义是:如果两个软件实体无须直接通信，那么就不应当发生直接的相互调用，可以通过第三方转发该调用。其目的是降低类之间的精合度，提高模块的相对独立性.
+1. **单一职责原则 (Single Responsibility Principle，SRP)：**一个类应该只有一个责任。换句话说，一个类应该只有一个引起它的变化原因。
+2. **开闭原则 (Open Closed Principle，OCP):** 对扩展开放，对修改关闭。
+3. **里氏代换原则 (Liskov Substitution Principle，LSP):** 任何基类可以出现的地方，子类一定可以出现。通俗理解: 子类可以扩展父类的功能，但不能改变父类原有的功能。换句话说，子类继承父类时，除添加新的方法完成新增功能外，尽量不要重写父类的方法。
+4. **接口隔离原则 (Interface Segregation Principle，ISP) : **客户端不应该被迫依赖于它不使用的方法，一个类对另一个类的依赖应该建立在最小的接口上。
+5. **依赖倒转原则 (Dependency Inversion Principle，DIP)** : 高层模块不应该依赖低层模块，两者都应该依赖其抽象。抽象不应该依赖细节，细节应该依赖抽象。简单的说就是要求对抽象进行编程，不要对实现进行编程，这样就降低了客户与实现模块间的耦合。
+5. **迪米特法则 (Law of Demeter，LoD)** : 迪米特法则又叫最少知道原则 (Least Knowledge Principle)。只和你的直接朋友交谈，不跟"陌生人"说话 (Talk only to your immediate friends and not to strangers)。其含义是:如果两个软件实体无须直接通信，那么就不应当发生直接的相互调用，可以通过第三方转发该调用。其目的是降低类之间的精合度，提高模块的相对独立性.
    迪米特法则中的“朋友”是指: 当前对象本身、当前对象的成员对象、当前对象所创建的对象、当前对象的方法参数等，这些对象同当前对象存在关联、聚合或组合关系，可以直接访问这些对象的方法。
-6. **合成复用原则** : 尽量先使用组合或者聚合等关联关系来实现，其次才考虑使用继承关系来实现。通常类的复用分为继承复用和合成复用两种。
+6. **合成复用原则 (Composite/Aggregate Reuse Principle，CARP)** : 尽量先使用组合或者聚合等关联关系来实现，其次才考虑使用继承关系来实现。通常类的复用分为继承复用和合成复用两种。
    1. 继承复用虽然有简单和易实现的优点，但它也存在以下缺点
       1. 继承复用破坏了类的封装性，因为继承会将父类的实现细节暴露给子类，父类对子类是透明的，所以这种复用又称为“白箱”复用。
       2. 子类与父类的糟合度高。父类的实现的任何改变都会导致子类的实现发生变化，这不利于类的扩展与维护
@@ -428,7 +429,19 @@ Phone phone = new Phone.Builder()
 
 1. 静态代理: 代理类在编译期就生成。
 2. 动态代理 (JDK 代理，必须依赖接口)
-3. CGlib代理
+3. CGLib代理
+
+> JDK代理和CGLib代理
+>
+> 使用CGLib实现动态代理，CGLib底层采用ASM字节码生成框架，使用字节码技术生成代理类，在JDK1.6之前比使用Java反射效率要高。唯一需要注意的是，CGLib不能对声明为final的类或者方法进行代理，因为CGLib原理是动态生成被代理类的子类
+>
+> 在JDK1.6、JDK 1.7、JDK 1.8逐步对JDK动态代理优化之后，在调用次数较少的情况下，JDK代理效率高于CGLib代理效率，只有当进行大量调用的时候，JDK1.6和JDK 1.7比CGLib代理效率低一点，但是到JDK 1.8的时候，JDK代理效率高于CGLib代理。所以如果有接口使用JDK动态代理，如果没有接口使用CGLIB代理。
+
+> 动态代理和静态代理
+>
+> 动态代理与静态代理相比较，最大的好处是接口中声明的所有方法都被转移到调用处理器一个集中的方法中处理(InvocationHandler.invoke)。这样，在接口方法数量比较多的时候，我们可以进行灵活处理，而不需要像静态代理那样每一个方法进行中转。
+>
+> 如果接口增加一个方法，静态代理模式除了所有实现类需要实现这个方法外，所有代理类也需要实现此方法。增加了代码维护的复杂度。而动态代理不会出现该问题。
 
 ```java
 // JDK 代理
@@ -504,11 +517,50 @@ public class Renter {
 	}
 }
 
+public class MyInterceptor implements MethodInterceptor {
+    private Object target;
+    public MyInterceptor(Object target) {
+        this.target = target;
+    }
+    /**
+     * @param o 代理对象
+     * @param method 被代理对象的方法
+     * @param objects 方法入参
+     * @param methodProxy 代理方法
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+        System.out.println("cglib before");
+        // 调用代理类FastClass对象
+        Object result =  methodProxy.invokeSuper(o, objects);
+//        Object result = methodProxy.invoke(target, objects);
+        System.out.println("cglib after");
+        return result;
+    }
+}
+
+// 通过CGLIB动态代理获取代理对象的过程
+Enhancer enhancer = new Enhancer();
+// 设置enhancer对象的父类
+enhancer.setSuperclass(Renter.class);
+// 设置enhancer的回调对象
+enhancer.setCallback(new MyInterceptor(target));
+// 创建代理对象
+Renter renter = (Renter)enhancer.create();
+// 通过代理对象调用目标方法
+renter.rentHouse();
 ```
 
-
-
 ### 3.2 适配器模式
+
+类适配器：继承适配器。
+
+对象适配器：聚合适配器。
+
+接口适配器：当不希望实现一个接口中所有的方法时，可以创建一个抽象类Adapter ，实现所有方
+法。而此时我们只需要继承该抽象类即可。
 
 ### 3.3 装饰者模式
 

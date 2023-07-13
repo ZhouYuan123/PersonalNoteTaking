@@ -257,7 +257,11 @@ class TwoPhaseTermination{
 1. **NEW** : 线程刚被创建，但是还没有调用 `start()` 方法
 2. **RUNNABLE** : 当调用了 start()方法之后，Java API层面的 **RUNNABLE** 状态涵盖了操作系统层面的 [可运行状态]、[运行状态] 和 [阻塞状态] (由于 BIO 导致的线程阻塞，在Java 里无法区分，仍然认为是可运行)
 3. **TERMINATED** : 当线程代码运行结束
-4. **BLOCKED**，**WAITING**，**TIMED_WAITING** 都是Java API层面对 [阻塞状态] 的细分
+4. **BLOCKED ：**线程处于阻塞状态是由于某些原因导致线程暂时停止执行，等待某个条件的达成。例如，线程可能被某个锁对象的 `synchronized` 关键字所阻塞，或者等待某个输入/输出操作完成。一旦条件达到，线程将从阻塞状态转为可运行状态。
+4. **WAITING：**线程调用 `wait()` 方法后。
+4. **TIMED_WAITING：** 线程调用 `sleep()`、`join()` 或 `wait(timeout)` 方法后。
+
+456都是Java API层面对 [阻塞状态] 的细分
 
 ## 8. 多线程
 
@@ -368,9 +372,25 @@ Monitor (监视器): 由操作系统提供
 2. 因为该Monitor没有和其他的obj的MarkWord相关联，所以Thread 2就成为了该Monitor的Owner(所有者)。
 3. 然后，又来了一个Thread1执行synchronized(obj)代码，它首先会检查是否能执行临界区代码，即检查obj是否关联了Monitor，此时已经有关联了, 它就会去看看该Monitor有没有所有者(Owner), 发现有所有者了(Thread 2)；Thread 1也会和该Monitor关联, 该线程就会进入到它的EntryList(阻塞队列)，EntryList是一个列表，若此时Thread 3也执行到synchronized(obj)代码，也会进入阻塞队列。
 4. 当Thread 2执行完临界区代码后, Monitor的Owner(所有者)就空出来了. 此时就会通知Monitor中的EntryList阻塞队列中的线程, 这些线程通过竞争, 成为新的所有者。
-5. Wait Set 中的 Thread-0，Thread-1 是之前获得过锁，但条件不满足进入 WAITING 状态的线程
+5. Wait Set 中的 Thread-0，Thread-1 是之前获得过锁，但条件不满足进入，调用wait 方法，即可进入Wait Set 变为 WAITING状态
+6. BLOCKED和WAITING的线程都处于阻塞状态，不占用CPU时间片
+7. BLOCKED线程会在Owner 线程释放锁时唤醒
+8. WAITING线程会在 0wner 线程调用 notify 或 notifyAll 时唤醒，但唤醒后并不意味者立刻获得锁，仍需进入EntryList重新竞争
 
-等待集（Wait Set）: 用于存储等待在条件队列上的线程。线程可以通过调用 wait() 方法使自己进入等待集，等待条件满足时被唤醒。
+### 13.1 wait notify
+
+1. `obj.wait()` 让进入object 监视器的线程到 Wait Set 等待
+   1. `obj.wait(1OOO)` 顶多等待`1000ms`
+2. `obj.notify()` 在object 上正在 Wait Set 等待的线程中挑一个唤醒
+3. `obj.notifyAll()` 让object 上正在Wait Set 等待的线程全部唤醒
+
+sleep 是 Thread方法，而wait 是 Object 的方法
+
+sleep不需要强制和 synchronized 配合使用，但wait 需要和 synchronized 一起用
+
+sleep 在睡眠的同时，不会释放对象锁的，但 wait 在等待的时候会释放对象锁。
+
+状态都是TIMED_WAITING
 
 ## 14. 自旋优化
 
@@ -388,6 +408,20 @@ Monitor (监视器): 由操作系统提供
 轻量级锁在没有竞争时(就自己这个线程)，每次重入仍然需要执行 CAS操作。
 
 Java 6中引入了偏向锁来做进一步优化: 只有第一次使用CAS 将线程ID设置到对象的 Mark Word头，之后发现这个线程ID是自己的，就表示没有竞争，不用重新 CAS。以后只要不发生竞争，这个对象就归该线程所有。
+
+**批量重偏向**
+
+如果对象虽然被多个线程访问，但没有竞争，这时偏向了线程 T1 的对象仍有机会重新偏向 T2，重偏向会重置对象的Thread ID.
+
+当撤销偏向锁闻值超过 20次后，jvm 会这样觉得，我是不是偏向错了呢，于是会在给这些对象加锁时重新偏向至加锁线程
+
+**批量撤销**
+
+当撤销偏向锁闻值超过 40次后，ivm 会这样觉得，自己确实偏向错了，根本就不该偏向。于是整个类的所有对象都会变为不可偏向的，新建的对象也是不可偏向的。
+
+## 16. 锁消除
+
+JIT 即时编译器进行了优化。默认打开锁消除。
 
 
 # NOTE

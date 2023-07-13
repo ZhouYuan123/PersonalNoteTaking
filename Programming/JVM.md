@@ -411,6 +411,37 @@ program counter register
 2. JVM直接对Java栈的操作只有两个: 每个方法执行，伴随着进栈(入栈、压栈), 执行结束后的出栈工作。
 3. 对于栈来说不存在垃圾回收问题。
 
+**栈的存储单位：Stack Frame**
+
+1. 每个线程都有自己的栈，栈中的数据都是以栈帧 (Stack Erame) 的格式存在
+2. 在这个线程上正在执行的每个方法都各自对应一个栈帧(Stack Erame)
+3. 栈帧是一个内存区块，是一个数据集，维系着方法执行过程中的各种数据信息。
+
+在一条活动线程中，一个时间点上，只会有一个活动的栈帧。即只有当前正在执行的方法的栈帧(栈顶栈帧) 是有效的，这个栈被称为当前栈帧(Current Frame)，与当前栈相对应的方法就是当前方法 (Current Method)，定义这个方法的类就是当前类 (Current Class)
+
+**每个栈帧中存储着:**
+
+1. 局部变量表 (Local Variables)
+   1. 定义为一个数字数组，主要用于存储方法参数和定义在方法体内的局部变量，这些数据类型包括各类基本数据类型、对象引用 (reference)，以及returnAddress类型。
+   2. 由于局部变量表是建立在线程的栈上，是线程的私有数据，因此不存在数据安全问题
+   3. 局部变量表所需的容量大小是在编译期确定下来的，并保存在方法的Code属性的maximum local variables数据项中。在方法运行期间是不会改变局部变量表的大小的。
+2. 操作数栈 (Operand stack) (或表达式栈)
+3. 动态链接(Dynamic Linking)  (或指向运行时常量池的方法引用)
+4. 方法返回地址 (Return Address) (或方法正常退出或者异常退出的定义)
+5. 一些附加信息
+
+**局部变量表:**
+
+最基本的存储单元是slot (变量槽) （index表示，this是第一个）
+
+局部变量表中存放编译期可知的各种基本数据类型(8种)，引用类型(reference)，returnAddress类型的变量。
+
+在局部变量表里，32位以内的类型只占用一个slot (包括returnAddress类型)，64位的类型 (lonq和double) 占用两个slot。
+
+byte、short、char 在存储前被转换为int，boolean 也被转换为int, 0表示false，非0表示true.
+
+slot可以重复利用。
+
 #### 2.2.4 堆
 
 ### 2.3 执行引擎
@@ -422,3 +453,35 @@ program counter register
 ## 4. 性能监控与调优
 
 ## 5. 大厂面试
+
+# NOTE
+
+## 1. JNI描述符
+
+| Java类型     | 类型描述符   |
+| ------------ | ------------ |
+| int          | I            |
+| long         | J            |
+| byte         | B            |
+| short        | S            |
+| char         | C            |
+| float        | F            |
+| double       | D            |
+| boolean      | Z            |
+| void         | V            |
+| 其他引用类型 | L+类全名+;   |
+| 数组         | [            |
+| 方法         | (参数)返回值 |
+
+```java
+Java 类型：java.lang.String
+JNI 描述符：Ljava/lang/String;
+Java 类型：String[]
+JNI 描述符：[Ljava/lang/String;
+Java 类型：int[][]
+JNI 描述符：[[I
+Java 方法：long f(int n, String s, int[] arr);
+JNI 描述符：(ILjava/lang/String;[I)J
+Java 方法：void f();
+JNI 描述符：()V
+```
