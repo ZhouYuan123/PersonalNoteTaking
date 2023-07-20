@@ -213,6 +213,8 @@ enum Sex s = MALE;
 >void * : 就是指向任何类型的指针，在编译的时候不会确定其指向的类型，是在程序中进行指向的
 >
 >void*仅仅包含地址信息。int *不仅仅包含地址信息，还包含类型信息。
+>
+>由于`void*`没有具体的类型信息，所以无法直接对其解引用。为了对 void\* 指针进行解引用，你需要将其转换为具体的指针类型。例如，如果你有一个 void\* 指针指向一个整数，你可以将其转换为整型指针，并通过解引用操作符*来获取该整数的值。`int* p = (int*)malloc(10*sizeof(int));`
 
 野指针：
 
@@ -330,7 +332,11 @@ void
 >
 > 存放在静态区，只会被存储一次。
 
-char arr[] = “hello”; or char arr[] = {'a', 'b' ,'c', '\0'};
+```c
+char arr[] = “hello”;
+char arr[] = {'a', 'b' ,'c', '\0'};
+char arr[5] = { 0 }; // 0 跟 '\0'在大多数情况下是等价的，均表示ASCII字符编码中的空字符。
+```
 
 `??)` : 三字母词，等于 ]
 
@@ -550,6 +556,42 @@ int memcmp (const void * arr1, const void * arr2, size_t num);
 void * memset (void * ptr, int value, size_t num)
 ```
 
+### 10.1 动态内存分配
+
+```c
+#include <stdlib.h>
+int arr[10]; // 栈区
+void *malloc(size_t size); // size：总字节数
+int* p = (int*)malloc(10*sizeof(int)); // 强制类型转换一下。
+free(p); // 回收空间
+p = NULL;
+```
+
+* 这个函数向内存申请一块连续可用的空间，并返回指向这块空间的指针。
+  * 如果开辟成功，则返回一个指向开辟好空间的指针。
+  * 如果开辟失败，则返回]一个NULL指针，因此malloc的返回值一定要做检查
+  * 返回值的类型是 void*，所以malloc函数并不知道开辟空间的类型，具体在使用的时候使用者自己来决定。
+  * 如果参数size为0，malloc的行为是标准是未定义的，取决于编译器
+
+```c
+int a=10;
+int *p = &a;
+free(p); // error
+```
+
+* free函数用来释放动态开辟的内存。
+  * 如果参数 ptr 指向的空间不是动态开辟的，那free函数的行为是未定义的
+  * 如果参数 ptr 是NULL指针，则函数什么事都不做。
+
+```c
+void * calloc (size_t num, size_t size);// num：个数， size：字节数
+// 会初始化分配后的内存中的默认值。
+
+void * realloc (void * memblock, size_t size);// memblock：原先开辟的内存， size：新总字节数
+// 这个函数调整原内存空间大小的基础上，还会将原来内存中的数据移动到新的空间
+// memblock 可以为空，类似malloc
+```
+
 
 
 ## 11. 操作符
@@ -747,7 +789,7 @@ F5停到断点之后，调试 --> 窗口
 | assert()                                                     | 断言                                                         |
 | char * gets(char * str)                                      | 接收有空格字符串。                                           |
 | pow()                                                        | \<math.h>                                                    |
-|                                                              |                                                              |
+| perror(char *)                                               | <stdlib.h>, `perror ("main");// main: xxxxxxxx`              |
 ### 2. 标准库类型
 
 | name   |              |

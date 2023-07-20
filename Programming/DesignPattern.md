@@ -120,7 +120,7 @@ Vehicle <|.. Car
 
 ### 1.3 软件设计原则
 
-1. **单一职责原则 (Single Responsibility Principle，SRP)：**一个类应该只有一个责任。换句话说，一个类应该只有一个引起它的变化原因。
+1. **单一职责原则 (Single Responsibility Principle，SRP)：** 一个类应该只有一个责任。换句话说，一个类应该只有一个引起它的变化原因。
 2. **开闭原则 (Open Closed Principle，OCP):** 对扩展开放，对修改关闭。
 3. **里氏代换原则 (Liskov Substitution Principle，LSP):** 任何基类可以出现的地方，子类一定可以出现。通俗理解: 子类可以扩展父类的功能，但不能改变父类原有的功能。换句话说，子类继承父类时，除添加新的方法完成新增功能外，尽量不要重写父类的方法。
 4. **接口隔离原则 (Interface Segregation Principle，ISP) : **客户端不应该被迫依赖于它不使用的方法，一个类对另一个类的依赖应该建立在最小的接口上。
@@ -564,9 +564,186 @@ renter.rentHouse();
 
 ### 3.3 装饰者模式
 
+装饰 (Decorator) 模式中的角色
+
+* 抽象构件 (component)角色 : 定义一个抽象接口以规范准备接收附加责任的对象。
+* 具体构件 (Concrete component)角色 : 实现抽象构件，通过装饰角色为其添加一些职责
+* 抽象装饰 (Decorator) 角色 :  <font color=green> **继承或实现抽象构件，并包含具体构件的实例** </font>
+* 具体装饰(Concrete Decorator)角色: 实现抽象装饰的相关方法，并给具体构件对象添加附加的责任。
+
+**优点:**
+
+饰者模式可以带来比继承更加灵活性的扩展功能，使用更加方便，可以通过 <font color=green>**组合不同的装饰者对象** </font>来获取具有不同行为状态的多样化的结果。装饰者模式比继承更具良好的扩展性，完美的遵循开闭原则，继承是静态的附加责任，装饰者则是动态的附加责任。
+
+装饰类和被装饰类可以独立发展，不会相互耦合，装饰模式是继承的一个替代模式，装饰模式可以动态扩展一个实现类的功能。
+
+<font color=green> **静态代理和装饰者模式的区别 : ** </font>
+
+相同点:
+
+1. 都要实现与目标类相同的业务接口
+2. 在两个类中都要声明目标对家
+3. 都可以在不修改目标类的前提下增强目标方法
+
+不同点:
+
+1. 目的不同: 装饰者是为了增强目标对象, 静态代理是为了保护和隐藏目标对象
+2. 获取目标对象构建的地方不同: 装饰者是由外界传递进来，可以通过构造方法传递静态代理是在代理类内部创建，以此来隐藏目标对象
+
 ### 3.4 桥接模式
 
+Bridge Pattern
+
+```java
+// 实现部分的接口
+interface Color {
+    void applyColor();
+}
+
+// 实现部分的具体实现类
+class Red implements Color {
+    @Override
+    public void applyColor() {
+        System.out.println("Applying red color");
+    }
+}
+
+class Blue implements Color {
+    @Override
+    public void applyColor() {
+        System.out.println("Applying blue color");
+    }
+}
+
+// 抽象部分的抽象类
+abstract class Shape {
+    protected Color color;
+
+    public Shape(Color color) {
+        this.color = color;
+    }
+
+    public abstract void draw();
+}
+
+// 抽象部分的具体实现类
+class Circle extends Shape {
+    public Circle(Color color) {
+        super(color);
+    }
+
+    @Override
+    public void draw() {
+        System.out.print("Drawing circle. ");
+        color.applyColor();
+    }
+}
+
+class Rectangle extends Shape {
+    public Rectangle(Color color) {
+        super(color);
+    }
+
+    @Override
+    public void draw() {
+        System.out.print("Drawing rectangle. ");
+        color.applyColor();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Color red = new Red();
+        Color blue = new Blue();
+
+        Shape redCircle = new Circle(red);
+        Shape blueRectangle = new Rectangle(blue);
+
+        redCircle.draw();       // 输出：Drawing circle. Applying red color
+        blueRectangle.draw();   // 输出：Drawing rectangle. Applying blue color
+    }
+}
+```
+
+<font color=green> **优点 : ** </font> 在两个变化维度中任意扩展一个维度，互不影响，都不需要修改原有系统。
+
 ### 3.5 外观模式
+
+外观 (Facade)模式是“迪米特法则”的典型应用。
+
+```java
+// 子系统类
+class CPU {
+    public void start() {
+        System.out.println("CPU is starting");
+    }
+
+    public void shutdown() {
+        System.out.println("CPU is shutting down");
+    }
+}
+
+class Memory {
+    public void load() {
+        System.out.println("Memory is loading data");
+    }
+
+    public void unload() {
+        System.out.println("Memory is unloading data");
+    }
+}
+
+class HardDrive {
+    public void read() {
+        System.out.println("Hard Drive is reading data");
+    }
+
+    public void write() {
+        System.out.println("Hard Drive is writing data");
+    }
+}
+
+// 外观类
+class Computer {
+    private CPU cpu;
+    private Memory memory;
+    private HardDrive hardDrive;
+
+    public Computer() {
+        cpu = new CPU();
+        memory = new Memory();
+        hardDrive = new HardDrive();
+    }
+
+    public void startComputer() {
+        cpu.start();
+        memory.load();
+        hardDrive.read();
+        System.out.println("Computer started successfully");
+    }
+    
+    public void shutdownComputer() {
+        cpu.shutdown();
+        memory.unload();
+        hardDrive.write();
+        System.out.println("Computer shutdown successfully");
+    }
+}
+
+// 客户端代码
+public class Main {
+    public static void main(String[] args) {
+        Computer computer = new Computer();
+
+        // 客户端通过调用外观类的方法来使用子系统的功能
+        computer.startComputer();
+        System.out.println();
+        computer.shutdownComputer();
+    }
+}
+```
+
+缺点：不符合开闭原则。
 
 ### 3.6 组合模式
 

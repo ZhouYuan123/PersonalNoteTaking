@@ -154,7 +154,7 @@ Thread.sleep(ms); // while 循环中必须sleep防止cpu占用100%。只需要1m
  */
 yield();
 
-join(); 			// 等待join进来的线程运行结束。
+join(); 			// 等待join进来的线程运行结束。实现原理：保护性暂停模式。
 join(long n); 		// 等待join进来的线程运行结束，最多等待n毫秒
 getId();			// 获取线程长整型的id
 getName(); 			// 获取线程名
@@ -381,16 +381,62 @@ Monitor (监视器): 由操作系统提供
 
 1. `obj.wait()` 让进入object 监视器的线程到 Wait Set 等待
    1. `obj.wait(1OOO)` 顶多等待`1000ms`
-2. `obj.notify()` 在object 上正在 Wait Set 等待的线程中挑一个唤醒
+2. `obj.notify()` 在object 上正在 Wait Set 等待的线程中随机挑一个唤醒
 3. `obj.notifyAll()` 让object 上正在Wait Set 等待的线程全部唤醒
 
-sleep 是 Thread方法，而wait 是 Object 的方法
+* sleep 是 Thread方法，而wait 是 Object 的方法
+* sleep不需要强制和 synchronized 配合使用，但wait 需要和 synchronized 一起用
+* sleep 在睡眠的同时，不会释放对象锁的，但 wait 在等待的时候会释放对象锁。
+* 状态都是TIMED_WAITING
 
-sleep不需要强制和 synchronized 配合使用，但wait 需要和 synchronized 一起用
+### 13.2 保护性暂停
 
-sleep 在睡眠的同时，不会释放对象锁的，但 wait 在等待的时候会释放对象锁。
+即Guarded Suspension，用在一个线程等待另一个线程的执行结果。
 
-状态都是TIMED_WAITING
+```java
+class GuardedObject {
+	// 结果
+	private Object response;
+	// 获取结果
+	public Object get() {
+        synchronized (this){
+            // 没有结果
+            while(response == nul1) {
+                try {
+                    this.wait();
+				} catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+			return response;
+		}
+    }
+    
+    // 产生结果
+	public void complete(Object response) {
+        synchronized (this) {
+            // 给结果成员变量值
+			this.response = response;
+			this.notifyAll();
+        }
+    }
+}
+
+public static void main(String[] args) {
+    GuardedObject guardedObject = new GuardedObject();
+    new Thread(() -> {
+        // 等待结果
+        Object list = guardedObject.get();
+    }, "t1").start();
+    
+    new Thread(()->{
+        List<String> list = Downloader.download();
+        guardedObject.complete(list);
+    }, "t2").start();
+}
+```
+
+
 
 ## 14. 自旋优化
 
