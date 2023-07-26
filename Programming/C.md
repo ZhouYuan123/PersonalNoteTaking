@@ -402,8 +402,6 @@ perror("fopen"); // fopen: No such file or directory
 char * strtok(char * str, const char * sep);
 ```
 
-
-
 ## 5. 常见关键字
 
 | 关键字            |                                                              |
@@ -414,6 +412,15 @@ char * strtok(char * str, const char * sep);
 | typedef 原名 新名 | 类型重定义                                                   |
 | static            | 修饰局部变量，只初始化一次，方法结束不销毁。<br />修饰全局变量，只能在自己所在源文件使用，切断外部链接。<br />修饰函数，只能在自己所在源文件使用，切断外部链接。 |
 | const             |                                                              |
+
+```c
+typedef struct Person{
+    int age;
+    char name[20];
+} Per;
+Per p;
+```
+
 
 
 ## 6. 位段
@@ -569,7 +576,7 @@ p = NULL;
 
 * 这个函数向内存申请一块连续可用的空间，并返回指向这块空间的指针。
   * 如果开辟成功，则返回一个指向开辟好空间的指针。
-  * 如果开辟失败，则返回]一个NULL指针，因此malloc的返回值一定要做检查
+  * 如果开辟失败，则返回一个NULL指针，因此malloc的返回值一定要做检查
   * 返回值的类型是 void*，所以malloc函数并不知道开辟空间的类型，具体在使用的时候使用者自己来决定。
   * 如果参数size为0，malloc的行为是标准是未定义的，取决于编译器
 

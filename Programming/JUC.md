@@ -291,11 +291,11 @@ synchronized 在静态方法上 锁对象是 Test.class
 
 Java对象头：
 
-<img src="..\imgs\JUC\java_object_head.png" style="zoom:80%;" />
+![一般对象](..\imgs\JUC\java_object_head.png)
 
-<img src="..\imgs\JUC\java_object_head2.png" style="zoom:80%;" />
+![数组对象](..\imgs\JUC\java_object_head2.png)
 
-<img src="..\imgs\JUC\java_object_head_markword.png" style="zoom:80%;" />
+![markword](..\imgs\JUC\java_object_head_markword.png)
 
 运行时元数据（Mark Word）:
 
@@ -333,7 +333,7 @@ public static void method2() {
 
 主要是将锁对象的Mark Word更新为指向Lock Record的指针，也就是锁记录。
 
-<img src="D:\myGit\note-taking\imgs\JUC\lightlock.jpg" style="zoom:80%;" />
+![Lock Record](D:\myGit\note-taking\imgs\JUC\lightlock.jpg)
 
 1. 线程在自己的栈桢中创建锁记录 LockRecord，每个线程都的栈都会包含一个锁记录的结构。
 2. LockRecord 中的 object reference ：让锁记录中 Object reference 指向锁对象，
@@ -341,7 +341,7 @@ public static void method2() {
 4. 如果cas 替换成功，对象头中存储了锁记录地址和状态  00，表示由该线程给对象加锁
 5. 如果加锁失败了 (对象头中存储了状态  00)，会重入 (创建新的锁记录 LockRecord，cas失败，lock record为null)，或者进入重量级锁 (锁膨胀)。
 
-<img src="D:\myGit\note-taking\imgs\JUC\heavylock.jpg" style="zoom:80%;" />
+![轻量级锁](D:\myGit\note-taking\imgs\JUC\heavylock.jpg)
 
 解锁：
 
@@ -354,7 +354,7 @@ public static void method2() {
 
 这时 Thread-1加轻量级锁失败，进入锁膨胀流程，即为 Object 对象申请Monitor 锁，让Object 指向重量级锁地址，然后自己进入Monitor的EntryList BLOCKED
 
-<img src="D:\myGit\note-taking\imgs\JUC\lock_coarsening.jpg" style="zoom:80%;" />
+![锁膨胀](D:\myGit\note-taking\imgs\JUC\lock_coarsening.jpg)
 
 解锁：
 
@@ -364,7 +364,7 @@ public static void method2() {
 
 加synchronized的对象关联监视器
 
-<img src="..\imgs\JUC\monitor.jpg" style="zoom:80%;"/>
+![重量级锁](..\imgs\JUC\monitor.jpg)
 
 Monitor (监视器): 由操作系统提供
 
@@ -436,14 +436,12 @@ public static void main(String[] args) {
 }
 ```
 
-
-
 ## 14. 自旋优化
 
 重量级锁竞争的时候，还可以使用自旋来进行优化，如果当前线程自旋成功(即这时候持锁线程已经退出了
 同步块，释放了锁)，这时当前线程就可以避免阻塞。
 
-<img src="D:\myGit\note-taking\imgs\JUC\spin.jpg" style="zoom:80%;" />
+![自旋优化](D:\myGit\note-taking\imgs\JUC\spin.jpg)
 
 * 在Java 6 之后自旋锁是自适应的，比如对象刚刚的一次自旋操作成功过，那么认为这次自旋成功的可能性会高，就多自旋几次;反之，就少自旋甚至不自旋，总之，比较智能。
 * 自旋会占用CPU时间，单核CPU自旋就是浪费，多核CPU自旋才能发挥优势.。

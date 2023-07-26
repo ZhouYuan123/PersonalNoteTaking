@@ -144,6 +144,8 @@ Vehicle <|.. Car
 
 #### 2.1.1 创建
 
+**Singleton Pattern**
+
 单例设计模式分类两种
 
 饿汉式: 类加载就会导致该单实例对象被创建
@@ -265,7 +267,7 @@ private Singleton() {
 2. 具体产品 : 实现或者继承抽象产品的子类
 3. 具体工厂 : 提供了创建产品的方法，调用者通过该方法来创建产品。
 
-**工厂方法模式**
+**工厂方法模式 Factory Method Pattern**
 
 定义一个用于创建对象的接口，让子类决定实例化哪个产品类对象。工厂方法使一个产品类的实例化延迟到其工厂的子类。
 
@@ -286,6 +288,8 @@ private Singleton() {
 * 每增加一个产品就要增加一个具体产品类和一个对应的具体工厂类，这增加了系统的复杂度.
 
 ### 2.3 抽象工厂模式
+
+**Abstract Factory Pattern**
 
 是一种为访问类提供一个创建一组相关或相互依赖对象的接口，且访问类无须指定所要产品的具体类就能得到同族的不同等级的产品的模式结构。
 
@@ -314,7 +318,7 @@ private Singleton() {
 
 ### 2.4 原型模式
 
-原型模式的克隆分为浅克隆和深克隆.
+原型模式 **(Prototype Pattern)** 的克隆分为浅克隆和深克隆.
 
 > 浅克隆: 创建一个新对象，对于非基本类型属 性，仍指向原有属性所指向的对象的内存地址。
 >
@@ -346,7 +350,7 @@ ois.close(); // 释放资源
 
 ### 2.5 建造者模式
 
-建造者 (Builder) 模式角色:
+建造者  **(Builder)**  模式角色:
 
 * 抽象建造者类(Builder):
 * 具体建造者类(ConcreteBuilder): 实现 Builder 接口，完成复杂产品的 **各个部件** 的具体创建方法。
@@ -426,6 +430,8 @@ Phone phone = new Phone.Builder()
 ## 3. 结构型模式
 
 ### 3.1 代理模式
+
+**Proxy Pattern**
 
 1. 静态代理: 代理类在编译期就生成。
 2. 动态代理 (JDK 代理，必须依赖接口)
@@ -555,6 +561,8 @@ renter.rentHouse();
 
 ### 3.2 适配器模式
 
+**Adapter Pattern**
+
 类适配器：继承适配器。
 
 对象适配器：聚合适配器。
@@ -564,7 +572,7 @@ renter.rentHouse();
 
 ### 3.3 装饰者模式
 
-装饰 (Decorator) 模式中的角色
+装饰 **(Decorator)** 模式中的角色
 
 * 抽象构件 (component)角色 : 定义一个抽象接口以规范准备接收附加责任的对象。
 * 具体构件 (Concrete component)角色 : 实现抽象构件，通过装饰角色为其添加一些职责
@@ -592,7 +600,7 @@ renter.rentHouse();
 
 ### 3.4 桥接模式
 
-Bridge Pattern
+**Bridge Pattern**
 
 ```java
 // 实现部分的接口
@@ -669,7 +677,7 @@ public class Main {
 
 ### 3.5 外观模式
 
-外观 (Facade)模式是“迪米特法则”的典型应用。
+外观 **(Facade)** 模式是“迪米特法则”的典型应用。
 
 ```java
 // 子系统类
@@ -743,13 +751,238 @@ public class Main {
 }
 ```
 
-缺点：不符合开闭原则。
+**缺点：** 不符合开闭原则。
 
 ### 3.6 组合模式
 
+**Composite Pattern**
+
+```java
+// 组件接口
+interface Component {
+    void operation();
+}
+
+// 叶子类
+class Leaf implements Component {
+    @Override
+    public void operation() {
+        System.out.println("Leaf operation");
+    }
+}
+
+// 组合类
+class Composite implements Component {
+    private List<Component> children = new ArrayList<>();
+
+    public void add(Component component) {
+        children.add(component);
+    }
+
+    public void remove(Component component) {
+        children.remove(component);
+    }
+
+    @Override
+    public void operation() {
+        System.out.println("Composite operation");
+        for (Component component : children) {
+            component.operation();
+        }
+    }
+}
+
+// 客户端代码
+public class Main {
+    public static void main(String[] args) {
+        Component leaf1 = new Leaf();
+        Component leaf2 = new Leaf();
+        Component leaf3 = new Leaf();
+
+        Composite composite1 = new Composite();
+        composite1.add(leaf1);
+        composite1.add(leaf2);
+        
+        Composite composite2 = new Composite();
+        composite2.add(leaf3);
+        composite2.add(composite1);
+
+        composite2.operation();
+    }
+}
+```
+
+* 安全组合模式
+* 透明组合模式（Transparent Composite Pattern）是组合模式的一种变体。在透明组合模式中，组合对象和叶子对象具有相同的接口，这意味着客户端可以以相同的方式处理组合对象和叶子对象，无需进行类型检查。透明组合模式的关键在于组件接口的设计。组件接口应该包含所有可能操作的方法，无论是组合对象还是叶子对象都要实现这些方法。然而，由于叶子对象没有子组件，因此在叶子对象中实现这些方法时可以抛出一个适当的异常或者直接不进行任何操作。
+
+```java
+// 组件接口
+interface Component {
+    void operation();
+    void add(Component component);
+    void remove(Component component);
+}
+
+// 叶子类
+class Leaf implements Component {
+    @Override
+    public void operation() {
+        System.out.println("Leaf operation");
+    }
+
+    @Override
+    public void add(Component component) {
+        throw new UnsupportedOperationException("Cannot add component to a leaf");
+    }
+
+    @Override
+    public void remove(Component component) {
+        throw new UnsupportedOperationException("Cannot remove component from a leaf");
+    }
+}
+
+// 组合类
+class Composite implements Component {
+    private List<Component> children = new ArrayList<>();
+
+    @Override
+    public void operation() {
+        System.out.println("Composite operation");
+        for (Component component : children) {
+            component.operation();
+        }
+    }
+
+    @Override
+    public void add(Component component) {
+        children.add(component);
+    }
+
+    @Override
+    public void remove(Component component) {
+        children.remove(component);
+    }
+}
+
+// 客户端代码
+public class Main {
+    public static void main(String[] args) {
+        Component leaf1 = new Leaf();
+        Component leaf2 = new Leaf();
+        Component leaf3 = new Leaf();
+
+        Component composite1 = new Composite();
+        composite1.add(leaf1);
+        composite1.add(leaf2);
+
+        Component composite2 = new Composite();
+        composite2.add(leaf3);
+        composite2.add(composite1);
+
+        composite2.operation();
+    }
+}
+```
+
 ### 3.7 享元模式
 
+**Flyweight Pattern**
+
+通过共享对象来减少内存使用和提高性能。
+
+**缺点:** 为了使对象可以共享，需要将享元对象的部分状态外部化，分离内部状态和外部状态，使程序逻辑复杂。
+
+```java
+// 享元接口
+interface Flyweight {
+    void operation(String extrinsicState);
+}
+
+// 具体享元类
+class ConcreteFlyweight implements Flyweight {
+    @Override
+    public void operation(String extrinsicState) {
+        System.out.println("具体享元对象操作，外部状态为: " + extrinsicState);
+    }
+}
+
+// 享元工厂类
+class FlyweightFactory {
+    private Map<String, Flyweight> flyweights = new HashMap<>();
+
+    public Flyweight getFlyweight(String key) {
+        Flyweight flyweight = flyweights.get(key);
+        if (flyweight == null) {
+            flyweight = new ConcreteFlyweight();
+            flyweights.put(key, flyweight);
+        }
+        return flyweight;
+    }
+}
+
+// 客户端使用享元对象
+public class Client {
+    public static void main(String[] args) {
+        FlyweightFactory factory = new FlyweightFactory();
+
+        // 获取享元对象并进行操作
+        Flyweight flyweight1 = factory.getFlyweight("key1");
+        flyweight1.operation("state1");
+
+        Flyweight flyweight2 = factory.getFlyweight("key2");
+        flyweight2.operation("state2");
+
+        Flyweight flyweight3 = factory.getFlyweight("key1");
+        flyweight3.operation("state3");
+    }
+}
+```
+
 ## 4. 行为型模式
+
+### 4.1 模板方法模式
+
+**Template Method Pattern**
+
+### 4.2 命令模式
+
+**Command Pattern**
+
+### 4.3 迭代器模式
+
+**Iterator Pattern**
+
+### 4.4 观察者模式
+
+**Observer Pattern**
+
+### 4.5 状态模式
+
+**State Pattern**
+
+### 4.6 策略模式
+
+**Strategy Pattern**
+
+### 4.7 责任链模式
+
+**Chain of Responsibility Pattern**
+
+### 4.8 中介者模式
+
+**Mediator Pattern**
+
+### 4.9 备忘录模式
+
+**Memento Pattern**
+
+### 4.10 访问者模式
+
+**Visitor Pattern**
+
+### 4.11 解释器模式
+
+**Interpreter Pattern**
 
 
 
