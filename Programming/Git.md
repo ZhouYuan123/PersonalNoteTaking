@@ -259,21 +259,7 @@ doc/**/*.pdf
 
 ## 6. 分支
 
-<font color=blue>**== 远程跟踪分支 ==**</font>
-
-> 远程跟踪分支是远程分支状态的引用。它们是你无法移动的本地引用。一旦你进行了网络通信， Git 就会为你移动它们以精确反映远程仓库的状态。请将它们看做书签， 这样可以提醒你该分支在远程仓库中的位置就是你最后一次连接到它们的位置。例如， `origin/master` 。
-
-> 当克隆一个仓库时，它通常会自动地创建一个跟踪 `origin/master` 的 `master` 分支。 
-
-> 当抓取到新的远程跟踪分支时，本地不会自动生成一份可编辑的副本（拷贝）。 这种情况下，不会有一个新的本地分支——只有一个不可以修改的 `origin/master` 指针。
-
-> 从一个远程跟踪分支检出一个本地分支会自动创建所谓的“跟踪分支”（它跟踪的分支叫做“上游分支”）。 跟踪分支是与远程分支有直接关系的本地分支。`-u` 或 `--set-upstream-to` 选项运行 `git branch` 来显式地设置。
-
-```console
-$ git branch -u origin/master
-```
-
-<font color=blue>**== 分支 ==**</font>
+### 6.1 本地分支
 
 SVN分支是重量级，git分支只是创建了指针。
 
@@ -285,6 +271,8 @@ HEAD: 是一个指针。 默认指向master分支，切换分支时其实就是�
 
 master：指向的是提交。master 分支并不是一个特殊分支，是因为 git init 命令默认创建它。
 
+![branches](../imgs/git/branches.png)
+
 | 命令                                                          |                                                                                                   |
 | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | git branch                                                  | 查看本地所有分支。                                                                                         |
@@ -294,11 +282,11 @@ master：指向的是提交。master 分支并不是一个特殊分支，是因�
 | git branch -d brname                                        | 删除分支。只能删除另一个分支。没有merge无法删除。<br/>-D：强制删除。                                                          |
 | git merge hotfix                                            | 把另一个分支的内容合并过来。删除分支时会丢掉分支信息。三方合并时会创建一个新的commit。                                                    |
 | git mergetool                                               | 可视化工具。                                                                                            |
-| git branch --merged                                         | 已经合并到当前分支的分支。--no-merged: 还没有被合并的。                                    |
+| git branch --merged                                         | 已经合并到当前分支的分支。--no-merged: 还没有被合并的。                                                                |
 | git branch -v                                               | 显示每个分支最后一次commit。                                                                                 |
-| git branch -vv                                              | 查看本地分支对应的远程分支。                                                                                    |
-| git branch -r                                               | 查看远程分支。                                                                                           |
-| git branch -a                                               | 显示所有分支包括远程分支。                                                                                     |
+| git branch -vv                                              | 查看本地分支对应的跟踪分支。                                                                                    |
+| git branch -r                                               | 查看远程跟踪分支。                                                                                         |
+| git branch -a                                               | 显示所有分支包括远程跟踪分支。                                                                                   |
 | git reset HEAD^<br/>git reset HEAD~1<br/>git reset commitID | ^代表回退版本个数。<br/>1: 代表第一个提交<br/>git checkout commitID: 可以创建一个游离的分支。                                 |
 | git reflog                                                  | git的操作日志。                                                                                         |
 | git push origin --delete 分支名                                | 删除分支。                                                                                             |
@@ -326,6 +314,26 @@ graph RL
 ```
 
 **Note:** 当你试图合并两个分支时， 如果顺着一个分支走下去能够到达另一个分支，那么 Git 在合并两者的时候， 只会简单的将指针向前推进（指针右移），因为这种情况下的合并操作没有需要解决的分歧——这就叫做 “快进（fast-forward）”。
+
+### 6.2 远程跟踪分支
+
+1. 远程跟踪分支是远程分支状态的引用。它们是你无法移动的本地引用。一旦你进行了网络通信， Git 就会为你移动它们以精确反映远程仓库的状态。请将它们看做书签， 这样可以提醒你该分支在远程仓库中的位置就是你最后一次连接到它们的位置。例如， `origin/master` 。
+
+2. 当克隆一个仓库时，它通常会自动地创建一个跟踪 `origin/master` 的 `master` 分支。 
+
+3. `git fetch origin` :  从origin中抓取本地没有的数据，并且更新本地数据库，移动 `origin/master` 指针到更新之后的位置。
+
+4. 当抓取到新的远程跟踪分支时，本地不会自动生成一份可编辑的副本（拷贝）。 这种情况下，不会有一个新的本地分支——只有一个不可以修改的 `origin/master` 指针。
+
+5. 可以运行 `git merge origin/master` 将这些工作合并到当前所在的分支。 如果想要在自己的 `master` 分支上工作，可以将其建立在远程跟踪分支之上：`git checkout -b master origin/master`,这会给你一个用于工作的本地分支 `master`
+
+6. 从一个远程跟踪分支检出一个本地分支会自动创建所谓的“跟踪分支”（它跟踪的分支叫做“上游分支”）。 跟踪分支是与远程分支有直接关系的本地分支, 如果在一个跟踪分支上输入 `git pull`，Git 能自动地识别去哪个服务器上抓取、合并到哪个分支。
+
+7. 修改正在跟踪的上游分支: `-u` 或 `--set-upstream-to` 选项运行 `git branch` 来显式地设置。
+
+```console
+$ git branch -u origin/master
+```
 
 ## 7. 标签
 
@@ -540,11 +548,13 @@ master[master] --> C4
 
  C4' 和C5一模一样，区别是提交历史更加整洁。
 
+或者：在master上 `git rebase <basebranch> <topicbranch>`
+
 `git rebase --onto master server client` : 取出 `client` 分支，找出它从 `server` 分支分歧之后的补丁， 然后把这些补丁在 `master` 分支上重放一遍，让 `client` 看起来像直接基于 `master` 修改一样。
 
 **NOTE :** 如果将已经提交至某个仓库的，并且其他人也已经从该仓库拉取到的提交进行变基并再次推送，会有问题发生。
 
-**<u>合并分支：</u>**
+**<u>合并提交：</u>**
 
 ```bash
 git rebase -i commitID # 合并这个commit之后的提交(该节点不参与合并)。 -i: --interactive let the user edit the list of commits to rebase.
