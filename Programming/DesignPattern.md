@@ -570,6 +570,83 @@ renter.rentHouse();
 接口适配器：当不希望实现一个接口中所有的方法时，可以创建一个抽象类Adapter ，实现所有方
 法。而此时我们只需要继承该抽象类即可。
 
+```java
+// 类适配器
+// 目标接口
+interface Target {
+    void request();
+}
+
+// 被适配类
+class Adaptee {
+    public void specificRequest() {
+        System.out.println("Adaptee: specificRequest");
+    }
+}
+
+// 适配器类
+class Adapter implements Target {
+    private Adaptee adaptee;
+
+    public Adapter(Adaptee adaptee) {
+        this.adaptee = adaptee;
+    }
+
+    public void request() {
+        adaptee.specificRequest();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // 创建被适配类的实例
+        Adaptee adaptee = new Adaptee();
+
+        // 创建适配器并传入被适配类的实例
+        Target adapter = new Adapter(adaptee);
+
+        // 使用适配器调用目标接口的方法
+        adapter.request();
+    }
+}
+```
+
+```java
+// 接口适配器
+// 目标接口
+interface Target {
+    void method1();
+    void method2();
+    void method3();
+}
+
+// 抽象适配器类
+abstract class Adapter implements Target {
+    public void method1() { }
+    public void method2() { }
+    public void method3() { }
+}
+
+// 具体适配器类
+class ConcreteAdapter extends Adapter {
+    public void method1() {
+        System.out.println("ConcreteAdapter: method1");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // 创建具体适配器类的实例
+        Target adapter = new ConcreteAdapter();
+
+        // 调用目标接口的方法
+        adapter.method1(); // ConcreteAdapter: method1
+        adapter.method2(); // 空
+        adapter.method3(); // 空
+    }
+}
+```
+
 ### 3.3 装饰者模式
 
 装饰 **(Decorator)** 模式中的角色
@@ -944,6 +1021,47 @@ public class Client {
 
 **Template Method Pattern**
 
+```java
+// 抽象类
+abstract class AbstractClass {
+    // 模板方法
+    public void templateMethod() {
+        // 调用抽象方法或具体方法
+        step1();
+        step2();
+        step3();
+    }
+
+    // 抽象方法
+    public abstract void step1();
+    public abstract void step2();
+
+    // 具体方法
+    public void step3() {
+        System.out.println("AbstractClass: step3");
+    }
+}
+
+// 具体类
+class ConcreteClass extends AbstractClass {
+    // 实现抽象方法
+    public void step1() {
+        System.out.println("ConcreteClass: step1");
+    }
+
+    public void step2() {
+        System.out.println("ConcreteClass: step2");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        AbstractClass template = new ConcreteClass();
+        template.templateMethod();
+    }
+}
+```
+
 ### 4.2 命令模式
 
 **Command Pattern**
@@ -963,6 +1081,58 @@ public class Client {
 ### 4.6 策略模式
 
 **Strategy Pattern**
+
+```java
+// 策略接口
+interface Strategy {
+    void executeStrategy();
+}
+
+// 具体策略类1
+class ConcreteStrategyA implements Strategy {
+    @Override
+    public void executeStrategy() {
+        System.out.println("Executing strategy A");
+    }
+}
+
+// 具体策略类2
+class ConcreteStrategyB implements Strategy {
+    @Override
+    public void executeStrategy() {
+        System.out.println("Executing strategy B");
+    }
+}
+
+// 环境类
+class Context {
+    private Strategy strategy;
+
+    public void setStrategy(Strategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public void execute() {
+        if (strategy != null) {
+            strategy.executeStrategy();
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Context context = new Context();
+
+        // 使用策略A执行
+        context.setStrategy(new ConcreteStrategyA());
+        context.execute();
+
+        // 使用策略B执行
+        context.setStrategy(new ConcreteStrategyB());
+        context.execute();
+    }
+}
+```
 
 ### 4.7 责任链模式
 

@@ -13,7 +13,7 @@ Sparse Array:  一般使用在一个二维数组存储着大量无效数据的�
 - 第一行记录二维数组的行数，列数，以及有效数据的个数
 - 其他行记录每个有效数据所在的行数，列数，以及值
 
-<img src="..\imgs\algorithm\sparsearray.jpg" alt="稀疏数组" style="zoom:80%;" />
+<img src="../imgs/algorithm/sparsearray.jpg" alt="稀疏数组" style="zoom:80%;" />
 
 ### 1.2 队列
 
@@ -33,7 +33,7 @@ Sparse Array:  一般使用在一个二维数组存储着大量无效数据的�
 #### 1.3.1 单向链表
 
 1. 单向链表 **(Singly Linked List)** ，查找的方向只能是一个方向，而双向链表可以向前或者向后查找。
-2. 单向链表不能自我删除，需要靠辅助节点，而双向链表，则可以自我删除。
+2. 单向链表不能自我删除，需要靠辅助节点，而双向链表，则可以自我删除。(辅助节点通常是指向前一个节点)
 
 **头插法：**
 
@@ -62,8 +62,14 @@ public class Main {
 }
 ```
 
+<font color=blue>**单向环形链表**</font>
+
+约瑟夫问题 (Josephus problem)
+
 #### 1.3.2 双向链表
 
-**(Doubly Linked List)**
+**(Doubly Linked List)** ： 可以自我删除。
+
+
 
 ## 2. 非线性结构
