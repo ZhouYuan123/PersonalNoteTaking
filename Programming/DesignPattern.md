@@ -1066,6 +1066,70 @@ public class Main {
 
 **Command Pattern**
 
+```java
+// 命令接口
+public interface Command {
+    void execute();
+}
+
+// 具体命令类
+public class ConcreteCommand implements Command {
+    private Receiver receiver;
+    
+    public ConcreteCommand(Receiver receiver) {
+        this.receiver = receiver;
+    }
+    
+    public void execute() {
+        receiver.action();
+    }
+}
+
+// 接收者类
+public class Receiver {
+    public void action() {
+        System.out.println("接收者执行具体操作");
+    }
+}
+
+// 调用者类
+public class Invoker {
+    private Command command;
+    
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+    
+    public void executeCommand() {
+        command.execute();
+    }
+}
+
+// 客户端类
+public class Client {
+    public static void main(String[] args) {
+        // 创建接收者对象
+        Receiver receiver = new Receiver();
+        
+        // 创建具体命令对象，传入接收者对象
+        Command command = new ConcreteCommand(receiver);
+        
+        // 创建调用者对象，并设置具体命令
+        Invoker invoker = new Invoker();
+        invoker.setCommand(command);
+        
+        // 执行命令
+        invoker.executeCommand();
+    }
+}
+```
+
+命令模式的优点包括：
+
+1. 解耦调用者和接收者，使得系统更加灵活。
+2. 可以轻松实现命令的撤销、重做等功能。
+3. 可以将多个命令组合成复合命令，进行批处理。
+
 ### 4.3 迭代器模式
 
 **Iterator Pattern**
@@ -1137,6 +1201,84 @@ public class Main {
 ### 4.7 责任链模式
 
 **Chain of Responsibility Pattern**
+
+```java
+// 抽象处理者
+public abstract class Handler {
+    protected Handler nextHandler;
+    
+    public void setNextHandler(Handler nextHandler) {
+        this.nextHandler = nextHandler;
+    }
+    
+    public abstract void handleRequest(Request request);
+}
+
+// 具体处理者1
+public class ConcreteHandler1 extends Handler {
+    public void handleRequest(Request request) {
+        if (request.getType().equals("Type1")) {
+            System.out.println("ConcreteHandler1 处理了请求：" + request.getName());
+        } else {
+            if (nextHandler != null) {
+                nextHandler.handleRequest(request);
+            }
+        }
+    }
+}
+
+// 具体处理者2
+public class ConcreteHandler2 extends Handler {
+    public void handleRequest(Request request) {
+        if (request.getType().equals("Type2")) {
+            System.out.println("ConcreteHandler2 处理了请求：" + request.getName());
+        } else {
+            if (nextHandler != null) {
+                nextHandler.handleRequest(request);
+            }
+        }
+    }
+}
+
+// 请求类
+public class Request {
+    private String type;
+    private String name;
+    
+    public Request(String type, String name) {
+        this.type = type;
+        this.name = name;
+    }
+    
+    public String getType() {
+        return type;
+    }
+    
+    public String getName() {
+        return name;
+    }
+}
+
+// 客户端
+public class Client {
+    public static void main(String[] args) {
+        // 创建处理者对象
+        Handler handler1 = new ConcreteHandler1();
+        Handler handler2 = new ConcreteHandler2();
+        
+        // 设置处理者的下一个处理者
+        handler1.setNextHandler(handler2);
+        
+        // 创建请求对象
+        Request request1 = new Request("Type1", "Request1");
+        Request request2 = new Request("Type2", "Request2");
+        
+        // 发送请求
+        handler1.handleRequest(request1);
+        handler1.handleRequest(request2);
+    }
+}
+```
 
 ### 4.8 中介者模式
 
