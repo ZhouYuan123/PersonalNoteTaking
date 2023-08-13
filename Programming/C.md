@@ -572,21 +572,30 @@ printf("%d\n", sizeof(a));
 %u		// 无符号整型。
 
 int sprintf(char *buffer, const char *format [, argument] ...);
+// 把一个格式化的数据，转换成字符串
+struct S s = {"hello", 20, 5.5f };
+char buf[100] = { 0 };
+sprintf(buf, "%s %d %f", s.arr, s.age, s.f);
+printf("%s\n", buf);
 ```
 
 #### 9.2.3 scanf()
 
 ```c
 int scanf(const char *format [,argument]..);
-scanf(“%d %d”，&a, &b); //  输入函数，scanf_s是VS自带的。不能读空格。
+scanf(“%d %d”, &a, &b); //  输入函数，scanf_s是VS自带的。不能读空格。
 int sscanf(const char *buffer, const char *format [, argument ] ...);
+// 从buf字符串中还原出一个结构体数据
+struct S tmp = { 0 };
+sscanf(buf, "%s %d %f", tmp.arr, &(tmp.age), &(tmp.f));
+printf("%s %d %f\n", tmp.arr, tmp.age, tmp.f);
 
 scanf 针对标准输入的格式化的输入语句 - stdin
 fscanf 针对所有输入流的格式化的输入语句-stdin/文件
-sscanf
+sscanf 从一个字符串中读取一个格式化的数据
 printf 针对标准输出的格式化输出语句 - stdout
 fprintf 针对所有输出流的格式化输出语句- stdout/文件
-sprintf
+sprintf 把一个格式化的数据，转换成字符串
 ```
 
 
@@ -843,6 +852,8 @@ printf("%d\n", sizeof(a[3]));			// 16
 
 ### 13.1 读写
 
+字符一律以ASCII形式存储，数值型数据既可以用ASCII形式存储，也可以使用二进制形式存储。
+
 **程序文件**
 
 * 包括源程序文件 (后缀为.c)
@@ -888,8 +899,12 @@ int ret = fgetc(pf); // EOF == -1
 char arr[10] = { 0 };
 
 char *fgets(char *string, int n, FILE *stream); // n包括末尾的\0
-fgets(arr, 4, pf);
+char buffer[4];
+fgets(buffer, 4, pf);
 printf("%s\n", arr);
+while (fgets(buffer, 4, pf) != NULL) { // 读取到文件末尾返回的 NULL
+    printf("%s", buffer);
+}
 
 int fscanf(FILE *stream, const char *format [, argument ]...);
 fscanf(pf, "%s %d %f", s.arr, &(s.num), &(s.sc));
@@ -917,16 +932,16 @@ while (fread(&s, sizeof(S), 1, pf)) // 读取多个的时候
 | “a+”(读写)   | 打开一个文件，在文件尾进行读写           | 建立一个新的文件   |
 | “rb+”“wb+”“ab+” | 二进制读写        |                |
 
-| 功能           | 函数名                      | 适用于     |
-| -------------- | --------------------------- | ---------- |
-| 字符输入函数   | fgetc | 所有输入流 |
-| 字符输出函数| fputc | 所有输出流 |
-| 文本行输入函数 | fgets | 所有输入流 |
-| 文本行输出函数 | fputs | 所有输出流 |
-| 格式化输入函数 | fscanf                      | 所有输入流 |
-| 格式化输出函数 | fprintf                     | 所有输出流 |
-| 二进制输入     | fread                       | 文件       |
-| 二进制输出     | fwrite                      | 文件       |
+| 功能           | 函数名                      | 返回值                   | 适用于     |
+| -------------- | --------------------------- | ---------- | ---------- |
+| 字符输入函数   | fgetc | 字符的ASCII码值，结束时EOF | 所有输入流 |
+| 字符输出函数| fputc | 存放字符串的空间起始地址，结束时NULL | 所有输出流 |
+| 文本行输入函数 | fgets | 读取到文件末尾返回的 NULL | 所有输入流 |
+| 文本行输出函数 | fputs | ==EOF表示写入失败 | 所有输出流 |
+| 格式化输入函数 | fscanf                      |                       | 所有输入流 |
+| 格式化输出函数 | fprintf                     |                      | 所有输出流 |
+| 二进制输入     | fread                       | 如果发现读取到的完整的元素的个数小于指定的元素个数，这就是最后一次读取了. | 文件       |
+| 二进制输出     | fwrite                      |                       | 文件       |
 
 **流**
 
@@ -937,6 +952,160 @@ stderr - 标准输出流 - 屏幕
 ```
 
 ### 13.2 随机读写
+
+```c
+int fseek(FILE *stream, long offset, int origin);
+fseek(pf, -1, SEEK_CUR); // 从当前位置开始。SEEK_END, SEEK_SET:开始位置
+
+long int ftell (FILE * stream); // 返回文件偏移量
+
+void rewind(FILE * stream); // 让文件指针的位置回到文件的起始位置
+```
+
+**Sample Code**
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+int main(void)
+{
+    int c; // 注意: int，非char，要求处理EOF
+    FILE* fp = fopen("test.txt","r");
+    if(!fp) {
+        perror("File opening failed");
+        return EXIT_FAILURE; // 是一个约定俗成的常量，表示失败的退出状态码
+    }
+	// fgetc 当读取失败的时候或者遇到文件结束的时候，都会返回EOF
+    while ((c = fgetc(fp)) != EOF) // 标准C I/0读取文件循环
+    {
+        putchar(c);
+    }
+    // 判断是什么原因结束的
+    if (ferror(fp))
+        puts("I/o error when reading"); // puts方法只能用于打印字符串
+    else if (feof(fp))
+        puts("End of file reached successfully") ;
+    fclose(fp);
+}
+
+enum { SIZE = 5 };
+int main(void)
+{
+    double a[SIZE] = {1.,2.,3.,4.,5.};
+    FILE *fp = fopen("test.bin",，"wb"); // 必须用二进制模式
+    fwrite(a, sizeof *a,SIZE,fp); // 写 double 的数组
+    fclose(fp);
+    
+    double b[SIZE];
+    fp = fopen("test.bin" ,"rb");
+    size_t ret_code = fread(b,sizeof *b,SIZE,fp); // 读 double 的数组
+    if(ret_code == sIZE) {
+        puts("Array read successfu11y,  contents: ");
+        for(int n = 0; n < SIZE; ++n)
+            printf("%f", b[n]);
+        putchar('\n');
+    } else { // error handling
+        if (feof(fp))
+            printf("Error reading test.bin: unexpected end of file\n");
+        else if (ferror(fp))
+            perror("Error reading test.bin");
+	}
+    fclose(fp);
+}
+```
+
+**缓冲区**
+
+ASCII 标准采用“缓冲文件系统”处理的数据文件的，所谓缓冲文件系统是指系统自动地在内存中为程序中每一个正在使用的文件开辟一块“文件缓冲区”。从内存向磁盘输出数据会先送到内存中的缓冲区，装满缓冲区后才一起送到磁盘上。如果从磁盘向计算机读入数据，则从磁盘文件中读取数据输入到内存缓冲区(充满缓冲区)，然后再从缓冲区逐个地将数据送到程序数据区(程序变量等)。缓冲区的大小根据C编译系统决定的。
+
+`fflush(pf);`
+
+## 14. 程序环境
+
+在ANSI C的任何一种实现中，存在两个不同的环境。
+
+* 第1种是翻译环境，在这个环境中源代码被转换为可执行的机器指令 (生成解决方案)
+* 第2种是执行环境，它用于实际执行代码
+
+<img src="../imgs/C/transfer.png" style="zoom:80%;" />
+
+<img src="../imgs/C/compile.png" style="zoom:80%;" />
+
+Linux下： `gcc test.c` 默认生成一个a.out - 可执行程序
+
+```shell
+gcc -E test.c > test.i # 预处理完之后停下来, 预处理之后产生的结果放在test.i文件中
+# 都是处理一些文件操作
+# 1. 头文件的包含 (从include的原文本复制了一份)
+# 2. #define定义的符号和宏的替换
+# 3. 注释删除
+
+gcc -S test.c # 编译完之后停下来，结果保存在test.s中
+# 把C语言代码转化成汇编代码
+# 1. 语法分析
+# 2. 词法分析
+# 3. 语义分析
+# 4. 符号汇总
+
+gcc -c test.c # 汇编完之后停下来，结果保存在test.o中(elf格式) (windows叫test.obj)
+# 把汇编代码转换成了机器指令(二进制指令)
+# 1. 生成符号表。
+# 2. 生成二进制指令--> test.o,sum.0
+```
+
+链接： 1. 合并段表。2. 符号表的合并和重定位。
+
+**运行环境**
+
+程序执行的过程:
+
+1. 程序必须载入内存中。在有操作系统的环境中: 一般这个由操作系统完成。在独立的环境中，程序的载入必须由手工安排，也可能是通过可执行代码置入只读内存来完成
+2. 程序的执行便开始。接着便调用main函数
+3. 开始执行程序代码。这个时候程序将使用一个运行时的堆栈(Stack)，存储函数的局部变量和返回地址。程序同时也可以使用静态 (static) 内存，存储于静态内存中的变量在程序的整个执行过程一直保留他们的值。
+4. 终止程序。正常终止main函数;也有可能是意外终止。
+
+### 14.1 预定义符号
+
+语言内置符号。
+
+```	c
+__FILE__ //进行编译的源文件
+__LINE__ //文件当前的行号
+__DATE__ //文件被编译的日期
+__TIME__ //文件被编译的时间
+__STDC__ //如果编译器遵循ANSI C，其值为1，否则未定义
+__FUNCTION__ // 当前方法名
+    
+printf("file:%s line:%d\n", __FILE__, __LINE__);
+```
+
+#define: 定义标识符。
+
+```c
+#define M 1000
+#define reg register // 为 register这个关键字，创建一个简短的名字
+#define do_forever for(;;) // 用更形象的符号来替换一种实现
+#define CASE break;case // 在写case语句的时候自动把break写上。
+
+// 如果定义的 stuff过长，可以分成几行写，除了最后一行外，每行的后面都加一个反斜杠(续行符).
+#define DEBUG_PRINT printf("file:%s\tline:%d\t \
+		date:%s\ttime:%s\n" ,\
+		__FILE__, __LINE__ , \
+		__DATE__, __TIME__)
+
+```
+
+#define: 定义宏。#define 机制包括了一个规定，允许把参数替换到文本中，这种实现通常称为宏 (macro) 或定
+义宏 (define macro) 。
+
+```c
+#define name( parament-list ) stuff
+// 其中的 parament-list 是一个由逗号隔开的符号表，它们可能出现在stuff中
+
+#define SQUARE(X) X*X
+```
+
+
 
 
 
