@@ -8,7 +8,7 @@
 
 1972年上线，面向过程，由B语言发展而来，贝尔实验室。
 
-国际标准：C89/C90
+国际标准：C89/C90, C99, C11
 
 广泛应用于底层软件开发(OS, 驱动)。
 
@@ -29,13 +29,16 @@ int main()
 
 | 内置类型	|长度(Byte)      |
 | --------- | ---- |
-| char       | 1 |
+| char       | 1，'\0' 空字符，ASCII 码为0 |
 | short | 2 |
 | int  | 4 |
 | long      | 4 (C语言标准：sizeof(long)>=sizeof(int) 就可以了) |
-| long long | 8 |
-| float     | 4, 定义: `1.0f` |
-| double    | 8 |
+| long long (C99) | 8 |
+| float     | 4, 定义: `1.0f`，1位用于表示符号位（正负号），8位用于表示指数部分，剩余的23位用于表示尾数部分。6~7位有效数字。 |
+| double    | 8, 11位表示指数，2的52次方，16位有效数字。 |
+| long double | 8 |
+| _Complex (C99) | 复数数据类型。表示具有实部和虚部的复数数值 |
+| _Bool (C99) | 1, C99中需要引入<stdbool.h>, C11是关键字 |
 
 正整数：原码，反码，补码相同。
 
@@ -306,6 +309,11 @@ void
 ## 3. 变量与常量
 
 ### 3.1 变量
+
+只能数字字母下划线，不能数字开头。不能是保留字/关键字。
+
+命令方式：单词之间下划线或者驼峰命名法。
+
 |          | 局部变量         | 全局变量                                                   |
 | -------- | ---------------- | ---------------------------------------------------------- |
 | 位置     | 在大括号内部     | 在大括号外部                                               |
@@ -322,6 +330,8 @@ void
 | 常变量     | const 修饰的                                                 |
 | 标识符常量 | define是一个预处理指令 <br />#define MAX 1000. 定义了一个常量<br />#define ADD(X,Y) X+Y .定义了宏 (宏就是替换) 4\*ADD(2, 3) = 4\*2 + 3 |
 | 枚举常量   |                                                              |
+
+`const`： 使用const定义的常量在编译时就确定了其值，不会被修改，因此编译器可以将常量存储在只读内存区域，避免了在运行时分配内存。 从而 --》节省了内存空间，提高了访问效率，增强了代码可读性。
 
 ## 4. 字符串
 
@@ -454,29 +464,58 @@ struct A
 
 ## 7. 流程控制
 
-1. switch （整型表达式）
+1. if 语句
+
+```c
+if (condition1) {
+    // 条件1满足时执行的语句块
+} else if (condition2) {
+    // 条件1不满足，条件2满足时执行的语句块
+} else {
+    // 所有条件都不满足时执行的语句块
+}
+```
+
+2. switch （整型或者字符）
 
    ```c
    int input = 0;
-   switch (input)
-   {
+   switch (input) {
    case 1:
-       break;
+       break; // 没有break会"case穿透"
    case 2:
        break;
-   default:
+   default: // 可以不需要，可以变换顺序
    	break;        
    }
    ```
 
-2. goto: 别用。不能跨函数跳转。
+3. 循环 （可以用break，continue结束循环）
 
-3. 循环
    1. while
    2. do while
    3. for 
 
+4. goto: 别用。不能跨函数跳转。
+
 ```c
+while (条件) {
+    // 循环体，满足条件时要执行的语句
+}
+
+do {
+    // 循环体语句
+} while (条件);
+
+// for
+int i;
+for (i = 0; i < 10; i++) {
+    printf("%d ", i);
+}
+
+flag:
+	goto flag;
+
 int main()
 {
     int ch = 0;
@@ -484,13 +523,6 @@ int main()
     while((ch = getchar()) != EOF) 
         putchar(ch); // 在终端输出
     retrun 0;
-}
-flag:
-	goto flag;
-// for
-int i;
-for (i = 0; i < 10; i++) {
-    printf("%d ", i);
 }
 ```
 
@@ -598,7 +630,20 @@ fprintf 针对所有输出流的格式化输出语句- stdout/文件
 sprintf 把一个格式化的数据，转换成字符串
 ```
 
+#### 9.2.4 其他
 
+```c
+#include <math.h>
+double pow(double x, double y); // x是底数，y是指数
+
+#include <stdlib.h>
+#include <time.h>
+// 使用系统时间作为种子
+srand(time(NULL));
+for(int i = 0; i < 5; i++) {
+    printf("%d\n", rand());
+}
+```
 
 ### 9.3 字符分类函数
 
@@ -1033,24 +1078,34 @@ ASCII 标准采用“缓冲文件系统”处理的数据文件的，所谓缓�
 
 Linux下： `gcc test.c` 默认生成一个a.out - 可执行程序
 
+> Linux: 		gcc hello.c -o hello
+>
+> Windows: gcc hello.c -o hello.exe
+
 ```shell
-gcc -E test.c > test.i # 预处理完之后停下来, 预处理之后产生的结果放在test.i文件中
+# 预处理 完之后停下来, 预处理之后产生的结果放在test.i文件中
+gcc -E test.c
 # 都是处理一些文件操作
 # 1. 头文件的包含 (从include的原文本复制了一份)
 # 2. #define定义的符号和宏的替换
 # 3. 注释删除
 
-gcc -S test.c # 编译完之后停下来，结果保存在test.s中
+# 编译 完之后停下来，结果保存在test.s中
+gcc -S test.i
 # 把C语言代码转化成汇编代码
 # 1. 语法分析
 # 2. 词法分析
 # 3. 语义分析
 # 4. 符号汇总
 
-gcc -c test.c # 汇编完之后停下来，结果保存在test.o中(elf格式) (windows叫test.obj)
+# 汇编 完之后停下来，结果保存在test.o中(elf格式) (windows叫test.obj)
+gcc -c test.s
 # 把汇编代码转换成了机器指令(二进制指令)
 # 1. 生成符号表。
 # 2. 生成二进制指令--> test.o,sum.0
+
+# 链接
+gcc test.o test
 ```
 
 链接： 1. 合并段表。2. 符号表的合并和重定位。
@@ -1095,17 +1150,148 @@ printf("file:%s line:%d\n", __FILE__, __LINE__);
 
 ```
 
-#define: 定义宏。#define 机制包括了一个规定，允许把参数替换到文本中，这种实现通常称为宏 (macro) 或定
+### 14.2 宏
+
+#define: 定义宏。#define 机制包括了一个规定，允许把参数替换到**文本**中，这种实现通常称为宏 (macro) 或定
 义宏 (define macro) 。
+
+* 宏名全部大写。
+* `undef NAME` : 取消宏。
+* `gcc -test.c -D M=10` : 命令行指定宏。
 
 ```c
 #define name( parament-list ) stuff
 // 其中的 parament-list 是一个由逗号隔开的符号表，它们可能出现在stuff中
 
 #define SQUARE(X) X*X
+
+#define M 100
+int main(){
+    int a = M;
+undef M;
+    return 0;
+}
 ```
 
+在程序中扩展#define定义符号和宏时，需要涉及几个步骤。
 
+1. 在调用宏时，首先对参数进行检查，看看是否包含任何由#define定义的符号。如果是，它们首先被替换。
+2. 替换文本随后被插入到程序中原来文本的位置。对于宏，参数名被他们的值替换。
+3. 最后，再次对结果文件进行扫描，看看它是否包含任何由#define定义的符号。如果是，就重复上述处理过程。
+4. 宏参数和#define 定义中可以出现其他#define定义的常量。但是对于宏，不能出现递归。
+5. 当预处理器搜索#define定义的符号的时候，字符串常量的内容并不被搜索。（字符串中不被替换）
+
+```c
+printf("hello world\n");
+printf("hello " "world\n"); // 可以这样写，效果一样
+
+// 一个符号"#", 换成字符
+#define PRINT(X) printf("the value of "#x” is d", X);
+int main()
+{
+    int a = 10;
+    PRINT(a);
+    //the value of a is 10
+    
+    int b = 20; // the value of b is 20
+    PRINT(b);
+    printf("the value of ""b""is %d\n"，b);
+    
+    int c = 30;
+    //the value of c is 30
+    return 0;
+}
+
+// 两个符号"##", 连接
+#define CAT(X,Y) X##Y
+int main()
+{
+    int class101 = 100;
+    printf("%d\n", CAT(class, 101));// printf("%d\n", class101)); 结果100
+    return 0;
+}
+```
+
+<font color=blue>**副作用**</font>
+
+1. 每次使用宏的时候，一份宏定义的代码将插入到程序中。除非宏比较短，否则可能大幅度增加程序的长度。
+2. 宏是没法调试的
+3. 宏由于类型无关，也就不够严谨
+4. 宏可能会带来运算符优先级的问题，导致程容易出现错
+
+```c
+#define MALLOC(num, type) (type*)malloc(num*sizeof(type))
+int main()
+{
+    // malloc(10*sizeof(int));
+    // malloc(10，int);
+    int*p = MALLOC(10, int); // (int*)malloc(10 * sizeof(int));
+    return 0;
+}
+```
+
+### 14.3 条件编译
+
+```c
+#define RRINT
+int main()
+{
+#ifdef PRINT
+    printf("hehe\n");
+#endif
+    return 0;
+}
+
+1.
+#if 常量表达式
+    //... 可以嵌套#if
+#elif 常量表达式
+    //...
+#else 常量表达式
+    //...
+#endif
+
+// 由常量表达式预处理器求值。如:
+#define __DEBUG__ 1
+#if __DEBUG__
+    //...
+#endif
+
+2.
+#ifdef TEST && TEST2
+    //...
+#endif
+#ifndef TEST // 未定义
+    //...
+#endif
+#if defined(TEST)
+    //...
+#endif
+#if !defined(TEST) // 未定义
+    //...
+#endif
+```
+
+### 14.4 文件包含
+
+```c
+// 库文件包含，<>
+#include <stdio.h>
+// 本地文件包含，""
+#include "add.h"
+// "" 1.先在自己代码所在的目录下查找，如果找不到则在库函数的头文件目录下查找
+// <> 直接去库函数头文件所在的目录下查找 (安装包的头文件目录)
+
+// 防止头文件重复包含
+1.
+#pragma once
+
+2.
+#ifndef __TEST_H__
+#define __TEST_H__
+int Add( int x, int y);
+#endif
+```
 
 
 
@@ -1115,21 +1301,19 @@ printf("file:%s line:%d\n", __FILE__, __LINE__);
 
 利用C语言语法实现的函数。
 
-| name                                                         |                                                              |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| getchar();                                                   | 获取缓冲区                                                   |
-| Sleep(n);                                                    | <windows.h>                                                  |
-| system("cls");                                               | 清屏                                                         |
-| int rand(void);<br />void srand(unsigned int seed)<br />time(NULL) | <stdlib.h> 返回 [0-0xfff]<br />seed决定rand()值<br /><time.h> 返回时间戳，可以(unsigned int)time(NULL); |
-| sqrt()                                                       | 开平方。                                                     |
-| system()<br />system("shutdown -s -t 60")                    | 执行系统命令<br />60s后关机, shutdown -a取消关机。           |
-| memset()                                                     | 设置内存，可以用来修改数组。                                 |
-| strcap(desArray, srcArray);                                  | 复制字符串。<string.h>                                       |
-| size_t strlen(const char *str)                               | <string.h> 返回字符串长度。                                  |
-| assert()                                                     | 断言                                                         |
-| char * gets(char * str)                                      | 接收有空格字符串。                                           |
-| pow()                                                        | \<math.h>                                                    |
-| perror(char *)                                               | <stdlib.h>, `perror ("main");// main: xxxxxxxx`              |
+| name                                      |                                                    |
+| ----------------------------------------- | -------------------------------------------------- |
+| getchar();                                | 获取缓冲区                                         |
+| Sleep(n);                                 | <windows.h>                                        |
+| system("cls");                            | 清屏                                               |
+| sqrt()                                    | 开平方。                                           |
+| system()<br />system("shutdown -s -t 60") | 执行系统命令<br />60s后关机, shutdown -a取消关机。 |
+| memset()                                  | 设置内存，可以用来修改数组。                       |
+| strcap(desArray, srcArray);               | 复制字符串。<string.h>                             |
+| size_t strlen(const char *str)            | <string.h> 返回字符串长度。                        |
+| assert()                                  | 断言                                               |
+| char * gets(char * str)                   | 接收有空格字符串。                                 |
+| perror(char *)                            | <stdlib.h>, `perror ("main");// main: xxxxxxxx`    |
 ### 2. 标准库类型
 
 | name   |              |
