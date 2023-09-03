@@ -20,3 +20,46 @@ Error Lens. 	One Dark Pro.	Live Server(浏览器自动刷新)
    * Web APIs
      * DOM (Document Object Model——文档对象模型) 操作文档，比如对页面元素进行移动、大小、添加删除等操作
      * BOM (Browser Object Model) 操作浏览器，比如页面弹窗，检测窗口宽度、存储数据到浏览器等等
+
+## 2. 书写
+
+<font color=green>**书写位置**</font>
+
+* 内部
+
+* 外部
+* 行内
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 内联js -->
+    <button onclick="alert('逗你玩~~~')">点击我月薪过万</button>
+
+    <!-- 内部js -->
+    <!-- 放在body结束的位置，保证页面元素已经加载完了之后 -->
+    <script>
+        alert('你好，js~')
+    </script>
+
+    <!-- 外部js -->
+    <!-- 标签中间不要写代码，写的内容会被忽略 -->
+    <script src="my.js"></script>
+</body>
+</html>
+```
+
+<font color=green>**注释**</font>
+
+单行注释： `/`
+
+多行注释： `/* */`
+
+<font color=green>**语法**</font>
+
+结束符：`;` ，可以加也可以不加
