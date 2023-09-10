@@ -1082,7 +1082,7 @@ ASCII 标准采用“缓冲文件系统”处理的数据文件的，所谓缓�
 * 第1种是翻译环境，在这个环境中源代码被转换为可执行的机器指令 (生成解决方案)
 * 第2种是执行环境，它用于实际执行代码
 
-<img src="../imgs/C/transfer.png" style="zoom:80%;" />
+<img src="../imgs/C/transfer.jpg" style="zoom:80%;" />
 
 <img src="../imgs/C/compile.png" style="zoom:80%;" />
 

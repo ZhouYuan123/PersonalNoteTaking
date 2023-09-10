@@ -142,7 +142,7 @@ delete [] intArray;
 
 STL和Boost C++
 
-![](../imgs/Cpp/function.png)
+![](../imgs/Cpp/function.jpg)
 
 ### 6.2 引用
 
@@ -192,7 +192,7 @@ int main()
 // 1. 默认值可以在函数原型域定义中给出，不能在这两个位置同时出现
 // 2. 对干带参数列表的函数，必须从右向左添加默认值
 void test1(int a, int b = 5, int c = 10);
-test(1);
+test(1); // 如果存在void test1(int a);会调用这个方法
 test(1, 2);
 
 // overloading
@@ -517,9 +517,9 @@ void operation()(string test)
 对象名("AAA"); // 调用
 ```
 
-![](../imgs/Cpp/overloadoperation.png)
+![](../imgs/Cpp/overloadoperation.jpg)
 
-![](../imgs/Cpp/nooverloadoperation.png)
+![](../imgs/Cpp/nooverloadoperation.jpg)
 
 ## 10. 类型转换
 

@@ -25,8 +25,8 @@
 | --------------------------- | ------------------------------------ | ---------------- | --------------------- | ------------- | ------------------------------------ | ---------------- |
 | 快捷键设置                  | keys                                 | keymap           |                       |               |                                      |                  |
 | 提示                        |                                      |                  |                       |               | ctrl + j                             |                  |
-| 删除当前行                  | Ctrl + d                             | Ctrl + Y         | 只能 ctrl + x         | 只能 ctrl + x | ctrl + L                             |                  |
-| 复制并粘贴                  | Ctrl + alt + down [up]               | ctrl + d         | ctrl + d              |               | ctrl + d                             |                  |
+| 删除当前行                  | Ctrl + d                             | Ctrl + Y         | 只能 ctrl + x         | 只能 ctrl + x | ctrl + L                             | Ctrl + Shift + K |
+| 复制并粘贴                  | Ctrl + alt + down [up]               | ctrl + d         | ctrl + d              |               | ctrl + d                             | alt + shift + ↓  |
 | 竖向多选                    | alt + shift + a                      |                  |                       |               | alt + shif + 鼠标                    |                  |
 | 递进式选择代                | Ctrl + w                             | alt + shift +  ↑ |                       |               |                                      |                  |
 | 复制文件路径                | Ctrl + shift + C                     | /                |                       |               |                                      |                  |
