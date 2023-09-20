@@ -214,6 +214,15 @@ ifconfig: interface config
 | grep -iv ^指定字串[文件]         | 在文件中搜索字符串匹配的行并输出。<br/>-i: 不区分大小写。<br/>-v: 排除指定字串。<br/>^：以某某开头。<br/>-n：显示行号。 |
 | wc 文件 | word count: 显示行数、单词数、大小 |
 
+```shell
+find ./ -type f -name "fileName" | xargs grep "stringContent"
+// 删除
+find /path/to/directory -type f -mtime +days -delete
+find /path/to/directory -type d -mtime +days -delete
+```
+
+
+
 ### 7.6 帮助
 
 |                                              |                                                              |
@@ -232,8 +241,10 @@ ifconfig: interface config
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | gzip 文件名<br/>gunzip 文件名                                | .gz 格式。 压缩与解压缩。不能压缩目录。不保留原文件。多个文件多个压缩包。<br/>gzip -d: 也是解压缩。 |
 | tar -cvf 压缩后文件名 目录名<br />-C 指定解压到的目录        | .tar 打包文件夹。<br/>-c: 打包。-v：显示详细信息。-f: 指定文件名。-z: 打包同时压缩。-x: 解压。 |
-| zip [-r] 压缩后文件名 文件或者目录<br/>unzip -d 指定解压后的目录 | zip linux和win同时支持。-r: 压缩目录<br/>解压缩。            |
+| zip [-r] 压缩后文件名 文件或者目录<br/>unzip \<file> -d 指定解压后的目录 | zip linux和win同时支持。-r: 压缩目录<br/>解压缩。            |
 | bzip2 [-k] 文件名<br/>tar -cjvf 压缩包<br/>bunzip2 文件名<br/>tar -xjvf 压缩包 | .bz2 压缩比惊人。-k keep: 保留原文件。                       |
+| xz [-k] \<file><br />xz -9 file <br />xz -1 file             | 压缩，-k保留原文件<br />最高压缩率，压缩最慢<br/>最低压缩率，压缩最快 |
+| xz -d file.xz<br />xz -dk file.xz                            | 解压xz文件并删除压缩包<br/>解压xz文件，保留压缩包            |
 
 ### 7.7 网络
 
