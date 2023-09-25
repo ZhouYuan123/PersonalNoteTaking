@@ -46,7 +46,7 @@ shell.setSize(100，100);
 shell.open();
 shell.layout();
 while (!shell.isDisposed()){ // 进入事件循环
-	if (!display.readAndDispatch()) // 1. 首先从系统事件队列中读取消息，如果在程序的事件队列中读到事件，就将它发送到窗口去处理；2. 如果在线程交互的事件队列中有需要执行的事件，就去执行它。
+    if (!display.readAndDispatch()) // 1. 首先从系统事件队列中读取消息，如果在程序的事件队列中读到事件，就将它发送到窗口去处理；2. 如果在线程交互的事件队列中有需要执行的事件，就去执行它。
         display.sleep(); // 当前线程(UI线程)休眠。当事件队列中有新的事件传来时，UI线程会被唤醒并恢复事件循环过程。
 }
 display.dispose();
@@ -54,34 +54,34 @@ display.dispose();
 
 ```mermaid
 graph BT
-	B[Shell] -->|继承|A[Display]
+    B[Shell] -->|继承|A[Display]
 ```
 
 <font color=blue>**== 监视器 ==**</font>
 
 ```java
 Monitor monitor = display.getPrimaryMonitor(); // getMonitors(); 多个监视器
-monitor.getClientArea(); 	//  整个桌面大小
-monitor.getBounds();		//	可以显示窗口的区域(除去任务栏)
+monitor.getClientArea();     //  整个桌面大小
+monitor.getBounds();        //    可以显示窗口的区域(除去任务栏)
 ```
 
 #### 3.1 控件
 
 ```mermaid
 graph BT;
-	A[Widget];
-	B[Item];	C[Control];
-	D[TableItem]; E[Scrollable]; F[Button]; G[Lable];
-	H[Composite]; I[Text];
-	J[Tree]; 	K[Table]; 	L[Canvas];
-	M[Decorations]; N[Shell];
-	D-->B-->A;
-	J-->H;
-	K-->H;
-	N-->M-->L-->H-->E-->C-->A;
-	I-->E;
-	F-->C;
-	G-->C;
+    A[Widget];
+    B[Item];    C[Control];
+    D[TableItem]; E[Scrollable]; F[Button]; G[Lable];
+    H[Composite]; I[Text];
+    J[Tree];     K[Table];     L[Canvas];
+    M[Decorations]; N[Shell];
+    D-->B-->A;
+    J-->H;
+    K-->H;
+    N-->M-->L-->H-->E-->C-->A;
+    I-->E;
+    F-->C;
+    G-->C;
 
 ```
 
@@ -95,9 +95,11 @@ button.setImage(image);
 button.setText("Push Button");
 button.setBounds(20, 10, 150, 25);
 button.getSelection(); // 返回boolean
+
 // Button Styles:
 ARROW, CHECK, PUSH, RADIO, TOGGLE, FLAT
 UP, DOWN, LEFT, RIGHT, CENTER
+
 // Control Styles:
 BORDER
 LEFT_TO_RIGHT, RIGHT_TO_LEFT // 图片显示在文字左边，图片显示在文字右边
@@ -114,6 +116,22 @@ horLine.setBounds(10, 10, 100, 20);
 Text text = new Text(shell, SWT.BORDER);
 // SWT.READONLY 样式，这时文本框的背景色将由默认的白色变为灰色，当鼠标单击文字时仍然可以显示编辑光标，也可以拖动鼠标来选择一片文字，对只读的文本框，仍然可以使用setText来改变它的内容。
 // SWT.PASSWORD 样式，这个样式会使文本框将输入的所有文字都显示成密码字符, 可以用Text.setEchoChar方法来改变默认的密码字符.
+// SWT.MULTI可以创建一个多行文本框，
+// SWT.V_SCROLL和SWT.H_SCROLL 控制多行文本框中，是否显示竖直滚动条和水平滚动条。
+// SWT.WRAP 自动换行
+
+// verify
+final Text numberText = new Text (shell, SWT.BORDER)；
+numberText.addVerifyListener (new VerifyListener(){
+    public void verifyText (final VerifyEvent e) {
+        e.doit = false;
+    }
+}
+
+List -> 每一项是items
+SWT.MULTI 可以使items多选
+
+Coolbar 与 Toolbar 不同，可以支持拖动。
 ```
 
 <font color=blue>**== 控件继承检查 ==**</font>
@@ -148,9 +166,9 @@ PaletteData palette = new PaletteData(0xFF, OxFF00, 0xFF0000);
 //设置了RGB三种颜色的掩码
 ImageData imageData = new ImageData(48, 48, 24, palette);
 for(int x = 0; x < 48; x++)
-	for(int y = 0; y < 48; y++)
-		imageData.setPixel(x, y, 0xFF);
-		//将48*48的图像全部设置成红色
+    for(int y = 0; y < 48; y++)
+        imageData.setPixel(x, y, 0xFF);
+        //将48*48的图像全部设置成红色
 // 或者
 ImageData imageData = new ImageData("D:\\test.bmp");
 Image image = new Image(Display.getDefault(), imageData);
@@ -173,12 +191,12 @@ Font createdTahoma = new Font(display, "Tahoma", 10, SWT.BOLD);
 
 ```java
 // 系统托盘
-Tray systemTray = display.getSystemTray();  	// 不需要释放
+Tray systemTray = display.getSystemTray();      // 不需要释放
 TrayItem newItem = new TrayItem(systemTray, SWT.NONE); // 需要释放
 newItem.setImage(display.getSystemImage(SWT.ICON ERROR));
 newItem.setToolTipText("Test Tray!");
 
-final Menu menu = new Menu(shell, SWT.POP UP);
+final Menu menu = new Menu(shell, SWT.POP_UP);
 MenuItem item1 = new MenuItem(menu, SWT.PUSH);
 item1.setText("Menu Item 1");
 MenuItem item2 = new MenuItem(menu, SWT.PUSH);
@@ -198,21 +216,33 @@ shell.open();
 // 使用SWT.NO_TRIM指明了需要创建的是一个没有边框，没有标题栏的窗口。只有这样的窗口才能用setRegion来指定它的形状。
 ```
 
-
-
 ### 4. 布局 Layout
+
+1. No Layout: AbsoluteLayout
+
+2. FillLayout: 从左到右，或者从上到下布局。组件平均大小
+
+3. RowLayout: 通过RowData 给每个组件自定义大小。
+   
+   1. fill: 每行中组件高度是否一致
+   
+   2. justify：每行中组件间距是否相等
+   
+   3. pack：如果false，取组件公共最大高宽，所有组件同样大小。
+
+4. GridLayout：GridLayout会将容器的空间划分为网格(Grid), Grid的列数由属性numColumns指定,而行数则由numColumns和子控件的个数共同决定。
 
 ### 5. 事件 Event
 
-| 监听器             | 事件名         | 描述                                             |
-| ------------------ | -------------- | ------------------------------------------------ |
-| MouseListener      | MouseEvent     | 监听鼠标按钮按下的事件                           |
-| MouseMoveListener  | MouseEvent     | 监听鼠标移动事件                                 |
-| MouseTrackListener | MouseEvent     | 监听鼠标进入、离开事件源的事件                   |
-| KeyListener        | KeyEvent       | 监听按键事件                                     |
-| ControlListener    | ControlEvent   | 监听控件尺寸或位置改变的事件                     |
-| DisposeListener    | DisposeEvent   | 监听控件被销毁(Dispose)的事件                    |
-| FocusListener      | FocusEvent     | 监听控件得到焦点的事件                           |
+| 监听器                | 事件名            | 描述                        |
+| ------------------ | -------------- | ------------------------- |
+| MouseListener      | MouseEvent     | 监听鼠标按钮按下的事件               |
+| MouseMoveListener  | MouseEvent     | 监听鼠标移动事件                  |
+| MouseTrackListener | MouseEvent     | 监听鼠标进入、离开事件源的事件           |
+| KeyListener        | KeyEvent       | 监听按键事件                    |
+| ControlListener    | ControlEvent   | 监听控件尺寸或位置改变的事件            |
+| DisposeListener    | DisposeEvent   | 监听控件被销毁(Dispose)的事件       |
+| FocusListener      | FocusEvent     | 监听控件得到焦点的事件               |
 | SelectionListener  | SelectionEvent | 监听控件被选中(按钮被单击，复选框被勾选等)的事件 |
 
 ### 6. 图形类与系统资源管理
@@ -228,26 +258,26 @@ SWT使用单线程模式。
 Display维护了一个自定义的事件队列，这个队列就是用来供后台线程和UI线程同步的。后台线程用Runnable对象将绘图操作包装起来，然后将对象插入事件队列中，这样Display执行消息循环时就会执行这些操作了。
 
 > Display.syncExec(Runnable runnable)
->
+> 
 > > 同步调用。调用这个方法会通知UI线程在下一次事件循环时执行runnable参数的run方法。调用这个方法的线程将被阻塞到runnable执行完成为止。如果参数是null，调用这个函数会唤醒休眠中的UI线程。
->
+> 
 > Display.asyncExec(Runnable runnable)
->
+> 
 > > 异步调用。调用这个方法会通知UI线程在下一次事件循环时执行runnable参数的run方法。调用这个方法的线程不会被阻塞，而且在runnable执行完成后不会得到通知。如果参数是nul1，调用这个函数会唤醒休眠中的UI线程。
 
 ```java
 button.addSelectionListener(new SelectionAdapter() {
-	public void widgetSelected(final SelectionEvent e){
+    public void widgetSelected(final SelectionEvent e){
         Thread thread = new Thread() {
             public void run(){
                 try{
-					Thread.sleep(10000);
+                    Thread.sleep(10000);
                 } catch (InterruptedException el) {
                     el.printStackTrace();
                 }
                 display.syncExec(new Runnable() {
-					public void run(){
-						button.setText("Execution Done");
+                    public void run(){
+                        button.setText("Execution Done");
                     }
                 }
             }
