@@ -23,6 +23,24 @@ Error Lens. 	One Dark Pro.	Live Server(浏览器自动刷新)
      * DOM (Document Object Model——文档对象模型) 操作文档，比如对页面元素进行移动、大小、添加删除等操作
      * BOM (Browser Object Model) 操作浏览器，比如页面弹窗，检测窗口宽度、存储数据到浏览器等等
 
+<font color=green>**JS执行机制**</font>
+
+JavaScript 语言的一大特点就是单线程。因为诞生的使命就是操作DOM，需要单线程。
+
+HTML5 提出 Web Worker 标准，允许JavaScript 脚本创建多个线程，出现：
+
+* 同步任务: 都在主线程上执行，形成一个执行栈。
+* 异步任务: 相关添加到任务队列中.
+  1. 普通事件，如 click、resize 等
+  2. 资源加载，如 load、error 等
+  3. 定时器，包括 setlnterval、setTimeout 等
+
+执行顺序（重复执行 --> 时间循环）：
+
+1. 先执行执行栈中的同步任务
+2. 异步任务放入任务队列中
+3. 一旦执行栈中的所有同步任务执行完毕，系统就会按次序读取任务队列中的异步任务，于是被读取的异步任务结束等待状态，进入执行栈，开始执行。
+
 ## 2. ECMAScript
 
 ### 2.1 书写
@@ -181,6 +199,16 @@ arr.unshift(元素1, ..., 元素n) // 在数组开头添加数据，返回该数
 arr.pop() // 删除数组最后一个元素，返回删除元素，空数组返回undefined
 arr.shift() // 删除数组第一个元素，返回删除元素，空数组返回undefined
 arr.splice(startIndex, deleteCount) // 指定删除，批量删除
+
+// 遍历数组并返回新的数组
+const newArr = arr.map(function(ele, index) {
+    console.log(ele) // 数组元素
+    console.log(index) // 数组索引号
+    return ele + '处理后的' // 返回添加到新的数组中
+})
+
+// 把数组中的所有元素转换一个字符串
+const str = arr.join('分隔符')
 ```
 
 `typeof 变量` , `typeof(变量)` ：数据类型
@@ -190,7 +218,7 @@ arr.splice(startIndex, deleteCount) // 指定删除，批量删除
 ``` js
 let obj = {
     key1: value1, // 属性名尽量不要叫 'name'
-    'key-2': value2
+    'key-2': value2,
     sayHi: function() { // 对象里面叫方法
         document.write('hi~~')
     }
@@ -400,6 +428,7 @@ fn()
 (function () {
     console.log(11)
 }());
+!function(){}()
 ```
 
 **Debug:**
@@ -422,10 +451,11 @@ fn()
 >
 > 变量访问：就近原则
 
-#### 2.7.2 间歇函数
+#### 2.7.2 内置函数
 
 ```html
 <script>
+    // 1. 间歇函数
     // 定时器: setInterval(函数，间隔时间)
 	setInterval(function(){
        console.log('一秒执行一次')
@@ -438,25 +468,132 @@ fn()
     let n = setInterval(fn, 1000) // 返回定时器序号
     clearInterval(n) // 关闭定时器
     n = setInterval(fn, 1000) // 重开定时器
+
+    // 2. 延迟函数
+    setTimeout(回调函数，等待的毫秒数)
 </script>
 ```
+
+### 2.8 正则表达式
+
+正则表达式(Reqular Expression)是用于匹配字符串中字符组合的模式。在Javacript中，正则表达式也是对象。
+
+```js
+// 1. 定义规则
+const regObj = /表达式/;
+// 2. 检查
+regObj.test(被检测的字符串); // true or false
+regObj.exec(被检测的字符串); // null or 数组
+```
+
+<font color="green">**元字符 (特殊字符)**</font>
+
+1. 边界符 (表示位置，开头和结尾，必须用什么开头，用什么结尾 )
+
+   1. `^` : 以某某开始，`^a`
+   2. `$` : 以某某结束，`a$` :
+   3. `^a$` : `^$`一起表示精确匹配，只能匹配只有一个a的
+
+2. 量词 (表示重复次数)
+
+   | 符号  | 示例   | 解释                  |
+   | ----- | ------ | --------------------- |
+   | *     | (abc)* | 0次或多次             |
+   | +     | [abc]+ | 1次或多次             |
+   | ？    |        | 0次或1次              |
+   | {n}   |        | n次。(字符不重复匹配) |
+   | {n,}  |        | 大于等于3             |
+   | {n,m} |        | n到m (贪婪匹配)       |
+
+3. 字符类 (比如\d 表示0~9)
+
+   1. `.` : 除了换行所有
+   2. `[abc]` : 匹配一个字符
+   3. `-` : 连字符，`[a-zA-Z]`   ，如果在最后则没有特殊含义，代表字符本身
+   4. `|` : `abc | ABC`
+	5. 预定义类
+
+	| 符号 | 示例 | 解释                             |
+	| ---- | ---- | -------------------------------- |
+	| \\d  |      | 匹配单个数字字符，相当于[0-9]    |
+	| \\D  |      | 单个非数字字符，相当于\[^0-9]    |
+	| \\w  |      | 相当于[0-9a-zA-Z]                |
+	| \\W  |      | 相当于\[^0-9a-zA-Z]              |
+	| \\s  |      | 匹配空白字符, 相当于[\t\r\n\v\f] |
+	| \\S  |      | 匹配非空白                       |
+
+<font color="green">**修饰符**</font>
+
+修饰符约束正则执行的某些细节行为，如是否区分大小写、是否支持多行匹配等
+
+```js
+/表达式/修饰符
+
+// ignore 不区分大小写
+/表达式/i
+// global 全局匹配
+/表达式/g
+
+字符串.replace(/正则表达式/i, "替换的文本'); // 替换一个
+字符串.replace(/正则表达式/ig, "替换的文本');// 替换所有
+```
+
+
 
 ## 3. WebAPI
 
 ### 3.1 DOM
 
-#### 3.1.1 属性
-
 操作网页内容。
 
 **DOM树：** 文档树直观的体现了标签与标签之间的关系。
-
-![](../imgs/js/DOM_tree.jpg)
 
 **DOM对象:**  浏览器根据html标签生成的JS对象
 
 * 所有的标签属性都可以在这个对象上面找到
 * 修改这个对象的属性会自动映射到标签身上
+
+#### 3.1.1 DOM节点
+
+![](../imgs/js/DOM_tree.jpg)
+
+* 元素节点
+  * 所有的标签 比如 body、 div
+  * html是根节点
+* 属性节点
+  * 所有的属性比如href
+* 文本节点
+  * 所有的文本
+* 其他
+
+<font color="green">**节点操作**</font>
+
+```html
+<script>
+    // 查找父节点，找不到返回null
+    子元素.parentNode
+    父元素.children
+    // 查找下一个兄弟节点
+    ele.nextElementSibling
+    ele.previousElementSibling
+
+    // 创造一个节点
+    const ele = document.createElement(标签名)
+    // 插入到这个父元素的最后
+    父元素.appendChild(ele);
+    父元素.insertBefore(要插入的元素，在哪个元素前面);
+
+    // 克隆一个已有的元素节点, 默认false, ture: 复制所有子节点
+    元素.cloneNode(布尔值)
+
+    // 删除节点
+    父元素.removeChild(要删除的元素)
+</script>
+```
+
+
+
+#### 3.1.2 属性
 
 <font color="green">**查找**</font>
 
@@ -517,7 +654,7 @@ html5推出的，以 'data-' 开头，在DOM对象上一律以dataset对象方�
 </script>
 ```
 
-#### 3.1.2 事件
+#### 3.1.3 事件
 
 ```html
 <script>
@@ -541,6 +678,16 @@ html5推出的，以 'data-' 开头，在DOM对象上一律以dataset对象方�
 </script>
 ```
 
+<font color="green">**M端事件**</font>
+
+| 触屏touch事件 | 说明                            |
+| ------------- | ------------------------------- |
+| touchstart    | 手指触摸到一个 DOM 元素时触发   |
+| touchmove     | 手指在一个 DOM 元素上滑动时触发 |
+| touchend      | 手指从一个 DOM 元素上移开时触发 |
+
+
+
 | 事件类型               |                                      |
 | ---------------------- | ------------------------------------ |
 | 'click'                | 点击的时候出发                       |
@@ -549,6 +696,7 @@ html5推出的，以 'data-' 开头，在DOM对象上一律以dataset对象方�
 | focus, blur            |                                      |
 | Keydown, Keyup         |                                      |
 | input                  | 输入的时候                           |
+| change                 | 元素值发生变化并且失去焦点后触发     |
 
 | 事件对象属性 |                                    |
 | ------------ | ---------------------------------- |
@@ -576,12 +724,35 @@ html5推出的，以 'data-' 开头，在DOM对象上一律以dataset对象方�
 <script>
     window.addEventListener('scroll', function() {
         // 只要有滚动就会触发
+        // document.documentElement 获取html元素
+        document.documentElement.scrollTop // 页面已经被卷去的头部像素，可读写
     });
 
+    div.addEventListener('scroll', function() {
+        // 可以是overflow：scroll的div元素
+        div.scrollTop // 已经被卷去的头部像素，可读写
+        div.scrollLeft
+    });
+
+    元素.scrollTo(x,y) // 滚动到指定位置
+    window.scrollTo(0, 0) // 返回顶部
+    document.documentElement.scrollTop = 0 // 返回顶部
 </script>
 ```
 
+<font color=green>**页面尺寸事件**</font>
 
+```html
+<script>
+    window.addEventListener('resize', function () {
+        // 浏览器窗口大小发生变化的时候触发的事件
+    });
+    const div = document.querySelector('div')
+    div.clientWidth // 宽度 (内容 + padding)(只读)
+    div.offsetWidth // 宽度 (内容 + padding + border + margin + scroll) (只读)
+    div.offsetLeft // 获取元素距离自己定位父级元素的 左距离(只读)
+</script>
+```
 
 **this** : 指向调用的对象
 
@@ -596,6 +767,10 @@ html5推出的，以 'data-' 开头，在DOM对象上一律以dataset对象方�
 DOM.addEventListener(事件类型，事件处理函数，是否使用捕获机制) // true就是捕获，默认false
 事件对象.stopPropagation() // 阻止冒泡
 事件对象.preventDefault() // 阻止默认行为，例如阻止表单提交
+表单对象.addEventListener('submit', function (e) {
+    // 阻止默认行为 不跳转
+    e.preventDefault()
+})
 ```
 
 <font color=green>**事件委托**</font>
@@ -605,9 +780,97 @@ DOM.addEventListener(事件类型，事件处理函数，是否使用捕获机�
 ```js
 // 点击每个<li>变红
 const ul = document.querySelector('ul')
-ul.addEventListener('click', function(e){
-    e.target.style.color = 'red'
+ul.addEventListener('click', function(e) {
     // e.target.tagName 标签名字
+    if (e.target.tagName == 'A') {
+        e.target.style.color = 'red'
+    }
 }
+```
+
+#### 3.1.4 时间对象
+
+```html
+<script>
+    const date = new Date(); 			// 当前时间
+    const date = newDate('2022-5-1');	// 指定时间
+    date.getFullYear();		// 2023
+    date.getMonth();		// 0 ~ 11
+    date.getDate();
+	date.getDay();			// 0 ~ 6
+	date.getHours();		// 0 ~ 23
+	date.getMinutes();		// 0 ~ 59
+	date.getSeconds();
+
+    date.toLocaleString();		// 2023/9/24 03:56:48
+    date.toLocaleDateString(); 	// 2023/9/24
+    date.toLocaleTimeString(); 	// 03:56:48
+
+    // 获得时间戳。是指1970年01月01日00时00分00秒起至现在的毫秒数
+    date.getTime();
+    +new Date();
+    Date.now();
+</script>
+```
+
+#### 3.1.5 插件
+
+https://www.swiper.com.cn/  --> 下载zip --> package --> css, js --> 在线演示 --> 新窗口打开 --> CV
+
+### 3.2 BOM
+
+![](../imgs/js/bom.jpg)
+
+* window对象是一个全局对象。
+* 像document、alert()、console.log() 这些都是window的属性，基本BOM的属性和方法都是window的。
+* 所有通过var定义在全局作用域中的变量、函数都会变成window对象的属性和方法。
+* window对象下的属性和方法调用的时候可以省略window。
+
+#### 3.2.1 window中对象
+
+```html
+<script>
+    // 1. location
+    // 直接页面跳转
+    location.href = 'http://www.baidu.com'
+    // search 属性获取地址中携带的参数，符号?后面部分
+    // hash 属性获取地址中的哈希值，符号#后面部分
+
+    location.reload(); // 刷新当前页面，参数 true 时表示强制刷新 (不是本地，而是从服务器重新获取)
+
+    // 2. navigator
+    navigator.userAgent // 浏览器信息
+
+    // 3. history
+    history.back()
+    history.forward()
+    history.go(number) // 1前进1个页面, -1后退1个页面
+</script>
+```
+
+#### 3.2.2 本地存储
+
+Application --> Storage
+
+sessionStorage和localStorage约 5M左右
+
+localStorage: 持久化在本地计算机之中。
+
+sessionStorage: 关闭浏览器消失。
+
+```html
+<script>
+    // 键值都为字符串类型
+    localStorage.setItem(key, value);
+    localStorage.getItem(key);
+    localStorage.removeItem(key);
+
+    const obj = { uname :'name'};
+    // 复杂类型要用json string存储，否则无法使用 [object Object]
+    localStorage.setItem('obj', JSON.stringify(obj));
+    JSON.parse(localStorage.getItem(key));
+
+    // ID重复问题：新增加的ID应该是最后一条数据的ID + 1
+</script>
 ```
 
