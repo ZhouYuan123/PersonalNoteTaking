@@ -652,6 +652,11 @@ for(int i = 0; i < 5; i++) {
 int isdigit(int c); // 如果是数字字符返回非0的值，如果不是数字字符，返回0
 int tolower(int c);
 int toupper(int c);
+int atoi(char *);	 // 字符串转int
+int isspace(char *); // 是否是空白字符，<ctype.h>
+while (isspace(*s)){
+    s++;  // 判断字符串不包含任何空白字符
+}
 ```
 
 ### 9.3 内联函数
@@ -1116,6 +1121,7 @@ gcc -c test.s
 
 # 链接
 gcc test.o test
+# 1. 发现函数未定义
 ```
 
 链接： 1. 合并段表。2. 符号表的合并和重定位。
@@ -1172,6 +1178,7 @@ printf("file:%s line:%d\n", __FILE__, __LINE__);
 ```c
 #define name( parament-list ) stuff
 // 其中的 parament-list 是一个由逗号隔开的符号表，它们可能出现在stuff中
+// 宏的执行速度比函数快。
 
 #define SQUARE(X) X*X
 
@@ -1303,8 +1310,6 @@ int Add( int x, int y);
 #endif
 ```
 
-
-
 ## NOTE:
 
 ### 1. 库函数
@@ -1329,8 +1334,6 @@ int Add( int x, int y);
 | name   |              |
 | ------ | ------------ |
 | size_t | unsigned int |
-|        |              |
-|        |              |
 
 ### 3. 库文件
 
@@ -1338,6 +1341,5 @@ int Add( int x, int y);
 | ------- | ------------------------ |
 | float.h | 定义浮点数最大最小值。   |
 | limis.h | 定义整数类型最大最小值。 |
-|         |                          |
 
 # THE END

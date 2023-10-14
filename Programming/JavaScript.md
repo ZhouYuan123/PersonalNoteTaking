@@ -396,6 +396,78 @@ Math.random() // 生成[0-1)之间的随机数 (包含0不包括1)
 Math.floor(Math.random() * (max - min + 1)) + min; // [min, max] 之间的数
 ```
 
+### 2.5 原型
+
+![](../imgs/js/proto.jpg)
+
+<font color="green">***原型对象：prototype***</font>
+
+能够利用原型对象实现方法共享
+
+* 构造函数通过原型分配的函数是所有对象所共享的
+* JavaScript 规定，每一个构造函数都有一个 prototype 属性，指向另一个对象，所以我们也称为原型对象
+* 这个对象可以挂载函数，对象实例化不会多次创建原型上函数，节约内存
+* 我们可以把那些不变的方法，直接定义在 prototype 对象上，这样所有对象的实例就可以共享这些方法
+* 构造函数和原型对象中的this 都指 实例化的对象
+* 每个原型对象中都有一个constructor, 该属性指向原构造函数。
+
+```js
+function Person() {
+  this.name = "John";
+}
+
+Person.prototype.sayHello = function() {
+  this // 这里this还是指向Person对象
+  console.log("Hello, my name is " + this.name);
+};
+```
+
+<font color="green">***对象原型：\_\_proto\_\_***</font>
+
+每个实例对象都会有一个属性\_\_proto\_\_指向构造函数的 prototype 原型对象, 只读的。
+
+* \_\_proto\_\_是JS非标准属性
+* [[prototype]]和\_\_proto\_\_意义相同
+* 用来表明当前实例对象指向哪个原型对象prototype
+* \_\_proto\_\_对象原型里面也有一个 constructor属性，指向创建该实例对象的构造函数
+
+```js
+实例对象.__proto__ === Person.prototype
+```
+
+<font color="green">***原型继承***</font>
+
+JavaScript 中大多是借助原型对象实现继承。
+
+```js
+// 父类
+function Person() {
+    this.eyes = 2;
+    this.head = 1;
+}
+
+function Woman() {
+    this.name = "John";
+}
+Woman.prototype = new Person(); // 继承
+Woman.prototype.constructor = Woman; // 指回构造
+// 给Woman类新加方法
+Woman.prototype.newMethod = function() {
+
+}
+
+Man.prototype = new Person(); // 继承
+Man.prototype.constructor = Man; // 指回构造
+// 给Man类新加方法
+Man.prototype.newMethod = function() {
+
+}
+```
+
+<font color="green">***原型链***</font>
+
+`instanceof` : 本质是prototype属性是否出现在某个实例对象的原型链上.
+
 ### 2.6 运算符
 
 **赋值运算符：**`+=,-=,*=,/=,%=`

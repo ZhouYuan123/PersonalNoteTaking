@@ -1,12 +1,12 @@
 # 数据结构与算法
 
-程序 = 数据机构 + 算法
+程序 = 数据结构 + 算法
 
 ## 1. 线性结构
 
 顺序存储结构，链式存储结构。
 
-### 1.1 稀疏数组
+<font color=green>**稀疏数组**</font>
 
 Sparse Array:  一般使用在一个二维数组存储着大量无效数据的场景中。
 
@@ -15,13 +15,13 @@ Sparse Array:  一般使用在一个二维数组存储着大量无效数据的�
 
 <img src="../imgs/algorithm/sparsearray.jpg" alt="稀疏数组" style="zoom:80%;" />
 
-### 1.2 队列
+<font color=green>**队列**</font>
 
 队列是一个有序列表，可以用数组或是链表来实现。
 
 遵循先入先出的原则。
 
-### 1.3 链表
+<font color=green>**链表**</font>
 
 **Linked List：**
 
@@ -30,7 +30,7 @@ Sparse Array:  一般使用在一个二维数组存储着大量无效数据的�
 3. 链表的各个节点不一定是连续存储.
 4. 带头节点或者不带
 
-#### 1.3.1 单向链表
+<font color=green>**单向链表**</font>
 
 1. 单向链表 **(Singly Linked List)** ，查找的方向只能是一个方向，而双向链表可以向前或者向后查找。
 2. 单向链表不能自我删除，需要靠辅助节点，而双向链表，则可以自我删除。(辅助节点通常是指向前一个节点)
@@ -66,10 +66,12 @@ public class Main {
 
 约瑟夫问题 (Josephus problem)
 
-#### 1.3.2 双向链表
+<font color=green>**双向链表**</font>
 
 **(Doubly Linked List)** ： 可以自我删除。
 
+<font color=green>**栈**</font>
 
+stack : FILO-First In Last Out,  栈顶Top,  栈底Bottom
 
 ## 2. 非线性结构
