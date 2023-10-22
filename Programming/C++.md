@@ -18,15 +18,19 @@ int main()
 }
 ```
 
+## 2. 与C
+
+C++是C语言的超集，任何有效的C程序都是有效的C++程序。
+
+C提供了低级硬件访问，OOP提供了高级抽象。
+
+**头文件**
+
 转换后的C加上前缀C，没有扩展名，例如 `cstdio`, `cmath`，`ctype`等。
 
 `#include <cstdio> ` : `cstdio` 源文件中还是 `#include <stdio.h> `
 
 `\n ` 与 `endl` : 前者只换行，后者换行并 + `fflush(stdin)`(立即输出)
-
-## 2. 与C
-
-主存(main memory)也叫随机访问存储器RAM(Random Access Memory)
 
 新的数据类型string。
 
