@@ -10,89 +10,69 @@
 
 集中式版本控制系统（Centralized Version Control Systems), 分布式版本控制系统（Distributed Version Control Systems）。
 
-<font color=blue>**==GIT, GitHub 与 GitLab==**</font>
-
-* Git是一个版本控制软件
-
-* GitHub与GitLab都是用于管理版本的服务端软件
-
-* GitHub提供免费服务(代码需公开)及付费服务(代码为私有)
-
-* GitLab用于在企业内部管理Git版本库,功能上类似于GitHub
-  SVN只有一个版本库(commit ID 可以自增)(本地只有代码), Git有多个版本库 （commit ID是一个摘要值，这个值通过sha1计算出出来的）。  本地建立版本库，会有一个全量变化而不是增量(SVN)的变化。
-
 ## 2. 安装与配置
 
 地址： https://git-scm.com/downloads
 
-<font color=blue>**==帮助==**</font>
+`git --version` : 查看安装的Git版本
 
-```shell
-git help <verb>
-git <verb> --help
-man git-<verb>
-```
-
-`git add -h` : -h：只显示可用选项
+1. /etc/gitconfig (系统）, git config --system
+2. ~/.gitconfig (用户) , git config --global
+3. .git/config (仓库) , git config --local
 
 user.name与user.email的设置。
 
 ```shell
 git config --global user.name "John Doe"
 git config --global user.email johndoe@example.com
+git config --local --unset user.name             # 取消配置
 ```
 
-1. /etc/gitconfig (系统）, git config --system
-2. ~/.gitconfig (用户) , git config --global
-3. .git/config (仓库) , git config --local
+```shell
+git config --list [--show-origin]    # 查看config信息。配置所在文件。
+git config [--system] user.name     # 检查某一项配置
 
-| 命令                                                                                        |                                                                |
-| ----------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| git --version                                                                             | 查看安装的Git版本                                                     |
-| git config                                                                                | 打开使用方式说明                                                       |
-| git config --list [--show-origin]<br />git config [--system] -l <br/>git config user.name | 查看config信息。配置所在文件。<br />看config所有信息<br />看config中的user.name的值。 |
-| git config --local user.name '李四'<br />git config --local --unset user.name               | 配置<br />取消                                                     |
-| git config --global core.editor                                                           | 设置编辑器                                                          |
+git help <verb>
+git <verb> --help
+man git-<verb>
+git add -h:                 # -h：只显示可用选项
+```
 
 ## 3. 仓库
 
-### 3.1 本地库
+**生成本地库**
 
 1. 新建一个文件夹。
-
-2. git init: 创建了当前文件夹的git仓库。
-   
+2. git init: 创建了当前文件夹的git仓库, 生成 `.git` 目录。
    1. **.get目录下：管理了git。**（如果.git被删除，就不是一个GIT管理的仓库）
    2. git init --bare 创建一个裸库，原 .git 目录下的文件在当前目录下
-
 3. git clone 地址 [自定义名字]：新建了一个文件夹的git仓库
 
-| .git目录      |                                            |
-| ----------- | ------------------------------------------ |
-| hooks/      | 客户端或服务端的钩子脚本                               |
+| .git目录    |                                                                        |
+| ----------- | ---------------------------------------------------------------------- |
+| hooks/      | 客户端或服务端的钩子脚本                                               |
 | info/       | 包含全局性排除文件, 放置那些不希望被记录在 .gitignore 文件中的忽略模式 |
-| logs/       | 日志                                         |
-| objects/    | Git 数据库。<br />树对象，总是覆盖。<br />提交对象，         |
-| refs/       | 表示一系列的引用，保存包含`heads`、`remote`、`tags`等目录    |
-| refs/heads/ | 保存了分支以及其对应的提交对象(对象文件值存hash值)。              |
-| config      | 保存了本地仓库的配置信息                               |
-| description | 仅供 GitWeb 程序使用，我们无需关心。                     |
-| HEAD        | 它是一个指针，指向当前所在的本地分支, 例如ref: refs/heads/test |
-| index       | 存储的是暂存区内容                                  |
+| logs/       | 日志                                                                   |
+| objects/    | Git 数据库。<br />树对象，总是覆盖。<br />提交对象，                   |
+| refs/       | 表示一系列的引用，保存包含 `heads`、`remote`、`tags`等目录       |
+| refs/heads/ | 保存了分支以及其对应的提交对象(对象文件值存hash值)。                   |
+| config      | 保存了本地仓库的配置信息                                               |
+| description | 仅供 GitWeb 程序使用，我们无需关心。                                   |
+| HEAD        | 它是一个指针，指向当前所在的本地分支, 例如ref: refs/heads/test         |
+| index       | 存储的是暂存区内容                                                     |
 
-### 3.2 远程库
+**远程库**
 
-| git仓库                         |                                         |
-| ----------------------------- | --------------------------------------- |
+| git仓库                       |                                                                   |
+| ----------------------------- | ----------------------------------------------------------------- |
 | git remote                    | 列出所有指定的远程仓库的简写。例：origin。“origin” 并无特殊含义 |
-| git remote -v                 | 显示需要读写远程仓库使用的 Git 保存的简写与其对应的 URL        |
-| git remote add short_name url | 添加一个新的远程 Git 仓库。                        |
-| git fetch \<remote>           | 从远程仓库中获得数据.                             |
-| git push short_name branch    | 推送到远程仓库。                                |
-| git remote show short_name    | 查看远程仓库信息。                               |
-| git remote rename name1 name2 |                                         |
-| git remote remove short_name  | 移除仓库。                                   |
-| git fetch \<origin>           | 同步远程仓库数据                                |
+| git remote -v                 | 显示需要读写远程仓库使用的 Git 保存的简写与其对应的 URL           |
+| git remote add repoName url   | 添加一个新的远程 Git 仓库。                                       |
+| git fetch\<repoName>          | 从远程仓库中获得数据.同步远程仓库数据                             |
+| git push repoName branch     | 推送到远程仓库。                                                  |
+| git remote show repoName      | 查看远程仓库信息。                                                |
+| git remote rename name1 name2 |                                                                   |
+| git remote remove repoName    | 移除仓库。                                                        |
 
 ## 4. 文件状态周期
 
@@ -107,7 +87,7 @@ graph LR;
     B -->|git stash|A;
 
     C -->|git restore --staged file|B;
-    C -->|git reset HEAD|B;
+    C -->|git reset HEAD|B;
 
     D -->|git reset --soft|C;
     D -->|"git reset [--mixed] HEAD [file]"|B;
@@ -123,19 +103,17 @@ graph LR;
 `git reset`:
 
 * --hard：重置位置的同时，直接将 working Tree工作目录、 index 暂存区及 repository 都重置成目标Reset节点的內容,所以效果看起来等同于清空暂存区和工作区。
-
 * --soft：重置位置的同时，保留working Tree工作目录和index暂存区的内容，只让repository中的内容和 reset 目标节点保持一致，因此原节点和reset节点之间的【差异变更集】会放入index暂存区中(Staged files)。所以效果看起来就是工作目录的内容不变，暂存区原有的内容也不变，只是原节点和Reset节点之间的所有差异都会放到暂存区中。
-
 * --mixed（默认）：重置位置的同时，只保留Working Tree工作目录的內容，但会将 Index暂存区 和 Repository 中的內容更改和reset目标节点一致，因此原节点和Reset节点之间的【差异变更集】会放入Working Tree工作目录中。所以效果看起来就是原节点和Reset节点之间的所有差异都会放到工作目录中。
 
-对于git restore <file>命令，会撤销文件的修改，使文件恢复到暂存区或本地代码库(取决于文件在修改前的状态)；
+对于git restore `<file>`命令，会撤销文件的修改，使文件恢复到暂存区或本地代码库(取决于文件在修改前的状态)；
 
-| add               | 工作区 --> 暂存区      |
-| ----------------- | ---------------- |
-| git add file_name |                  |
-| git add .         | 提交所有改动           |
-| git add \*        | 提交所有，越过gitignore |
-| git add -i        | 交互式暂存            |
+| add               | 工作区 --> 暂存区       |
+| ----------------- | ----------------------- |
+| git add file_name |                         |
+| git add .         | 提交所有改动            |
+| git add\*         | 提交所有，越过gitignore |
+| git add -i        | 交互式暂存              |
 
 ```shell
 $ git add -i
@@ -158,22 +136,22 @@ git checkout --patch 部分检出文件。
 git stash save --patch 部分暂存文件。
 ```
 
-| commit                          | 暂存区 --> 版本库         |
-| ------------------------------- | ------------------- |
-| git commit                      | (每一次提交，都是对项目作一次快照)  |
-| git commit -v                   | 额外diff 输出呈现在编辑器中。   |
-| git commit -a                   | 跳过暂存区操作。            |
-| git commit --amend [--no-edit]  | 覆盖提交，不仅仅是提交的message |
-| git config --global core.editor | 自定义编辑器。             |
+| commit                          | 暂存区 --> 版本库                  |
+| ------------------------------- | ---------------------------------- |
+| git commit                      | (每一次提交，都是对项目作一次快照) |
+| git commit -v                   | 额外diff 输出呈现在编辑器中。      |
+| git commit -a                   | 跳过暂存区操作。                   |
+| git commit --amend [--no-edit]  | 覆盖提交，不仅仅是提交的message    |
+| git config --global core.editor | 自定义编辑器。                     |
 
 **Note:** 退出编辑器时，Git 会丢弃注释行。
 
-| remove                   |               |
-| ------------------------ | ------------- |
-| rm                       | 从工作区删除文件。     |
+| remove                   |                            |
+| ------------------------ | -------------------------- |
+| rm                       | 从工作区删除文件。         |
 | git rm                   | 从暂存区和工作区删除文件。 |
-| git rm --cached          | 从暂存区删除，本地保留。  |
-| git mv file_from file_to | rename文件      |
+| git rm --cached          | 从暂存区删除，本地保留。   |
+| git mv file_from file_to | rename文件                 |
 
 ```shell
 git rm log/\*.log
@@ -556,40 +534,51 @@ vi ~/.gitconfig  git 别名
 2. HTTP 协议：
 
 > `git clone https://example.com/gitproject.git`
-> 
+>
 > 可以使用用户名／密码授权是一个很大的优势。
-> 
+>
 > 在一些服务器上，架设 HTTPS 协议的服务端会比 SSH 协议的棘手一些。
 
 3. SSH 协议
 
 > 大多数环境下服务器已经支持通过 SSH 访问。
-> 
+>
 > `git clone ssh://[user@]server/project.git`
-> 
+>
 > 或者使用一个简短的 scp 式的写法：`git clone [user@]server:project.git` 如果不指定可选的用户名，那么 Git 会使用当前登录的用的名字。
-> 
+>
 > SSH 协议的缺点在于它不支持匿名访问 Git 仓库。
-> 
-> SSH 密钥存储在其 `~/.ssh` 目录下
-> 
+>
+> SSH 密钥存储在其 `~/.ssh` 目录下
+>
 > ssh-keygen -o ，然后它会要求你输入两次密钥口令。 如果你不想在使用密钥时输入口令，将其留空即可。
-> 
+>
 > id_rsa.pub
 
 4. Git 协议:
 
 > Git 协议是 Git 使用的网络传输协议里最快的。
-> 
+>
 > Git 协议缺点是缺乏授权机制。
 
 ### 9.2 GitHub
 
+SVN只有一个版本库(commit ID 可以自增)(本地只有代码), Git有多个版本库 （commit ID是一个摘要值，这个值通过sha1计算出出来的）。
+
+本地建立版本库，会有一个全量变化而不是增量(SVN)的变化。
+
+**GIT, GitHub 与 GitLab**
+
+* Git是一个版本控制软件
+* GitHub与GitLab都是用于管理版本的服务端软件
+* GitHub提供免费服务(代码需公开)及付费服务(代码为私有)
+* GitLab用于在企业内部管理Git版本库,功能上类似于GitHub
+
 1. 在GitHub创建仓库。
-
 2. `git remote add origin 仓库地址` : origin是默认名字，代表后面紧接着的地址。（关联远程库）
+3. `git push -u origin master`: 加了参数-u后，以后即可直接用git push代替git push origin master。设置成默认跟踪分支。
 
-3. `git push -u origin master`: 加了参数-u后，以后即可直接用git push代替git push origin master。（生成远程跟踪分支）
+`git remote set-url <url>` : 修改关联的远程仓库地址。
 
 `git remote show` : 显示当前库关联的所有远程仓库。
 

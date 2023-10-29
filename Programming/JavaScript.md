@@ -773,6 +773,158 @@ regObj.exec(被检测的字符串); // null or 数组
 字符串.replace(/正则表达式/ig, "替换的文本');// 替换所有
 ```
 
+### 2.10 解构赋值
+
+<font color="green">**数组解构**</font>
+
+是将数组的单元值快速批量赋值给一系列变量的简洁语法
+
+```js
+const [max, min, avg] = [100, 60, 80] // 数量不一致时会undefined和丢弃
+console.log(max) // 最大值 100
+console.log(min) // 最小值 60
+console.log(avg) // 平均值 80
+[a, b] = [b, a]  // 交换变量
+
+const [a = 0, b = 0, c = 0] = [1, 2]	// 可以给默认值
+const [a = 0, , c = 0] = [1, 2, 3] 		// 可以忽略， a=1, c=3
+const [a, b, [c, d]] = [1, 2, [3, 4]]
+```
+
+<font color="green">**对象解构**</font>
+
+是将对象属性和方法快速批量赋值给一系列变量的简洁语法
+
+```js
+const { uname, age ] = { uname:'', age: 18 } // 前后名字要一致 (不需要特意忽略了，按名字分配)
+const { uname：username, age ] = { uname:'', age: 18 } // 重命名
+// 多级对象解构
+const pig = {
+    name:'',
+    family: {
+        mother:'',
+        father:'',
+        sister:''
+    }
+}
+const { name, family: { mother, father, sister }} = pig
+console.log(name)
+console.log(mother)
+console.log(father)
+console.log(sister)
+```
+
+### 2.11 拷贝
+
+```js
+const pig = {
+    name:'',
+    family: {
+        mother:'',
+        father:'',
+        sister:''
+    }
+}
+// 浅拷贝 2种方式
+const pig2 = { ...pig }
+const pig2 = {}
+Object.assign(pig2, pig)
+
+// 深拷贝 3种方式
+// 1. 自己写递归
+// 2. lodash库, 下载, 引入
+const pig2 = _.cloneDeep(pig)
+// 3. JSON
+const pig2 = JSON.parse(JSON.stringify(pig))
+```
+
+### 2.12 其他
+
+<font color="green">**垃圾回收**</font>
+
+* 全局变量一般不会回收(关闭页面回收)
+* 一般情况下局部变量的值，不用了，会被自动回收掉
+
+<font color="green">**异常处理**</font>
+
+```js
+throw new Error('错误信息') // 会终止程序
+try{
+
+} catch(err){
+    err.message // 错误信息
+} finally {
+
+}
+```
+
+<font color="green">**Debug**</font>
+
+`debugger` : 代码中写这个，这个位置成为断点
+
+- 单步跳过：F10
+- 进入方法：F11
+- 跳出方法：Shift + F11
+
+<font color="green">**防抖 debounce**</font>
+
+防抖: 单位时间内，频繁触发事件，只执行最后一次
+
+```js
+// 1. lodash库, 下载, 引入
+_.debounce(func, [wait=0], [options=]) // 延迟wait秒调用func
+
+function mouseMove() {
+    box.innerHTML = i++
+}
+box.addEventListener('mousemove', _.debounce(mouseMove, 500))
+
+// 2. 自定义
+function debounce(fn, t) {
+    let timer
+    return function () {
+        if (timer) clearTimeout(timer)
+        timer = setTimeout(function () {
+            fn()
+        }, t)
+    }
+}
+box.addEventListener('mousemove', debounce(mouseMove, 500))
+```
+
+<font color="green">**节流 throttle**</font>
+
+节流：单位时间内，频繁触发事件，只执行一次。
+
+```js
+// 1. lodash库, 下载, 引入
+_.throttle(func, [wait=0], [options=]) // 在wait秒只调用一次func
+
+function mouseMove() {
+    box.innerHTML = i++
+}
+box.addEventListener('mousemove', _.throttle(mouseMove, 500))
+
+// 2. 自定义
+function debounce(fn, t) {
+    let timer = null
+    return function () {
+        if(!timer){
+            timer = setTimeout(function () {
+                fn()
+                timer = null
+            }, t)
+        }
+    }
+}
+box.addEventListener('mousemove', throttle(mouseMove, 500))
+```
+
+Js前面有两哪种情况需要加分号的?
+
+* 立即执行函数
+* 数组解构
+
 ## 3. WebAPI
 
 ### 3.1 DOM

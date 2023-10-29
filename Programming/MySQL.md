@@ -144,7 +144,7 @@ MySQL 在 Windows 环境下是大小写不敏感的，MySQL 在 Linux 环境下�
 
 ### 3.3 DQL
 
-**SELECT**
+🟦 **SELECT** 🟦
 
 ```mysql
 SELECT 1 + 1, 3*2 [DUAL]; # DUAL 是伪表
@@ -183,7 +183,7 @@ DESCRIBE 表名;
 DESC 表名;
 ```
 
-**WHERE**
+🟦 **WHERE** 🟦
 
 ```mysql
 SELECT *
@@ -193,7 +193,7 @@ WHERE last_name = 'King'; # 过滤.
 -- 2. MySQL字段值可以双引号，但oracle报错
 ```
 
-**运算符**
+🟦 **运算符** 🟦
 
 ```mysql
 -- 算术运算符
@@ -236,5 +236,54 @@ IS NULL, IS NOT NULL, ISNULL
 
 LEAST('a','b','c'); # 最小的
 GREATEST('a','b','c'); # 最大的
+
+WHERE salary BETWEEN 6000 AND 8000; # 包括6000和8000, 必须前小后大
+WHERE salary NOT BETWEEN 6000 AND 8000;
+WHERE salary < 6000 OR salary > 8000;
+WHERE salary [NOT] IN (6000, 7000, 8000);
+WHERE last_name LIKE '%a%';	# 模糊查询，且忽略了大小写。 LIKE 'a%':查询以a开头的。
+WHERE last_name LIKE '_a%';	# 查询第二个字符是a的。_代表一个不确定的字符。
+WHERE last_name LIKE '\_$_a%';	# \和$都可以表示转义
+SELECT
+'shkstart' REGEXP '^shk',
+'shkstart' REGEXP 't$',
+'shkstart' REGEXP 'hk'
+FROM DUAL;	# 1,1,1 或者使用RLIKE
+
+-- 逻辑运算符
+# AND 优先级会高于 OR
+```
+
+| 运算符     | 用作     | 示例                              |
+| ---------- | -------- | --------------------------------- |
+| NOT 或 !   | 逻辑非   | SELECT NOT A                      |
+| AND 或 &&  | 逻辑与   | SELECT A AND B<br />SELECT A && B |
+| OR 或 \|\| | 逻辑或   | SELECT A OR B<br />SELECT A  B    |
+| XOR        | 逻辑异或 | SELECT A XOR B                    |
+
+![](../imgs/MySQL/operator_priority.jpg)
+
+```mysql
+-- 位运算符
+SELECT A & B;
+SELECT A | B;
+SELECT A ^ B;
+SELECT ~ A; # 按位取反
+SELECT A >> 2;
+SELECT B << 2;
+```
+
+🟦 **排序** 🟦
+
+```mysql
+-- 默认按照插入顺序
+SELECT a
+FROM DUAL
+ORDER BY salary ASC; # 默认就是升序，DESC降序
+# 🟥 WHERE 后面不可以使用SELECT中的别名，ORDER BY是可以的
+
+-- 二级排序
+ORDER BY a ASC, b DESC;
+ORDER BY a,b DESC;
 ```
 
