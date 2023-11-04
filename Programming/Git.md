@@ -177,21 +177,21 @@ M      lib/simplegit.rb
 # `??`： 新添加的未跟踪文件
 ```
 
-| log                                             |                   |
-|:----------------------------------------------- | ----------------- |
-| git log -n                                      | 看最近n条提交           |
-| git log  -p 或 --patch                           | 显示提交的内容差异         |
-| git log --stat [--shortstat]                    | 列出移除或添加行的数量       |
-| git log --pretty=oneline<br />git log --oneline | 每个commit显示到一行     |
-| git log --pretty=format:"%h - %an, %ar : %s"    | 自定义格式             |
-| git log --graph                                 | 展示分支、合并历史         |
-| git log --relative-date                         | 显示相对时间            |
-| git log --since=2.weeks                         | 显示匹配时间的提交         |
-| git log --author=name                           | 显示匹配作者的提交         |
-| git log --grep=str                              | 显示匹配comments的提交   |
+| log                                             |                                    |
+| :---------------------------------------------- | ---------------------------------- |
+| git log -n                                      | 看最近n条提交                      |
+| git log  -p 或 --patch                          | 显示提交的内容差异                 |
+| git log --stat [--shortstat]                    | 列出移除或添加行的数量             |
+| git log --pretty=oneline<br />git log --oneline | 每个commit显示到一行               |
+| git log --pretty=format:"%h - %an, %ar : %s"    | 自定义格式                         |
+| git log --graph                                 | 展示分支、合并历史                 |
+| git log --relative-date                         | 显示相对时间                       |
+| git log --since=2.weeks                         | 显示匹配时间的提交                 |
+| git log --author=name                           | 显示匹配作者的提交                 |
+| git log --grep=str                              | 显示匹配comments的提交             |
 | git log -S str                                  | 显示添加或删除内容匹配字符串的提交 |
-| git log file_path                               | 文件修改历史            |
-| git log --no-merges                             | 不显示merged提交       |
+| git log file_path                               | 文件修改历史                       |
+| git log --no-merges                             | 不显示merged提交                   |
 
 **NOTE:**
 
@@ -203,18 +203,18 @@ git log -S function_name
 
 ### 4.3 查看改动
 
-| diff命令                                                         |                     |
-| -------------------------------------------------------------- | ------------------- |
-| git diff                                                       | 工作区和暂存区             |
-| git diff HEAD                                                  | 工作区和版本库             |
-| git diff --cached [commit_ID]<br />git diff --staged （1.6.1以上） | 暂存区和版本库             |
-| git diff --check                                               | 空白错误校验              |
-| git difftool [--tool-help]                                     | 系统支持哪些 Git Diff 插件。 |
-| git blame 文件名                                                  | 快速查看文件是被谁修改的。       |
-| git show --raw [HEAD]                                          | 每个提交的完整 SHA-1校验     |
-| git show --stat [HEAD]                                         | 每个文件的修改行。           |
-| git show [HEAD]                                                | 查看修改的文件内容。          |
-| git status -v                                                  | 查看详细修改内容            |
+| diff命令                                                           |                              |
+| ------------------------------------------------------------------ | ---------------------------- |
+| git diff                                                           | 工作区和暂存区               |
+| git diff HEAD                                                      | 工作区和版本库               |
+| git diff --cached [commit_ID]<br />git diff --staged （1.6.1以上） | 暂存区和版本库               |
+| git diff --check                                                   | 空白错误校验                 |
+| git difftool [--tool-help]                                         | 系统支持哪些 Git Diff 插件。 |
+| git blame 文件名                                                   | 快速查看文件是被谁修改的。   |
+| git show --raw [HEAD]                                              | 每个提交的完整 SHA-1校验     |
+| git show --stat [HEAD]                                             | 每个文件的修改行。           |
+| git show [HEAD]                                                    | 查看修改的文件内容。         |
+| git status -v                                                      | 查看详细修改内容             |
 
 ```shell
 --raw
@@ -228,46 +228,46 @@ git log -S function_name
 
 ### 4.4 grep
 
-| git grep + 参数                  |                                     |
-| ------------------------------ | ----------------------------------- |
-| -n “字符串”                       | 或者`--line-number`，显示行号              |
-| -c “字符串”                       | 或者`--count`，显示在每个文件中匹配数             |
-| -p 字符串 文件                      | 或者`--show-function`，字符串所在的方法或函数     |
-| --break                        | 选项会将搜索结果以文件为单位进行分隔，并在每个文件的结果之间添加空行。 |
-| --heading                      | 选项会在每个文件的搜索结果之前打印文件名及文件路径的标题。       |
-| -e pattern1 -e pattern2        | 搜索结果需要满足任何一个模式才能被返回                 |
-| --and pattern1 pattern2        | 搜索结果需要满足所有条件才能被返回                   |
-| -L \:git_deflate_bound\:zlib.c | 展示代码中一行或者一个函数的历史                    |
+| git grep + 参数               |                                                                        |
+| ----------------------------- | ---------------------------------------------------------------------- |
+| -n “字符串”                 | 或者 `--line-number`，显示行号                                       |
+| -c “字符串”                 | 或者 `--count`，显示在每个文件中匹配数                               |
+| -p 字符串 文件                | 或者 `--show-function`，字符串所在的方法或函数                       |
+| --break                       | 选项会将搜索结果以文件为单位进行分隔，并在每个文件的结果之间添加空行。 |
+| --heading                     | 选项会在每个文件的搜索结果之前打印文件名及文件路径的标题。             |
+| -e pattern1 -e pattern2       | 搜索结果需要满足任何一个模式才能被返回                                 |
+| --and pattern1 pattern2       | 搜索结果需要满足所有条件才能被返回                                     |
+| -L\:git_deflate_bound\:zlib.c | 展示代码中一行或者一个函数的历史                                       |
 
-`git log -L '/unsigned long git_deflate_bound/',/^}/:zlib.c` 这个命令的含义如下：
+`git log -L '/unsigned long git_deflate_bound/',/^}/:zlib.c` 这个命令的含义如下：
 
-* `git log` 是 Git 的一个命令，用于查看版本历史记录。
-* `-L` 是一个选项，用于告诉 Git 启用对代码行的跟踪。
-* `'/unsigned long git_deflate_bound/'` 和 `/^}/` 是两个正则表达式，用于指定要跟踪的代码行的范围。这里的意思是，从包含 `unsigned long git_deflate_bound` 的行开始，到以 `}` 结束的行结束。
-* `:zlib.c` 是文件名，即要查看的代码文件。
+* `git log` 是 Git 的一个命令，用于查看版本历史记录。
+* `-L` 是一个选项，用于告诉 Git 启用对代码行的跟踪。
+* `'/unsigned long git_deflate_bound/'` 和 `/^}/` 是两个正则表达式，用于指定要跟踪的代码行的范围。这里的意思是，从包含 `unsigned long git_deflate_bound` 的行开始，到以 `}` 结束的行结束。
+* `:zlib.c` 是文件名，即要查看的代码文件。
 
 ### 4.5 stash
 
 可以应用到不同的branch
 
-| git 存储                         |                      |
-| ------------------------------ | -------------------- |
-| git stash                      | 贮藏                   |
-| git stash --keep-index         | 同时保留在索引中。            |
-| git stash -u                   | 也会贮藏未跟踪文件            |
-| git stash list                 | 查看存储。                |
-| git stash show [stash@{2}]     | 查看哪些修改。              |
-| git stash show [stash@{2}] -p  | 查看修改内容。              |
-| git stash [save '注释']          | 不会存储 untracked files |
-| git stash apply [stash@{2}]    | 贮藏但不丢弃。              |
-| git stash apply --index        | 暂存区的会回到暂存区           |
-| git stash drop [stash@{2}]     | 丢弃。                  |
-| git stash clear                |                      |
-| git stash pop [stash@{1}]      | 应用并丢弃。               |
-| git stash branch newBranchName | 从贮藏创建branch          |
+| git 存储                       |                          |
+| ------------------------------ | ------------------------ |
+| git stash                      | 贮藏                     |
+| git stash --keep-index         | 同时保留在索引中。       |
+| git stash -u                   | 也会贮藏未跟踪文件       |
+| git stash list                 | 查看存储。               |
+| git stash show [stash@{2}]     | 查看哪些修改。           |
+| git stash show [stash@{2}] -p  | 查看修改内容。           |
+| git stash [save '注释']        | 不会存储 untracked files |
+| git stash apply [stash@{2}]    | 贮藏但不丢弃。           |
+| git stash apply --index        | 暂存区的会回到暂存区     |
+| git stash drop [stash@{2}]     | 丢弃。                   |
+| git stash clear                |                          |
+| git stash pop [stash@{1}]      | 应用并丢弃。             |
+| git stash branch newBranchName | 从贮藏创建branch         |
 | git stash --patch              | 分批贮藏                 |
 
-### 4.6 patch
+**patch**
 
 ```bash
 git format-patch <commit-range> #生成补丁
@@ -279,16 +279,14 @@ git am [-3] name.patch # 应用补丁 -3:三方合并
 自己新建一个.gitignore  --> 提交这个文件进库
 
 1. 可以使用标准的 glob 模式匹配，它会递归地应用在整个工作区中。
-   
+
    * 所谓的 glob 模式是指 shell 所使用的简化了的正则表达式。
    * 星号（`*`）匹配零个或多个任意字符；
    * `[abc]` 匹配任何一个列在方括号中的字符 （这个例子要么匹配一个 a，要么匹配一个 b，要么匹配一个 c）；
    * 问号（`?`）只匹配一个任意字符；
    * 如果在方括号中使用短划线分隔两个字符， 表示所有在这两个字符范围内的都可以匹配（比如 `[0-9]` 表示匹配所有 0 到 9 的数字）。
    * 使用两个星号（`**`）表示匹配任意中间目录，比如 `a/**/z` 可以匹配 `a/z` 、 `a/b/z` 或 `a/b/c/z` 等。
-
 2. 匹配模式可以以（`/`）开头防止递归。
-
 3. 匹配模式可以以（`/`）结尾指定目录。
 
 ```shell
@@ -320,14 +318,14 @@ doc/**/*.pdf
 
 一个项目可以有多个gitignore 文件，例如子目录下可以有额外的 .gitignore。
 
-**Note:** GitHub 有一个十分详细的针对数十种项目及语言的 .gitignore 文件列表: https://github.com/github/gitignore 
+**Note:** GitHub 有一个十分详细的针对数十种项目及语言的 .gitignore 文件列表: https://github.com/github/gitignore
 
-<font color="green">**git clean**</font>
+`<font color="green">`**git clean** `</font>`
 
-* `-n`, `--dry-run`: 显示将要移除的文件和目录，而不实际执行移除操作。
-* `-f`, `--force`: 强制执行移除操作，即使有些文件被其他文件或目录所追踪。
-* `-d`, `--dir`: 移除所有未追踪的目录，而不仅仅是文件。
-* `-x`, `--exclude-standard`: 仅移除标准的忽略文件和目录（如`.gitignore`文件中定义的）。
+* `-n`, `--dry-run`: 显示将要移除的文件和目录，而不实际执行移除操作。
+* `-f`, `--force`: 强制执行移除操作，即使有些文件被其他文件或目录所追踪。
+* `-d`, `--dir`: 移除所有未追踪的目录，而不仅仅是文件。
+* `-x`, `--exclude-standard`: 仅移除标准的忽略文件和目录（如 `.gitignore`文件中定义的）。
 
 ## 6. 分支
 
@@ -386,8 +384,6 @@ git log --left-right master...experiment
 git log origin/master..HEAD
 ```
 
-
-
 **分支合并：** 合并了 idea 和 v2 分支之后的提交历史。当你新建和合并分支的时候，所有这一切都只发生在你本地的 Git 版本库中 —— 没有与服务器发生交互。
 
 ```mermaid
@@ -411,17 +407,11 @@ graph RL
 ### 6.2 远程跟踪分支
 
 1. 远程跟踪分支是远程分支状态的引用。它们是你无法移动的本地引用。一旦你进行了网络通信， Git 就会为你移动它们以精确反映远程仓库的状态。请将它们看做书签， 这样可以提醒你该分支在远程仓库中的位置就是你最后一次连接到它们的位置。例如， `origin/master` 。
-
-2. 当克隆一个仓库时，它通常会自动地创建一个跟踪 `origin/master` 的 `master` 分支。 
-
-3. `git fetch origin` :  从origin中抓取本地没有的数据，并且更新本地数据库，移动 `origin/master` 指针到更新之后的位置。
-
+2. 当克隆一个仓库时，它通常会自动地创建一个跟踪 `origin/master` 的 `master` 分支。
+3. `git fetch origin` :  从origin中抓取本地没有的数据，并且更新本地数据库，移动 `origin/master` 指针到更新之后的位置。
 4. 当抓取到新的远程跟踪分支时，本地不会自动生成一份可编辑的副本（拷贝）。 这种情况下，不会有一个新的本地分支——只有一个不可以修改的 `origin/master` 指针。
-
-5. 可以运行 `git merge origin/master` 将这些工作合并到当前所在的分支。 如果想要在自己的 `master` 分支上工作，可以将其建立在远程跟踪分支之上：`git checkout -b master origin/master`,这会给你一个用于工作的本地分支 `master`
-
-6. 从一个远程跟踪分支检出一个本地分支会自动创建所谓的“跟踪分支”（它跟踪的分支叫做“上游分支”）。 跟踪分支是与远程分支有直接关系的本地分支, 如果在一个跟踪分支上输入 `git pull`，Git 能自动地识别去哪个服务器上抓取、合并到哪个分支。
-
+5. 可以运行 `git merge origin/master` 将这些工作合并到当前所在的分支。 如果想要在自己的 `master` 分支上工作，可以将其建立在远程跟踪分支之上：`git checkout -b master origin/master`,这会给你一个用于工作的本地分支 `master`
+6. 从一个远程跟踪分支检出一个本地分支会自动创建所谓的“跟踪分支”（它跟踪的分支叫做“上游分支”）。 跟踪分支是与远程分支有直接关系的本地分支, 如果在一个跟踪分支上输入 `git pull`，Git 能自动地识别去哪个服务器上抓取、合并到哪个分支。
 7. 修改正在跟踪的上游分支: `-u` 或 `--set-upstream-to` 选项运行 `git branch` 来显式地设置。
 
 ```console
@@ -464,29 +454,25 @@ HEAD^^ 是 HEAD^1^1 的简写，而 ^ 后面的数字表示后退一步到第几
 
 HEAD^2 就有些不同了，它表示后退一步到第二个父提交上，所以对照树形图是第二排的第二个节点。
 
-## 7. 标签
+## 7. 标签与别名
 
 标签本身就是一个ID，并且指向一个commit ID。
 
+`git tag [-l]` : 列出已有标签。 `git tag -l "v1.8.5*"` : 匹配模式必须要加 -l
+
 `git tag [-a] v1.0.1 [-m '内容']` ：新建标签。-a：会强制要求-m，通过-m添加是附注标签。
+
+`git tag tagName 9fceb02` : 补上标签
+
+`git show tagName` : 查看标签。
 
 `git push origin 标签名 ` ：推送到远程。`git push origin --tags` :推送所有标签。
 
-`git tag [-l 正则]` : 查看标签。标签本质特定标记，指向一个commitID. github中release统计标签
-
-`git tag -d v1.0.1` ：删除标签。
+`git tag -d v1.0.1` : 删除标签。
 
 `git push origin --delete tag v1.0.1` ：删除远程标签。
 
 `git push origin :refs/tags/标签名 ` ：删除远程标签。
-
-| tag                     |             |
-| ----------------------- | ----------- |
-| git tag [-l]            | 列出已有标签      |
-| git tag -l "v1.8.5*"    | 匹配模式必须要加 -l |
-| git show tagName        | 查看标签。       |
-| git tag tagName         | 打标签         |
-| git tag tagName 9fceb02 | 补上标签        |
 
 ```shell
 # 轻量标签（lightweight)
@@ -514,7 +500,7 @@ Date:   Mon Mar 17 21:52:11 2008 -0700
     changed the version number
 ```
 
-## 8. 别名
+**别名**
 
 vi ~/.gitconfig  git 别名
 
@@ -588,14 +574,13 @@ SVN只有一个版本库(commit ID 可以自增)(本地只有代码), Git有多�
 
 或者用SSH通过秘钥链接。
 
-<font color=green>**fork**</font>
+🟦 **fork** 🟦
 
 ![](../imgs/git/fork1.png)
 
 1. Fork仓库：在 GitHub 上找到你要 Fork 的仓库，点击仓库页面右上角的 “Fork” 按钮。这将创建一个你自己的远程仓库副本（也就是 Fork 仓库）。
-
 2. 克隆仓库：在你的计算机上克隆 Fork 仓库。
-   
+
    ```bash
    git clone <forked_repository_url>
    ```
@@ -610,23 +595,30 @@ SVN只有一个版本库(commit ID 可以自增)(本地只有代码), Git有多�
    git push
 ```
 
+`<font color=green>`**使用token提交** `</font>`
+
+1. 获取token令牌: 右上角头像 -->  Settings -->  Developer settings --> token
+2. generate token，复制token值。(token 需要的access：Commit statuses 和 Contents)
+3. git remote add origin https://[TOKEN]@github.com[USER]/[REPO]
+4. git push -u origin master : 不需要进行用户名登录，直接使用token值推送。
+
 ## 10. submodule
 
 `git submodule add 另一个库远程地址 新目录`  : 自动生成 .gitmodules文件和新目录存放另一库代码
 
-<u>git pull：</u>
+`<u>`git pull：`</u>`
 
 > cd到submodule 中 git pull更新代码，或者，git submodule foreach git pull
 > 在本库git add commit push
 
-<u>git clone:</u> 
+`<u>`git clone:`</u>`
 
 > git clone 地址 [自定义文件夹]
 > git submodule init
 > git submodul update --recursive
-> 
+>
 > or
-> 
+>
 > git clone 地址 [自定义文件夹]  --recursive
 
 ## 11. subtree
@@ -641,11 +633,11 @@ SVN只有一个版本库(commit ID 可以自增)(本地只有代码), Git有多�
 
 ## 12. Cherry-pick
 
-`git cherry-pick (commitidA..commitidB]` :  不包含A 
+`git cherry-pick (commitidA..commitidB]` :  不包含A
 
 `git cherry-pick A^..B` ：包含A
 
-**<u>拉出dev1分支随后合并分支：</u>**
+**`<u>`拉出dev1分支随后合并分支：`</u>`**
 
 ```mermaid
 graph LR;
@@ -653,7 +645,7 @@ graph LR;
     C --> |dev1|D(D) --> E(E) --> M;
 ```
 
-<u>**拉出feature分支：**</u>
+`<u>`**拉出feature分支：**`</u>`
 
 ```mermaid
 graph LR;
@@ -662,7 +654,7 @@ graph LR;
     C --> |dev1|D(D) --> E(E) --> M;
 ```
 
-此时发现需要把分支dev1的改动(D和E)合并进来,  此时使用使用`git cherry-pick -m 1 <hash M>`就会把commit D和E的内容复制到分支feature上面来。1：原始分支号dev1，2: 变动来源分支master。
+此时发现需要把分支dev1的改动(D和E)合并进来,  此时使用使用 `git cherry-pick -m 1 <hash M>`就会把commit D和E的内容复制到分支feature上面来。1：原始分支号dev1，2: 变动来源分支master。
 
 ```mermaid
 graph LR;
@@ -671,7 +663,7 @@ graph LR;
 
 ## 13. Git rebase
 
-<font color=blue>**merge**</font>
+`<font color=blue>`**merge** `</font>`
 
 ```mermaid
 graph RL
@@ -688,7 +680,7 @@ master[master] --> C5((C5)) --> C3((C3))--> C2
 C5((C5)) --> C4
 ```
 
-<font color=blue>**rebase**</font>
+`<font color=blue>`**rebase** `</font>`
 
 提取在 C4 中引入的补丁和修改，然后在 C3 的基础上应用一次。
 
@@ -722,7 +714,7 @@ master[master] --> C4
 
 **NOTE :** 如果将已经提交至某个仓库的，并且其他人也已经从该仓库拉取到的提交进行变基并再次推送，会有问题发生。
 
-**<u>合并提交：</u>**
+**`<u>`合并提交：`</u>`**
 
 ```bash
 git rebase -i commitID # 合并这个commit之后的提交(该节点不参与合并)。 -i: --interactive let the user edit the list of commits to rebase.
@@ -747,26 +739,26 @@ Git 是一个内容寻址文件系统，Git的核心部分是一个简单的键�
 
 可以向数据库插入任何类型的内容，返回一个键值，通过键值可以再次检索该内容。
 
-### 14.1 Git 对象 （文件版本）
+**Git 对象 （文件版本）**
 
 Git对象，用来存储文件内容，**一个文件生成一个git对象**。Git对象，存储键值对对象。
 
-`git hash-object -w 文件名` ：生成git对象，存的全量不是增量,  <font color="#ff0000">**放到/objects中**</font>，返回key : value对应的hash值, value: blob类型, 文件内容作为值。
+`git hash-object -w 文件名` ：生成git对象，存的全量不是增量,  `<font color="#ff0000">`**放到/objects中** `</font>`，返回key : value对应的hash值, value: blob类型, 文件内容作为值。
 
 `git cat-file -p 文件夹+文件名` : 查看object内容。
 
 `git cat-file -t 文件夹+文件名` : 查看object类型。
 
-### 14.2 树对象 （项目版本）
+**树对象 （项目版本）**
 
 树对象，解决文件名保存问题。存储git对象hash, 对象文件名和子树对象。
 
-`git update-index --add --cacheinfo 100644 hash值 文件名` ：<font color="#ff0000">**往暂存区(.git/index)添加一个对象。**</font>
+`git update-index --add --cacheinfo 100644 hash值 文件名` ：`<font color="#ff0000">`**往暂存区(.git/index)添加一个对象。**`</font>`
 
 > 100644，表明这是一个普通文件。
-> 
+>
 > --add: 加入暂存区, 第一次添加需要。
-> 
+>
 > --cacheinfo: 要将添加的文件位于Git数据库中。
 
 git write-tree : 将暂存区的tree写入/objects
@@ -777,13 +769,13 @@ git write-tree : 将暂存区的tree写入/objects
 
 `git write-tree` : 把树对象读入暂存区。
 
-### 14.3 提交对象
+**提交对象**
 
-`echo 'first commit' | git commit-tree treeid [-P ]` ：<font color="#ff0000">  **创建提交对象, 存到.git/objects** </font>
+`echo 'first commit' | git commit-tree treeid [-P ]` ：`<font color="#ff0000">`  **创建提交对象, 存到.git/objects** `</font>`
 
-<font color="#cc9900"> **git add = git hash-object -w 文件名 + git udate-index ...**</font>
+`<font color="#cc9900">` **git add = git hash-object -w 文件名 + git udate-index ...**`</font>`
 
-<font color="#cc9900"> **git commit = git write-tree + git commit-tree**</font>
+`<font color="#cc9900">` **git commit = git write-tree + git commit-tree** `</font>`
 
 ```mermaid
 graph LR

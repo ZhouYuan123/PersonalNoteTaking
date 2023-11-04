@@ -286,4 +286,17 @@ ORDER BY salary ASC; # 默认就是升序，DESC降序
 ORDER BY a ASC, b DESC;
 ORDER BY a,b DESC;
 ```
+🟦 **分页** 🟦
 
+```mysql
+SELECT a
+FROM DUAL
+LIMIT 0, 20; # 偏移位置，偏移量。第一条开始，显示20条。
+
+SELECT a
+FROM DUAL
+WHERE salary > 6000
+ORDER BY salary DESC
+LIMIT 0, 10; # LIMIT 10; 默认就是从偏移量0开始。
+# LIMIT 10 OFFSET 0; 8.0新特性 偏移量, 偏移位置
+```

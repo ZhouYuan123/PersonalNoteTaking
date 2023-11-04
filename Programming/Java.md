@@ -969,8 +969,7 @@ String regStr ="(?i)abc"; // 匹配 abc 字符串[不区分大小写]
 4. 去掉重复的字 "我我要学学学学编程java!" 
 
 ```java
-pattern = Pattern.compile("(.)\\1+");
-matcher = pattern.matcher(content);
+matcher = Pattern.compile("(.)\\1+").matcher(content);
 content = matcher.replaceAll("$1");
 ```
 

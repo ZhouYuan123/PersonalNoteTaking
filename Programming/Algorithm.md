@@ -75,3 +75,103 @@ public class Main {
 stack : FILO-First In Last Out,  栈顶Top,  栈底Bottom
 
 ## 2. 非线性结构
+
+## 3. 复杂度
+
+时间频度T(n): 一个算法花费的时间与算法中语句的执行次数成正比例，哪个算法中语句执行次数多，它花费时间就多。一个算法中的语句执行次数称为语句频度或时间频度。
+
+时间复杂度O(n)：忽略T(n)的常数项。忽略低次项。忽略系数。
+
+![](../imgs/algorithm/timecomplex.jpg)
+
+
+
+## 4. 递归
+
+递归的重要规则：
+
+1. 重复相同的计算
+2. 执行一个方法时，就创建一个新的受保护的独立空间(栈空间)
+3. 递归必须向退出递归的条件逼近
+
+回溯算法：八皇后问题，迷宫算法。
+
+## 5. 排序算法
+
+![](../imgs/algorithm/sort.jpg)
+
+![](../imgs/algorithm/complex8.png)
+
+<font color=green>**1. 冒泡排序 (Bubble Sort)**</font>
+
+```java
+/* 冒泡排序（标志优化） */
+void bubbleSortWithFlag(int[] nums) {
+    // 外循环：未排序区间为 [0, i]
+    for (int i = nums.length - 1; i > 0; i--) {
+        boolean flag = false; // 初始化标志位
+        // 内循环：将未排序区间 [0, i] 中的最大元素交换至该区间的最右端
+        for (int j = 0; j < i; j++) {
+            if (nums[j] > nums[j + 1]) {
+                // 交换 nums[j] 与 nums[j + 1]
+                int tmp = nums[j];
+                nums[j] = nums[j + 1];
+                nums[j + 1] = tmp;
+                flag = true; // 记录交换元素
+            }
+        }
+        if (!flag)
+            break; // 此轮冒泡未交换任何元素，直接跳出
+    }
+}
+```
+
+<font color=green>**2. 选择排序 (Selection Sort)**</font>
+
+```java
+/* 选择排序 */
+void selectionSort(int[] nums) {
+    int n = nums.length;
+    // 外循环：未排序区间为 [i, n-1]
+    for (int i = 0; i < n - 1; i++) {
+        // 内循环：找到未排序区间内的最小元素
+        int k = i;
+        for (int j = i + 1; j < n; j++) {
+            if (nums[j] < nums[k])
+                k = j; // 记录最小元素的索引
+        }
+        // 将该最小元素与未排序区间的首个元素交换
+        int temp = nums[i];
+        nums[i] = nums[k];
+        nums[k] = temp;
+    }
+}
+```
+
+- **非稳定排序**：元素 `nums[i]` 有可能被交换至与其相等的元素的右边，导致两者相对顺序发生改变。
+
+<font color=green>**3. 「插入排序 insertion sort」**</font>
+
+```java
+/* 插入排序 */
+void insertionSort(int[] nums) {
+    // 外循环：已排序元素数量为 1, 2, ..., n
+    for (int i = 1; i < nums.length; i++) {
+        int base = nums[i];
+        int j = i - 1;
+        // 内循环：将 base 插入到已排序部分的正确位置
+        while (j >= 0 && nums[j] > base) {
+            nums[j + 1] = nums[j]; // 将 nums[j] 向右移动一位
+            j--;
+        }
+        nums[j + 1] = base;        // 将 base 赋值到正确位置
+    }
+}
+```
+
+**插入排序的使用频率显著高于冒泡排序和选择排序**，主要有以下原因。
+
+- 冒泡排序基于元素交换实现，需要借助一个临时变量，共涉及 3 个单元操作；插入排序基于元素赋值实现，仅需 1 个单元操作。因此，**冒泡排序的计算开销通常比插入排序更高**。
+- 选择排序在任何情况下的时间复杂度都为 \(O(n^2)\) 。**如果给定一组部分有序的数据，插入排序通常比选择排序效率更高**。
+- 选择排序不稳定，无法应用于多级排序。
+

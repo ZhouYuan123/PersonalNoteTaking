@@ -172,9 +172,7 @@ var的局限性：
 | null      | 赋值了，但内容为空。null是对象   |
 
 ```javascript
-console.log(undefined + 1) // NaN
-console.log(null + 1) // 1
-NaN === NaN // 返回NaN
+NaN === NaN // 返回false
 
 // 模版字符串, 反引号 + $
 let age = 18
@@ -187,7 +185,7 @@ document.write(`我${age + age2}岁了`)
 <font color="green">**隐式数据类型转换**</font>
 
 * `+`号两边只要有一个是字符串，都会把另外一个转成字符
-* 串除了+以外的算术运算符 比如 `- ,*, /,==` 等都会把两个数据转成数字类型
+* 除了+以外的算术运算符 比如 `- ,*, /,==` 等都会把两个数据转成数字类型
 
 ```javascript
 console.log(1 + 'a') // 字符串拼接 1a
@@ -212,6 +210,11 @@ console.log(+'123') // 转换为数字类型
 - `''`（空字符串）
 - `null`
 - `undefined` --> NaN， 但是 `null` == `undefined`
+
+```js
+console.log(undefined + 1) // NaN
+console.log(null + 1) // 1
+```
 
 <font color="green">**显示数据类型转换**</font>
 
@@ -707,6 +710,55 @@ var num = 10
 // 2. 函数提升
 // 1). 会把所有函数声明提升到当前作用域的最前面
 // 2). 只提升函数声明，不提升函数调用
+```
+
+#### 2.8.4 this
+
+**this** : 指向调用的对象
+
+* 普通函数里面this指向调用者，严格模式下指向undefined
+  * 在构造函数中，`this` 指向新创建的对象实例。
+  * 对象中的方法，`this` 指向对象实例。
+
+* 箭头函数不会创建自己的this, 沿用自己的作用域链的上一层的this
+  * 对象中的方法，`this` 指向上一层this。
+  * 不适用：
+    * DOM事件回调函数为了简便，不推荐使用箭头函数 (总是指向window)
+    * 构造函数
+    * 原型函数
+    * 字面量对象中函数
+
+
+<font color="green">**改变this**</font>
+
+```js
+// 1. call
+/* 调用fn并且修改this
+ *
+ * thisArg: 在 fun 函数运行时指向的 this 值
+ * arg1，arg2:传递的其他参数
+ * 返回值就是函数的返回值，因为它就是调用函数
+ */
+fn.call(thisArg, arg1, arg2);
+const obj = {
+    uname : ''
+}
+function fn(x, y) {
+}
+fn.call(obj, 1, 2)
+
+// 2. apply
+fn.apply(thisArg, [arg1, arg2]);
+function fn(x, y) {
+	// 必须还是用 x,y 两个参数去接, 一个参数只能接收一个
+}
+const arr = [100, 90, 75]
+const max = Math.max.apply(Math, arr)
+const min = Math.min.apply(null, arr)
+
+// 3. bind 不会调用函数
+const fun = fn.bind(obj); // 返回改造后的原函数的拷贝
+fun()
 ```
 
 ### 2.9 正则表达式
