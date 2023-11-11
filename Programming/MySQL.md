@@ -4,6 +4,11 @@
 
 开放源代码的关系型数据库管理系统。支持千万级别数据量的存储。1995年瑞典MySQL AB (创始人Michael Widenius) 公司开发。MySQL 的创造者担心MySQL有闭源的风险，因此创建了 MySQL的分支项目 MariaDB。
 
+发布之后语法几乎没有变化。
+
+* SQL-86、SQL-89、SQL:2003、SQL:2008、SQL:2011和SQL:2016
+* SQL92 (SQL-2标准)、SQL99 (SQL-3标准)
+
 <font color=green>**安装与配置**</font>
 
 官网：www.mysql.com
@@ -144,6 +149,14 @@ MySQL 在 Windows 环境下是大小写不敏感的，MySQL 在 Linux 环境下�
 
 ### 3.3 DQL
 
+```mysql
+-- 显示表结构
+DESCRIBE 表名;
+DESC 表名;
+```
+
+#### 3.3.1 select
+
 🟦 **SELECT** 🟦
 
 ```mysql
@@ -171,16 +184,12 @@ FROM 表名;
 SELECT 列名1,DISTINCT 列名2 # 报错
 FROM 表名;
 
--- 着重号 (反引号) 跟关键字重名的时候使用。
+-- 着重号 (反引号) 跟关键字重名的时候使用。(oracle不支持着重号)
 SELECT * FROM `order`;
 
 -- 查询常数，每一行数据都会添加
 SELECT 列名1,列名2,'abc'
 FROM 表名;
-
--- 显示表结构
-DESCRIBE 表名;
-DESC 表名;
 ```
 
 🟦 **WHERE** 🟦
@@ -248,6 +257,7 @@ SELECT
 'shkstart' REGEXP '^shk',
 'shkstart' REGEXP 't$',
 'shkstart' REGEXP 'hk'
+'shkstart' REGEXP '[k]' # 包含k
 FROM DUAL;	# 1,1,1 或者使用RLIKE
 
 -- 逻辑运算符
@@ -277,14 +287,14 @@ SELECT B << 2;
 
 ```mysql
 -- 默认按照插入顺序
-SELECT a
+SELECT salary * 12 abc
 FROM DUAL
-ORDER BY salary ASC; # 默认就是升序，DESC降序
+ORDER BY abc ASC; # 默认就是升序，DESC降序
 # 🟥 WHERE 后面不可以使用SELECT中的别名，ORDER BY是可以的
 
 -- 二级排序
 ORDER BY a ASC, b DESC;
-ORDER BY a,b DESC;
+ORDER BY a, b DESC;
 ```
 🟦 **分页** 🟦
 
@@ -299,4 +309,94 @@ WHERE salary > 6000
 ORDER BY salary DESC
 LIMIT 0, 10; # LIMIT 10; 默认就是从偏移量0开始。
 # LIMIT 10 OFFSET 0; 8.0新特性 偏移量, 偏移位置
+
+-- 其他数据库
+# SQL Server 和 Access : TOP
+SELECT TOP 5 name, hp_max FROM heros ORDER BY hp_max DESC
+# DB2 : FETCH FIRST 5 ROWS ONLY
+SELECT name, hp_max FROM heros ORDER BY hp_max DESC FETCH FIRST 5 ROWS ONLY
+# Oracle : ROWNUM
+SELECT rownum, last_name, salary FROM employees WHERE rownum < 5 ORDER BY salary DESC;
 ```
+
+#### 3.3.2 多表查询
+
+笛卡尔积错误 —— 缺少了多表连接的条件，出现n*m 条数据。CROSS JOIN
+
+![](../imgs/MySQL/multi_table.jpg)
+
+**job_grades表**
+
+| grade_level | lowest_sal | highest_sal |
+| ----------- | ---------- | ----------- |
+| A           | 1000       | 2999        |
+| B           | 3000       | 5999        |
+| C           | 6000       | 9999        |
+| D           | 10000      | 14999       |
+
+```mysql
+--
+SELECT employee_id, department_name
+FROM employees, departments
+# 两个表的连接条件
+WHERE employees.`department_id` = departments.`department_id`;
+
+-- 如果查询语句中出现了多个表中都存在的字段，则必须指明此字段所在的表。
+-- 从SQL优化的角度，建议多表查询时，每个字段前都指明其所在的表
+
+-- 可以给表起别名 一旦在SELECT或WHERE中使用表名的话，则必须使用表的别名，而不能再使用表的原名
+SELECT emp.employee_id, dept.department_name
+FROM employees emp, departments dept
+WHERE emp.`department_id` = dept.`department_id`;
+```
+
+🟩 **等值连接 vs 非等值连接** 🟩
+
+```mysql
+-- 查询出所在等级 ABCD
+SELECT last_name,salary,grade_level
+FROM employees e,job_grades j
+WHERE e.`salary` BETWEEN j.`lowest_sal` AND j.`highest_sal`; # 非等值连接
+```
+
+🟩 **自连接 vs 非自连接** 🟩
+
+```mysql
+-- 查询员工id,员工姓名及其管理者的id和姓名 (两者在同一个表中)
+SELECT emp.employee_id, emp.last_name, mgr.employee_id,mgr.last_name
+FROM employees emp, employees mgr
+WHERE emp.`manager_id` = mgr.`employee_id`; # 自连接
+```
+
+🟩 **内连接 vs 外连接** 🟩
+
+内连接: 合并具有同一列的两个以上的表的行，结果集中不包含一个表与另一个表不匹配的行。
+
+外连接: 合并具有同一列的两个以上的表的行，结果集中除了包含一个表与另一个表匹配的行之外, 还查询到了左表 或 右表中不匹配的行。(查询所有肯定是一个外连接)
+
+```mysql
+SELECT employee_id, department_name
+FROM employees e, departments d
+WHERE e.`department_id` = d.`department_id`;
+
+-- SQL92 实现外连接：使用 + (MySQL 不支持这种写法)
+SELECT employee_id, department_name
+FROM employees e, departments d
+WHERE e.`department_id` = d.`department_id`(+); # 左外连接 (注意不是右, 左边多，右边写加号)
+
+-- SQL99 实现外连接：使用 JOIN ...ON
+-- 内连接
+SELECT employee_id, department_name
+FROM employees e [INNER] JOIN departments d
+ON e.`department_id` = d.`department_id`; # 继续加表继续加 JOIN ...ON
+-- 外连接
+SELECT employee_id, department_name
+FROM employees e LEFT [OUTER] JOIN departments d # 左外连接 (左表全)
+ON e.`department_id` = d.`department_id`;
+SELECT employee_id, department_name
+FROM employees e RIGHT [OUTER] JOIN departments d # 右外连接 (右表全)
+ON e.`department_id` = d.`department_id`;
+```
+
+
+

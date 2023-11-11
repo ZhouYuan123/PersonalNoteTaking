@@ -77,6 +77,8 @@
 |查看选择类所有对象|ctrl + shift + n||||
 |退出调试||||shift + F5|
 
+## 5. PyCharm
+
 # 2. Snipaste
 
 F1: 截屏

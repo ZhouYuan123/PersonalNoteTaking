@@ -6,7 +6,7 @@
 
 顺序存储结构，链式存储结构。
 
-<font color=green>**稀疏数组**</font>
+🟩 **稀疏数组** 🟩
 
 Sparse Array:  一般使用在一个二维数组存储着大量无效数据的场景中。
 
@@ -15,13 +15,13 @@ Sparse Array:  一般使用在一个二维数组存储着大量无效数据的�
 
 <img src="../imgs/algorithm/sparsearray.jpg" alt="稀疏数组" style="zoom:80%;" />
 
-<font color=green>**队列**</font>
+🟩 **队列** 🟩
 
 队列是一个有序列表，可以用数组或是链表来实现。
 
 遵循先入先出的原则。
 
-<font color=green>**链表**</font>
+🟩 **链表**🟩
 
 **Linked List：**
 
@@ -30,7 +30,7 @@ Sparse Array:  一般使用在一个二维数组存储着大量无效数据的�
 3. 链表的各个节点不一定是连续存储.
 4. 带头节点或者不带
 
-<font color=green>**单向链表**</font>
+**单向链表**
 
 1. 单向链表 **(Singly Linked List)** ，查找的方向只能是一个方向，而双向链表可以向前或者向后查找。
 2. 单向链表不能自我删除，需要靠辅助节点，而双向链表，则可以自我删除。(辅助节点通常是指向前一个节点)
@@ -62,19 +62,24 @@ public class Main {
 }
 ```
 
-<font color=blue>**单向环形链表**</font>
+**单向环形链表**
 
 约瑟夫问题 (Josephus problem)
 
-<font color=green>**双向链表**</font>
+**双向链表**
 
 **(Doubly Linked List)** ： 可以自我删除。
 
-<font color=green>**栈**</font>
+🟩 **栈** 🟩
 
 stack : FILO-First In Last Out,  栈顶Top,  栈底Bottom
 
 ## 2. 非线性结构
+
+* 二叉排序树(Binary SortTree) ：插入，查找，删除都很块。
+  * 叶子节点(没有子节点的节点)
+  * 节点的权(节点值)
+  * 树的高度(最大层数)
 
 ## 3. 复杂度
 
@@ -102,7 +107,9 @@ stack : FILO-First In Last Out,  栈顶Top,  栈底Bottom
 
 ![](../imgs/algorithm/complex8.png)
 
-<font color=green>**1. 冒泡排序 (Bubble Sort)**</font>
+🟩 **1. 冒泡排序 (Bubble Sort)** 🟩
+
+![](../imgs/algorithm/BubbleSort.gif)
 
 ```java
 /* 冒泡排序（标志优化） */
@@ -126,7 +133,9 @@ void bubbleSortWithFlag(int[] nums) {
 }
 ```
 
-<font color=green>**2. 选择排序 (Selection Sort)**</font>
+🟩 **2. 选择排序 (Selection Sort)** 🟩
+
+![](../imgs/algorithm/SelectionSort.gif)
 
 ```java
 /* 选择排序 */
@@ -150,7 +159,7 @@ void selectionSort(int[] nums) {
 
 - **非稳定排序**：元素 `nums[i]` 有可能被交换至与其相等的元素的右边，导致两者相对顺序发生改变。
 
-<font color=green>**3. 「插入排序 insertion sort」**</font>
+🟩 **3. 「插入排序 insertion sort」** 🟩
 
 ```java
 /* 插入排序 */

@@ -343,24 +343,24 @@ master：指向的是提交。master 分支并不是一个特殊分支，是因�
 
 ![branches](../imgs/git/branches.png)
 
-| 命令                                                          |                                                                                                   |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| git branch                                                  | 查看本地所有分支。                                                                                         |
-| git branch brname [commitID]                                | 创建分支。只是更新指针的指向，轻量级。                                                                               |
-| git checkout brname                                         | 切换分支。HEAD指向当前分支。也可以git checkout -,  回刚刚的分支。切换分支会改变工作目录中的文件为当前分支的，之前untracked文件会保留， 没有add的文件会无法切换。 |
-| git checkout -b newbranchname [origin/master]               | 或者git checkout --track origin/develop<br />创建并且切换。[ 将本地分支与远程分支设置为不同的名字 ]                          |
-| git branch -d brname                                        | 删除分支。只能删除另一个分支。没有merge无法删除。<br/>-D：强制删除。                                                          |
-| git branch -v                                               | 显示每个分支最后一次commit。                                                                                 |
-| git branch -vv                                              | 查看本地分支对应的跟踪分支。                                                                                    |
-| git branch -r                                               | 查看远程跟踪分支。                                                                                         |
-| git branch -a                                               | 显示所有分支包括远程跟踪分支。                                                                                   |
-| git reset HEAD^<br/>git reset HEAD~1<br/>git reset commitID | ^代表回退版本个数。<br/>1: 代表第一个提交<br/>git checkout commitID: 可以创建一个游离的分支。                                 |
-| git reflog                                                  | git的操作日志。                                                                                         |
-| git push origin --delete 分支名                                | 删除分支。                                                                                             |
-| git push origin 本地名 [: 远端名]                                 | git push 完整写法                                                                                     |
-| git gui                                                     | 打开图形化界面                                                                                           |
-| git push --set-upstream origin develop （跟8.3相同，但是推荐这个）      | 将本地分支变为远程                                                                                         |
-| git gc                                                      |                                                                                                   |
+| 命令                                                               |                                                                                                                                                                  |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| git branch                                                         | 查看本地所有分支。                                                                                                                                               |
+| git branch brname [commitID]                                       | 创建分支。只是更新指针的指向，轻量级。                                                                                                                           |
+| git checkout brname                                                | 切换分支。HEAD指向当前分支。也可以git checkout -,  回刚刚的分支。切换分支会改变工作目录中的文件为当前分支的，之前untracked文件会保留， 没有add的文件会无法切换。 |
+| git checkout -b newbranchname [origin/master]                      | 或者git checkout --track origin/develop<br />创建并且切换。[ 将本地分支与远程分支设置为不同的名字 ]                                                              |
+| git branch -d brname                                              | 删除分支。只能删除另一个分支。没有merge无法删除。-D：强制删除。                                                                                                  |
+| git branch -v                                                      | 显示每个分支最后一次commit。                                                                                                                                     |
+| git branch -vv                                                     | 查看本地分支对应的跟踪分支。                                                                                                                                     |
+| git branch -r                                                      | 查看远程跟踪分支。                                                                                                                                               |
+| git branch -a                                                      | 显示所有分支包括远程跟踪分支。                                                                                                                                   |
+| git reset commitID                                                 | 可以创建一个游离的分支。                                                                                                                                         |
+| git reflog                                                         | git的操作日志。                                                                                                                                                  |
+| git push origin --delete 分支名                                    | 删除分支。                                                                                                                                                       |
+| git push origin 本地名 [: 远端名]                                  | git push 完整写法                                                                                                                                                |
+| git gui                                                            | 打开图形化界面                                                                                                                                                   |
+| git push --set-upstream origin develop （跟8.3相同，但是推荐这个） | 将本地分支变为远程                                                                                                                                               |
+| git gc                                                             |                                                                                                                                                                  |
 
 ### 6.2 分支合并
 
