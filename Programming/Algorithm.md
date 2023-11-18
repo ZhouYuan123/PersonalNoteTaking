@@ -76,6 +76,81 @@ stack : FILO-First In Last Out,  栈顶Top,  栈底Bottom
 
 ## 2. 非线性结构
 
+二叉树：每个节点最多只能有两个子节点的一种形式称为二叉树。
+
+满二叉树：二叉树的所有叶子节点都在最后一层，并且结点总数=2^(n-1)
+
+```mermaid
+graph TD;
+11((11))-->21((21))-->41((41))
+21((21))-->51((51))
+11((11))-->31((31))-->61((61))
+31((31))-->71((71))
+```
+
+
+
+完全二叉树：如果该二叉树的所有叶子节点都在最后一层或者倒数第二层，而且最后一层的叶子节点在左边连续，倒数第二层的叶子节点在右边连续，我们称为完全二叉树。
+
+```mermaid
+graph TD;
+A((A))-->B((B))-->D((D))-->H((H))
+D((D))-->I((I))
+B((B))-->E((E))-->J((J))
+A((A))-->C((C))-->F((F))
+C((C))-->G((G))
+```
+前序遍历:先输出父节点，再遍历左子树和右子树。  `A B D H I E J C F G`
+
+中序遍历:先遍历左子树，再输出父节点，再遍历右子树。`H D I B J E A F C G`
+
+后序遍历:先遍历左子树，再遍历右子树，最后输出父节点。`H I D J E B F G C A`
+
+```java
+public class TreeNode{
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode(int x){
+        val = x;
+    }
+}
+
+// 前序遍历
+public void preOrder(TreeNode node){
+    System.out.println(node.val);
+    TreeNode leftTree = node.left;
+    if(leftTree != null){
+        preOrder(leftTree);
+    }
+    TreeNode rightTree = biTree.right;
+    if(rightTree != null){
+        preOrder(rightTree);
+    }
+}
+
+// 中序遍历
+public void inOrderTraversal(TreeNode node){
+    if(node == null){
+        return;
+    }else{
+        inOrderTraversal(node.leftChild);
+        System.out.println(node.val);
+        inOrderTRaversal(node.rightChild);
+    }
+}
+
+// 后序遍历
+public void postorder(TreeNode node) {
+    if (node == null) {
+        return;
+    }
+    postorder(node.left);
+    postorder(node.right);
+    System.out.println(node.val);
+}
+```
+
 * 二叉排序树(Binary SortTree) ：插入，查找，删除都很块。
   * 叶子节点(没有子节点的节点)
   * 节点的权(节点值)

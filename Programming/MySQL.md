@@ -109,6 +109,8 @@ mysql -u用户名 -p密码 -h主机名 或 localhost # Linux
 
 ### 3.1 规则规范
 
+https://www.w3school.com.cn/
+
 **基本规则**
 
 1. SQL可以写在一行或者多行。为了提高可读性，各子句分行写，必要时使用缩进。
@@ -121,6 +123,8 @@ MySQL 在 Windows 环境下是大小写不敏感的，MySQL 在 Linux 环境下�
 
 * 数据库名、表名、表别名、字段名、字段别名等都小写
 * SQL 关键字、函数名、绑定变量等都大写
+* 单引号用于表示字符串数据类型
+* 双引号通常用于表示列名或表名
 
 ```sql
 单行注释: # 注释文字(MySQL特有的方式)
@@ -370,6 +374,8 @@ WHERE emp.`manager_id` = mgr.`employee_id`; # 自连接
 
 🟩 **内连接 vs 外连接** 🟩
 
+![](../imgs/MySQL/sqljoin.jpg)
+
 内连接: 合并具有同一列的两个以上的表的行，结果集中不包含一个表与另一个表不匹配的行。
 
 外连接: 合并具有同一列的两个以上的表的行，结果集中除了包含一个表与另一个表匹配的行之外, 还查询到了左表 或 右表中不匹配的行。(查询所有肯定是一个外连接)
@@ -379,7 +385,7 @@ SELECT employee_id, department_name
 FROM employees e, departments d
 WHERE e.`department_id` = d.`department_id`;
 
--- SQL92 实现外连接：使用 + (MySQL 不支持这种写法)
+-- SQL92 实现外连接：使用 + 🟥MySQL 不支持这种写法🟥
 SELECT employee_id, department_name
 FROM employees e, departments d
 WHERE e.`department_id` = d.`department_id`(+); # 左外连接 (注意不是右, 左边多，右边写加号)
@@ -388,7 +394,7 @@ WHERE e.`department_id` = d.`department_id`(+); # 左外连接 (注意不是右,
 -- 内连接
 SELECT employee_id, department_name
 FROM employees e [INNER] JOIN departments d
-ON e.`department_id` = d.`department_id`; # 继续加表继续加 JOIN ...ON
+ON e.`department_id` = d.`department_id`; # 继续加表继续加 JOIN ...ON (也可以一直JOIN然后 再 ON ... AND 连接)
 -- 外连接
 SELECT employee_id, department_name
 FROM employees e LEFT [OUTER] JOIN departments d # 左外连接 (左表全)
@@ -396,7 +402,39 @@ ON e.`department_id` = d.`department_id`;
 SELECT employee_id, department_name
 FROM employees e RIGHT [OUTER] JOIN departments d # 右外连接 (右表全)
 ON e.`department_id` = d.`department_id`;
+SELECT employee_id, department_name
+FROM employees e FULL [OUTER] JOIN departments d # 满外连接 🟥MySQL不支持🟥
+ON e.`department_id` = d.`department_id`;
+
+-- UNION 操作符返回两个查询的结果集的并集，去除重复记录。
+-- UNION ALL 不去重，推荐使用，效率高
+SELECT employee_id, department_name # 满外连接 🟥间接实现🟥
+FROM employees e LEFT [OUTER] JOIN departments d # (左上 + 右中)
+ON e.`department_id` = d.`department_id`;
+UNION ALL
+SELECT employee_id, department_name
+FROM employees e LEFT [OUTER] JOIN departments d
+ON e.`department_id` = d.`department_id`
+WHERE e.`department_id` IS NULL;
 ```
 
+#### 3.3.3 SQL99
 
+🟩 **NATURAL JOIN** 🟩
 
+```mysql
+-- 自然连接 自动查询两张连接表中、所有"相同的字段"，然后进行"等值连接"
+SELECT employee_id, department_name
+FROM employees e NATURAL JOIN departments d;
+
+-- JOIN...USING 可以简化 JOIN ON 的等值连接
+SELECT employee_id,last_name,department_name
+FROM employees e JOIN departments d
+USING (department id);
+```
+
+> 阿里巴巴《Java开发手册》
+>
+> [强制]超过三个表禁止join。需要 join 的字段，数据类型保持绝对一致;多表关联查询时，保证被关联的字段需要有索引。
+>
+> 说明: 即使双表join 也要注意表索引、SQL性能

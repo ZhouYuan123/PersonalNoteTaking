@@ -354,6 +354,12 @@ void
 
 `const`： 使用const定义的常量在编译时就确定了其值，不会被修改，因此编译器可以将常量存储在只读内存区域，避免了在运行时分配内存。 从而 --》节省了内存空间，提高了访问效率，增强了代码可读性。
 
+`const` 比 `#define` 好：
+
+1. 能够明确指定类型。
+2. 宏作用域有一直是全局的。
+3. const可以更复杂的数据类型。
+
 ## 4. 字符串
 
 ### 4.1 定义
@@ -689,9 +695,12 @@ INT_MAX; // int 最大值
 SHRT_MAX; // short 最大值
 LONG_MAX;
 LLONG_MAX;
+#include <float.h> // 定义浮点数最大最小值。
+
+// Sleep(n); <windows.h>
 ```
 
-### 9.3 内联函数
+🟩 **内联函数** 🟩
 
 内联函数是一种对编译器的请求，用于将函数内容直接插入到调用点处，而不是通过函数调用的方式执行. (C99)
 
@@ -1350,10 +1359,8 @@ int Add( int x, int y);
 
 | name                        |                                                 |
 | --------------------------- | ----------------------------------------------- |
-| Sleep(n);                   | <windows.h>                                     |
 | strcap(desArray, srcArray); | 复制字符串。<string.h>                          |
 | assert()                    | 断言                                            |
 | char * gets(char * str)     | 接收有空格字符串。                              |
 | perror(char *)              | <stdlib.h>, `perror ("main");// main: xxxxxxxx` |
-| float.h                     | 定义浮点数最大最小值。                          |
 # THE END
