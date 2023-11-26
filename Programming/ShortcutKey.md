@@ -79,16 +79,17 @@
 
 ## 5. PyCharm
 
-| 功能        |              |
-| ----------- | ------------ |
-| Ctrl + d    | 快速复制一样 |
-| Ctrl + F2   | 终止程序     |
-| Shift + F8  | 跳出         |
-| Shift + F9  | debug执行    |
-| Shift + F10 | 执行脚本     |
-| F7          | 进入         |
-| F8          | 单步执行     |
-| F9          | resume       |
+| 功能           |              |
+| -------------- | ------------ |
+| Ctrl + Alt + L | 格式化       |
+| Ctrl + d       | 快速复制一样 |
+| Ctrl + F2      | 终止程序     |
+| Shift + F8     | 跳出         |
+| Shift + F9     | debug执行    |
+| Shift + F10    | 执行脚本     |
+| F7             | 进入         |
+| F8             | 单步执行     |
+| F9             | resume       |
 
 # 2. Snipaste
 

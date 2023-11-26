@@ -259,3 +259,186 @@ void insertionSort(int[] nums) {
 - 选择排序在任何情况下的时间复杂度都为 \(O(n^2)\) 。**如果给定一组部分有序的数据，插入排序通常比选择排序效率更高**。
 - 选择排序不稳定，无法应用于多级排序。
 
+🟩 **4. 「希尔排序 shell sort」**🟩
+
+![](../imgs/algorithm/shellSort.jpg)
+
+```java
+void shellSort(arr) {
+    int len = arr.length;
+    int temp = 0;
+    for (int gap = len / 2; gap > 0; gap /= 2) {
+        for (int i = gap; i < len; i++) {
+            // 1. 交换法
+            for(int j = i - gap; j>=0; j-=gap){
+                if(arr[j] > arr[j+gap]){
+                    temp = arr[j];
+                    arr[j] = arr[j + gap];
+                    arr[j + gap] = temp;
+                }
+            }
+            //2. 移位法
+            var base = arr[i];
+            var j = i - gap;
+            while (j >= 0 && arr[j - gap] > base) {
+                 arr[j] = arr[j - gap];
+                 j -= gap;
+            }
+            arr[j] = base;
+        }
+    }
+}
+```
+
+🟩 **5. 「快速排序 quick sort」** 🟩
+
+是对冒泡排序的一种改进。
+
+```java
+/* 元素交换 */
+void swap(int[] nums, int i, int j) {
+    int tmp = nums[i];
+    nums[i] = nums[j];
+    nums[j] = tmp;
+}
+
+/* 哨兵划分 */
+int partition(int[] nums, int left, int right) {
+    // 以 nums[left] 作为基准数
+    int i = left, j = right;
+    while (i < j) {
+        while (i < j && nums[j] >= nums[left])
+            j--;          // 从右向左找首个小于基准数的元素
+        while (i < j && nums[i] <= nums[left])
+            i++;          // 从左向右找首个大于基准数的元素
+        swap(nums, i, j); // 交换这两个元素
+    }
+    swap(nums, i, left);  // 将基准数交换至两子数组的分界线
+    return i;             // 返回基准数的索引
+}
+
+/* 快速排序 */
+void quickSort(int[] nums, int left, int right) {
+    // 子数组长度为 1 时终止递归
+    if (left >= right)
+        return;
+    // 哨兵划分
+    int pivot = partition(nums, left, right);
+    // 递归左子数组、右子数组
+    quickSort(nums, left, pivot - 1);
+    quickSort(nums, pivot + 1, right);
+}
+```
+
+🟩 **6. 「归并排序 merge sort」**🟩
+
+```java
+/* 合并左子数组和右子数组 */
+// 左子数组区间 [left, mid]
+// 右子数组区间 [mid + 1, right]
+void merge(int[] nums, int left, int mid, int right) {
+    // 初始化辅助数组
+    int[] tmp = Arrays.copyOfRange(nums, left, right + 1);
+    // 左子数组的起始索引和结束索引
+    int leftStart = left, leftEnd = mid - left;
+    // 右子数组的起始索引和结束索引
+    int rightStart = mid + 1 - left, rightEnd = right - left;
+    // i, j 分别指向左子数组、右子数组的首元素
+    int i = leftStart, j = rightStart;
+    // 通过覆盖原数组 nums 来合并左子数组和右子数组
+    for (int k = left; k <= right; k++) {
+        // 若“左子数组已全部合并完”，则选取右子数组元素，并且 j++
+        if (i > leftEnd)
+            nums[k] = tmp[j++];
+        // 否则，若“右子数组已全部合并完”或“左子数组元素 <= 右子数组元素”，则选取左子数组元素，并且 i++
+        else if (j > rightEnd || tmp[i] <= tmp[j])
+            nums[k] = tmp[i++];
+        // 否则，若“左右子数组都未全部合并完”且“左子数组元素 > 右子数组元素”，则选取右子数组元素，并且 j++
+        else
+            nums[k] = tmp[j++];
+    }
+}
+
+/* 归并排序 */
+void mergeSort(int[] nums, int left, int right) {
+    // 终止条件
+    if (left >= right)
+        return;                      // 当子数组长度为 1 时终止递归
+    // 划分阶段
+    int mid = (left + right) / 2;    // 计算中点
+    mergeSort(nums, left, mid);      // 递归左子数组
+    mergeSort(nums, mid + 1, right); // 递归右子数组
+    // 合并阶段
+    merge(nums, left, mid, right);
+}
+```
+
+🟩 **7. 「基数排序 radix sort」** 🟩
+
+```java
+/* 获取元素 num 的第 k 位，其中 exp = 10^(k-1) */
+int digit(int num, int exp) {
+    // 传入 exp 而非 k 可以避免在此重复执行昂贵的次方计算
+    return (num / exp) % 10;
+}
+
+/* 计数排序（根据 nums 第 k 位排序） */
+void countingSortDigit(int[] nums, int exp) {
+    // 十进制的位范围为 0~9 ，因此需要长度为 10 的桶
+    int[] counter = new int[10];
+    int n = nums.length;
+    // 统计 0~9 各数字的出现次数
+    for (int i = 0; i < n; i++) {
+        int d = digit(nums[i], exp); // 获取 nums[i] 第 k 位，记为 d
+        counter[d]++;                // 统计数字 d 的出现次数
+    }
+    // 求前缀和，将“出现个数”转换为“数组索引”
+    for (int i = 1; i < 10; i++) {
+        counter[i] += counter[i - 1];
+    }
+    // 倒序遍历，根据桶内统计结果，将各元素填入 res
+    int[] res = new int[n];
+    for (int i = n - 1; i >= 0; i--) {
+        int d = digit(nums[i], exp);
+        int j = counter[d] - 1; // 获取 d 在数组中的索引 j
+        res[j] = nums[i];       // 将当前元素填入索引 j
+        counter[d]--;           // 将 d 的数量减 1
+    }
+    // 使用结果覆盖原数组 nums
+    for (int i = 0; i < n; i++)
+        nums[i] = res[i];
+}
+
+/* 基数排序 */
+void radixSort(int[] nums) {
+    // 获取数组的最大元素，用于判断最大位数
+    int m = Integer.MIN_VALUE;
+    for (int num : nums)
+        if (num > m)
+            m = num;
+    // 按照从低位到高位的顺序遍历
+    for (int exp = 1; exp <= m; exp *= 10)
+        // 对数组元素的第 k 位执行计数排序
+        // k = 1 -> exp = 1
+        // k = 2 -> exp = 10
+        // 即 exp = 10^(k-1)
+        countingSortDigit(nums, exp);
+}
+```
+
+## 6. 其他
+
+🟩 **查找** 🟩
+
+线性查找，二分查找，插值查找。
+
+```java
+int mid = Begin + 1/2 * (End - Begin);
+int mid = Begin + ((X - A[Begin] / (A[End] - A[Begin])) * (End - Begin));
+```
+
+斐波那契查找法。
+
+🟩 **哈希** 🟩
+
+把任意长度的输入（又叫做预映射pre-image）通过散列算法变换成固定长度的输出，该输出就是散列值。
