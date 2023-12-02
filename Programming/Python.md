@@ -1,6 +1,6 @@
 # Python
 
-## 1. 简介
+## 1. 简介与安装
 
 ​    胶水语言，背后有强大的代码库。动态语言。
 
@@ -14,7 +14,7 @@
 
 Python三大特点：完全面向对象 (一切皆对象)，强大标准库，大量第三方模块。
 
-## 2. 安装
+
 
 **安装python解释器**
 
@@ -34,7 +34,7 @@ Python Manuals: 官方手册。
 
 Python module docs: 已经安装的。
 
-**PyCharm**
+**安装PyCharm**
 
 community 下载这个就可以。
 
@@ -43,7 +43,7 @@ community 下载这个就可以。
 
 home下面出现配置目录隐藏文件。
 
-## 3. 基本语法
+## 2. 基本语法
 
 代码量，一般情况下是java的 1/5
 
@@ -56,9 +56,11 @@ print("Hello World")
 
 执行：`python xxx.py` or `python3 xxx.py` （python3的命令）
 
-**node：**关于脚本第一行的的解释，只对 Linux/Unix 用户适用，用来指定本脚本用什么解释器来执行。有这句的，加上执行权限后，可以直接用 ./ 执行。
+**node：**脚本第一行，只对 Linux/Unix 用户适用，用来指定本脚本用什么解释器来执行。有这句的，加上执行权限后，可以直接用 ./ 执行。
 
 `#` : 单行注释。没有多行注释，但是可以用三引号（单引号或者双引号）充当多行注释。
+
+`# TODO(author)` : 用于标记将要做的 (pycharm拥有TODO视图)。
 
 `#coding:GBK` : 文档第一行申明编码类型。
 
@@ -84,7 +86,9 @@ print("Hello World")
 | Function/Method Parameters | lower_with_under   |                                                              |
 | Local Variables            | lower_with_under   |                                                              |
 
-## 4. 数据类型
+🟩 **变量** 🟩
+
+## 3. 数据类型
 
 数字型：整型，浮点型，布尔型，复数型 (complex)。
 
@@ -132,7 +136,7 @@ i + "10"  # error
 
 `str(variable)` :
 
-## 5. 运算符
+## 4. 运算符
 
 **算术运算符 :**  先幂然后乘除再加减
 
@@ -168,7 +172,7 @@ i + "10"  # error
 
 优先级：算术运算符 > 位运算符 > 比较运算符 > 布尔运算符 > 赋值运算符
 
-## 7. 流程控制
+## 5. 流程控制
 
 任何简单或复杂的算法：顺序结构，选择结构，循环结构。
 
@@ -213,7 +217,7 @@ else:
 * 代码的缩进为一个 tab 键，或者4 个空格 -- 建议使用空格
 * 在Python 开发中Tab 和空格不要混用
 
-## 9. 非数字类型
+## 6. 非数字类型
 
 🟩 **列表** 🟩
 
@@ -225,18 +229,19 @@ lst=[] or list() #空列表
 lst=['hello','world',98]
 lst2=list(['hello','world',98])
 lst = list(元组)
+[1, 2] * 2  # [1, 2, 1, 2] 适用于字符串、列表、元组
 
 # 查询
 lst.index('hello') # 返回相同元素第一个的index，不存在抛异常 ValueError
 lst.index('hello',1,3) # [1-3)之间是否存在hello
 lst[N] or lst[-N] # -N从-1开始，没有索引抛异常 
-lst[start:stop:step] # 切片原列表，不包括stop, 三个值都可以省略。step为-1，反序切。
 len(lst)  # 列表中元素的总数
 lst.count('zs')  # 统计指定数据出现的字数
 
 # 判断
 元素 in lst
 元素 not in lst
+[1, 2, 3] < [2, 2, 3]  # 按照元素位进行比较。如果长度不同，短的列表认为小。
 
 # 遍历
 for _ in lst:
@@ -246,12 +251,14 @@ for index,value in enumerate(lst):
 
 # 增
 lst.append(100)
-lst.extend(lst2)
+lst.extend(lst2)  # 修改了调用这个方法的列表的内容
 lst.insert(index, 100)
 lst[1:] = lst2 # index1 之后的内容用新的列表替换掉
 
 # 改
 lst[1] = ""  # 超过index会数组越界error
+lst[start:stop:step] # 切片原列表，不包括stop, 三个值都可以省略。step为-1，反序切。
+[1, 2] + [3, 4]  # [1,2,3,4] 合并, 适用于字符串、列表、元组
 
 # 删
 lst.remove(100) # 只移除重复元素第一个，如果元素不存在 ValueError
@@ -382,84 +389,100 @@ s1.symmetric_difference(s2) or s1^ s2 # 取对称差集
 {i for i in range(1, 10)} #后面的i都放到前面里,也可以{i*i for i in range(1, 10)}
 ```
 
-## 10. 字符串
+## 7. 字符串
 
-是一个基本数据类型，不可变。== 比较的是内容。
+### 7.1 字符串处理
+
+🟩 **判断类型 -10** 🟩
+
+| str.方法名  |                                       |
+| ----------- | ------------------------------------- |
+| isspace()   | 是否只包含空白字符 (包括\t \n \r)     |
+| isalpha()   | 是否由全字母组成                      |
+| isalnum()   | 是否由数字和字母组成                  |
+| isdecimal() | 是否全部由十进制数字组成 (1.1是False) |
+| isdigit()   | 是不是数字，额外包括 `(1), \u00b2`    |
+| isnumeric() | 是不是数字，额外包括 `(1), \u00b2, 汉字数字(一千零一)` |
+| istitle()   | 是否每个单词的首写字母大写            |
+| islower()   | 是否都是小写                          |
+| isupper()   | 是否都是大写                          |
+| isidentifier() | 是不是合法标识符 |
+
+🟩 **查找和替换 -9** 🟩
+
+```python
+str = "HW"
+len(str)  # 字符串长度
+str.count('abc')  # str中abc出现的次数
+str.startswith('abc')
+str.endswith('abc')
+str.index('abc')  # 找不到，ValueError
+str.find('abc')  # 找不到，返回 -1
+str.replace('oldString','newString' [,指定次数])  # 不会修改原有字符串的内容
+str.rindex('abc')  # 最后一个指定字串, 找不到，ValueError
+str.rfind('abc')  # 最后一个指定字串, 找不到，返回 -1
+```
+
+🟩 **大小写转换和对其 -8** 🟩
+
+| str.方法名                   |                                                    |
+| ---------------------------- | -------------------------------------------------- |
+| capitalize()                 | 把字符串第一个字符大写                             |
+| title()                      | 把字符串的每个单词首写字母大写                     |
+| lower()                      |                                                    |
+| upper()                      |                                                    |
+| swapcase()                   | 翻转string中的大小写                               |
+| ljust(width [, '指定字符'])  | 左对齐，空白处用指定字符填充。默认使用半角空格填充 |
+| rjust(width [, '指定字符'])  |                                                    |
+| center(width [, '指定字符']) |                                                    |
+
+ 🟩 **字符串处理 -8** 🟩
+
+```python
+'''去除空白字符'''
+str = "HW"
+str.strip()  #  去除字符串左右的空白字符
+str.rstrip()
+str.lstrip()
+
+'''字符串拼接'''
+str.split('指定分隔符' [,num])  # 默认用空格(包括/r/n/t)分割，返回列表。 num指定分割的次数
+'指定拼接符'.join(lst)  # lst转为字符串用指定字符拼接
+string.partition(str)  # 把字符串 string 分成一个3元素的元组(str前面, str, str后面)
+string.rpartition(str)  # 类似于 partition()方法，不过是从右边开始查找
+string.splitlines()  # 按照行(\r;\n; n分隔，返回一个包含各行作为元素的列表
+
+'''字符串切片'''
+# 切片后返回新的字符串。
+str[start:stop:step]  # 前包括后不包括
+str[2:5]  # 截取了第3-5 (index 2到4)
+str[:5]  # 前五个字符的串 (index 0到4)
+str[5:]  # 第六到最后 (index 5到最后)
+str[5::2]  # 步长为2。
+str[-1]  # 倒序索引，拿到最后一个字符
+str[-2:]  # 倒序索引，拿到最后两个字符
+str[2:-1]  # index 2到倒数第二
+str[0::-1]  # 只截取了第一个字符
+str[-1::-1]  # 反转了字符串。-1可以省略：str[::-1]
+
+'''字符串填充'''
+# zfill(宽度)右对齐，左边0填充。
+n = "123"
+s = n.zfill(5)  # 00123
+
+# 字符串里的不一定需要是数字，其余字符也可以：
+n = "xyz"
+s = n.zfill(5)  # 00xyz
+
+# 对于纯数字，不能用zfill，可以参考C语言中的方法：
+n = 123
+s = "%05d" % n  # 00123
+```
+
 
 ```python
 "-" * 5  # 拼接出字符串 '-----'
 ```
-
-### 10.1 字符串驻留机制
-
-相同的字符串，指向同一个地址的条件：
-
-1. 字符串长度为0或者1
-2. 符合标识符的字符串
-3. 只在编译时驻留
-4. -5,256 之间的驻留
-
-强制驻留，sys.interna(a)。 PyCharm对字符串进行了优化，会自动驻留。
-
-### 10.2 字符串处理
-
-| 方法                                                         |                                          |
-| ------------------------------------------------------------ | ---------------------------------------- |
-| .index('')                                                   | 找不到，ValueError                       |
-| .find('')                                                    | 找不到，返回 -1                          |
-| .rindex('')                                                  | 最后一个指定字串, 找不到，ValueError     |
-| .rfind('')                                                   | 最后一个指定字串, 找不到，返回 -1        |
-| .upper(), lower(), swapcase(), capitalize(), title()         | 产生新的转换的字符串。                   |
-| center(totalNumber, ‘填充符’),                               | 左右填充，默认填充空格，超过返回原字符串 |
-| ljust(totalNumber, ‘填充符’), rjust(totalNumber, ‘填充符’),  | 右填充, 左填充。                         |
-| zfill(宽度)                                                  | 右对齐，左边0填充。                      |
-| split(sep='指定分隔符')                                      | 默认用空格分割，返回列表                 |
-| split(sep='指定分隔符', maxsplit=1)                          |                                          |
-| rsplit(sep='指定分隔符'), split(sep='指定分隔符', maxsplit=1) |                                          |
-| isidentifier()                                               | 是不是合法标识符                         |
-| isspace()                                                    | 是不是空白字符，包括\t \n \r             |
-| isalpha()                                                    | 是否由全字母组成                         |
-| .isdigit()                                                   | 是不是数字。                             |
-| isdecimal()                                                  | 是否全部由十进制数字组成                 |
-| isnumeric()                                                  | 是否全部由数字组成 （123四）true         |
-| isalnum()                                                    | 是否由数字和字母组成                     |
-| replace('Pythoin', 'Java')<br />replace('Pythoin', 'Java', 指定次数) | 用Java替换Python                         |
-| '\|'.join(lst)，'*'.join(t)，                                | lst转为字符串用指定字符拼接              |
-
-```python
-# 使用zfill方法：给字符串或者数字前面补0，例如123，补足5位，显示为00123;
-n="123"
-s=n.zfill(5)
-print(s) # 00123
-
-# 字符串里的不一定需要是数字，其余字符也可以：
-n="xyz"
-s=n.zfill(5)
-print(s) # 00xyz
-
-# 对于纯数字，不能用zfill，可以参考C语言中的方法：
-n=123
-s="%05d"%n
-print(s) # 00123
-```
-
-### 10.3 字符串的比较
-
-内置函数ord()获取原始值。
-
-`'a'>'b'` : 97>98, False
-
-`==` : 判断内容，is 判断地址。
-
-### 10.4 字符串切片
-
-切片后返回新的字符串。
-
-`s[:5]` : 前五个字符的串。
-
-`s[6:]`:  从六到最后。
-
-`s[6::2]`: 步长为2。`s[::-1]`: 反转了字符串。
 
 🟩 **格式化字符串** 🟩
 
@@ -483,7 +506,7 @@ print('{0:.3f'.format(3.1415926)) # 3个小数 3.142
 print(f'{name}{age}')
 ```
 
-### 10.2 其他
+### 7.2 其他
 
 是一个基本数据类型，不可变。
 
@@ -512,15 +535,16 @@ print(f'{name}{age}')
 
 `print(b.decode(encoding='UTF-8'))` : 一个中文占三个字节
 
-## 11. 函数
+## 8. 函数
 
-### 11.1 函数
+### 8.1 函数
 
 ```python
 def 函数名(para1, para2):
     """
     :param para1: 注释内容
     :param para2: 注释内容
+    :return: 内容
     函数文档注释方式
     """
 	函数封装的代码
@@ -546,11 +570,22 @@ def fun(*args):
 def fun1(**args): # 结果是一个字典
     print(args)
 fun1(a=1,b=2) # {'a':1, 'b':2}
+
+# 参数和返回值都是传递数据的引用
 ```
 
 局部变量作用域只在函数内部。需要global a变为全局。
 
-### 11.2 内置函数
+### 8.2 内置函数
+
+| 不需要import就可以使用的函数 |                                           |
+| ---------------------------- | ----------------------------------------- |
+| len(item)                    | 计算容器中元素个数                        |
+| del(item)                    | 删除变量                                  |
+| del(item[index])             | 删除元素                                  |
+| max(item)                    | 返回容器中最大值。如果是字典，比较的是key |
+| min(item)                    |                                           |
+| cmp(item1, item2)            | 小于返回-1。python3中被移除               |
 
 🟩 **input** 🟩
 
@@ -602,6 +637,9 @@ print(keyword.kwlist)
 # 随机数
 import random
 random.randint(a，b)  # 返回[a，b]之间的整数，包含a和b
+
+dir(stu)  # 返回当前范围内变量
+id(stu)  # 返回变量指向的数据的地址
 ```
 
 ## 12. 异常
@@ -838,9 +876,6 @@ os.startfile('路径') # 打开程序
 ```python
 range(stop) # 返回一个[0-stop)的序列，步长为1
 range(start,stop,step)
-
-dir(stu) # 返回当前范围内变量
-id(stu)
 
 '{0}{1}'.format('内容1','内容2')
 '{:>8}{:a>8}'.format('内容1','内容2') # '     内容1','aaaaa内容2'， ^<>中左右对其
