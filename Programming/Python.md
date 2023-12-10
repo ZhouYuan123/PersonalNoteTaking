@@ -14,8 +14,6 @@
 
 Python三大特点：完全面向对象 (一切皆对象)，强大标准库，大量第三方模块。
 
-
-
 **安装python解释器**
 
 ​    官网：www.python.org
@@ -56,7 +54,7 @@ print("Hello World")
 
 执行：`python xxx.py` or `python3 xxx.py` （python3的命令）
 
-**node：**脚本第一行，只对 Linux/Unix 用户适用，用来指定本脚本用什么解释器来执行。有这句的，加上执行权限后，可以直接用 ./ 执行。
+**node：**脚本第一行，shebang，只对 Linux/Unix 用户适用。
 
 `#` : 单行注释。没有多行注释，但是可以用三引号（单引号或者双引号）充当多行注释。
 
@@ -85,8 +83,6 @@ print("Hello World")
 | Method Names               | lower_with_under() | _lower_with_under() (protected) or __lower_with_under() (private) |
 | Function/Method Parameters | lower_with_under   |                                                              |
 | Local Variables            | lower_with_under   |                                                              |
-
-🟩 **变量** 🟩
 
 ## 3. 数据类型
 
@@ -152,7 +148,7 @@ i + "10"  # error
 
 `a=b=c=8` ：链式赋值
 
-`a+=30` ： 参数赋值
+`a+=30` ： 参数赋值。列表的 `+=` 调用的是`extend()`方法
 
 `a=b,b=a` 就可以实现参数值得互换
 
@@ -164,7 +160,7 @@ i + "10"  # error
 
 `==`：比较值。
 
-`is, is not  ` : 比较id。
+`is, is not  ` : 比较id, 类似 `id(x) == id(y)`。 python 中对 `None` 进行判断建议使用 `is`
 
 **逻辑运算符：** `and, or, not, in, not in   `
 
@@ -490,7 +486,7 @@ s = "%05d" % n  # 00123
 name = "name"
 age = 18
 
-print('%s%d' % (name, age))
+print('%s%d' % (name, age))  # %d: 十进制 %x:十六进制
 info = ('zs', 18)  # 元组类型
 print('%s 的年龄是 %d' % info)
 
@@ -552,29 +548,57 @@ def 函数名(para1, para2):
 # 需要先定义后使用
 def calc(a, b):
 calc(20, 10) # 位置实参   
-calc(*lst) # 结构列表，不然会因为参数不对应报错。字典：calc(**dict) 
 calc(b=10, a=20); # 关键字实参   
 
 # 只有一个返回值返回原值。
-# 返回值是多个返回元组。
 def getNum():
     return 1  # 没有返回值就是None
 
-# 参数默认值
-def calc(a, b=10):
-    
-# 可变位置参数
-def fun(*args):
+# 返回值是多个返回元组。
+def getNum():
+    return 1, 2
+a, b = getNum()  # 可以使用多个变量接收结果。变量数量不对应会报错。
+
+# 参数默认值，具有默认值的参数就叫做 缺省参数。只能在参数列表末尾。
+def calc(a, b=10, c=True):
+    pass
+# 调用带有多个缺省参数的函数, 可以指定参数名
+calc(10, c=False)
+
+# 可变位置参数，参数个数不确定
+def fun(*args):  # 接收元组
     print(args)
 # 可变关键字参数
-def fun1(**args): # 结果是一个字典
-    print(args)
+def fun1(**kwargs):  # 接收一个字典
+    print(kwargs)
+fun(1, 2, 3)
+fun(*lst)  # 拆包传递
 fun1(a=1,b=2) # {'a':1, 'b':2}
+fun2(**dict)  # 拆包传递
 
-# 参数和返回值都是传递数据的引用
+# 参数和返回值都是传递数据的引用 (对可变类型的参数的修改会影响原数据)
 ```
 
-局部变量作用域只在函数内部。需要global a变为全局。
+🟩 **变量** 🟩
+
+* 局部变量是在函数内部定义的变量，只能在函数内部使用
+  * 函数执行结束后，函数内部的局部变量，会被系统回收
+* 全局变量是在函数外部定义的变量，所有函数都可以使用这个变量
+  * 函数内部不允许直接修改全局变量的引用 -- 使用赋值语句修改全局变量的值，会在函数内部重新定义了一个局部变量。
+  * 需要用global关键字将其变为全局, 才能进行修改。
+  * 全局变量名前应该增加`g_`或者`gl_`的前缀
+
+
+```python
+num = 1
+def demo():
+    global num
+    num = 99
+
+# 变量交换
+a, b = (b, a)
+a, b = b, a  # 等号右边是一个元组，小括号被省略了
+```
 
 ### 8.2 内置函数
 
@@ -638,18 +662,32 @@ print(keyword.kwlist)
 import random
 random.randint(a，b)  # 返回[a，b]之间的整数，包含a和b
 
-dir(stu)  # 返回当前范围内变量
-id(stu)  # 返回变量指向的数据的地址
+range(stop) # 返回一个[0-stop)的序列，步长为1
+range(start,stop,step)
+
+# copy
+import copy
+obj2 = copy.copy(obj1) # 浅拷贝
+obj3 = copy.deepcopy(obj1) # 深拷贝
 ```
 
-## 12. 异常
+## 9. 异常
+
+程序在运行时，如果Python解释器遇到到一个错误，会停止程序的执行，并且提示一些错误信息就是异常
+
+程序停止执行并且提示错误信息这个动作，我们通常称之为: 抛出(raise)异常
 
 ```python
 try:
 	执行语句
 except ZeroDivisionError:
     执行语句
+except (错误类型2，错误类型3):
+    # 针对错误类型2 和 3，对应的代码处理
+    pass
 except ValueError as e:
+    print(e)
+except Exception as e:  # 未知错误
     print(e)
 else:
     执行语句 # 只有没有expection的时候，才会执行
@@ -666,34 +704,54 @@ import traceback
 	traceback.print_exc()
 ```
 
-## 13. 类
+异常具有传递性。自动向上一层调用者传递。
 
-### 13.1 类定义
+```python
+# 主动抛出异常
+ex = Exception("异常信息")
+raise ex
+```
+
+## 10. 面向对象
+
+面向对象三大特性: 封装，继承和多态。
+
+🟩 **类定义** 🟩
+
+类名大驼峰命令法
 
 ```python
 class Student:
     a = 'a' # 类属性
+
     def eat(self): # 实例方法， 类之外称为函数，类之内叫作方法。
         pass
-    @staticmethod
-    def sm(): # 静态方法
+    def eat(self, 参数列表):  # self:指向当前对象的引用
         pass
-    @classmethod
-    def cm(cls): # 类方法，调用 Student.cm() // 不需要传参
-        pass
-    
+
     def __init__(self,name,age): # 初始化方法
         self.name = name # self.name 实例属性
-        self.age = age
-        
+        self.__age = age  # 两个下划线伪私有属性和伪私有方法，只能在内部访问
+        Tool.a = 'b'  # 修改类属性的值
+
+    @classmethod
+    def cm(cls): # 类方法，调用 Student.cm() 调用不需要传参。cls 当前类的引用
+         cls.name = name  # 类属性
+
+    @staticmethod
+    def sm(): # 静态方法。使用场景：不需要访问类属性，也不需要访问对象属性的时候
+        pass
 ```
 
-### 13.2 对象创建
+🟩 **对象创建** 🟩
 
 ```python
+# 实例对象
+对象变量 = 类名()
 stu = Student('zs', 20)
 print(stu) # 实例对象
 print(Student) # 类对象
+stu.age  # 如果在运行时，没有找到属性，程序会报错
 stu.eat() # 方法调用
 Student.eat(stu) # 方法调用
 
@@ -701,13 +759,46 @@ stu.gender='女' # 动态绑定
 def show():
     pass
 stu.show = show # 动态绑定方法
+
+# 强行访问私有属性或私有方法
+stu._类名__变量名
+
+dir(stu)  # 返回对象所有属性和方法
+id(stu)  # 返回变量指向的数据的地址
+
+# 类对象 类是一个特殊的对象，内存中只有一份
+类名.类属性
+对象.类属性 # (不推荐)， 先找实例属性，再找类属性
+对象.类属性 = 'a'  # 只会新加一个实例属性
+
+# 单例模式. 重写__new__方法
+class Student(object):
+    instance = None
+    def __new__(cls, *args, **kwargs):
+        # 1.判断类属性是否是空对象
+        if cls.instance is None
+            # 2. 为对象分配空间
+            cls.instance = super().__new__(cls)
+        # 3. 返回对象的引用
+        return cls.instance
+
+    # 记录是否执行过初始化动作
+    init_flag = False
+    def __init__(self):
+        # 判断是否执行过初始化动作
+        if Student.init_flag:
+            return
+        Student.init_flag = True
 ```
 
-## 14. 面向对象
+| 内置方法名   |                                                        |
+| ------------ | ------------------------------------------------------ |
+| \_\_new\_\_  | 为分配内存空间，返回对象引用。创建对象时，会被自动调用 |
+| \_\_init\_\_ | 为对象的属性设置初始值。对象被初始化时，会被自动调用,  |
+| \_\_del\_\_  | 对象被从内存中销毁前，会被自动调用方法                 |
+| \_\_str\_\_  | 返回对象的描述信息，print 函数输出使用                 |
 
-封装，继承和多态。
-
-### 14.1 继承
+🟩 **继承** 🟩
 
 ```python
 class 子类类名( 父类1，父类2 ):
@@ -722,17 +813,32 @@ class Person(object): # 继承了object，不写也是默认继承
 class Student(Person):
     def __init__(self,name,age,stu_no):
         super().__init__(name,age)
+        Person.__init__(self)
         self.stu_no=stu_no
     def info(self): # 方法重写
-        pass 
+        pass
 	def __str__(self): # 重写
-        return '我的名字是{0}'.format(self.name) 
-    
+        return '我的名字是{0}'.format(self.name)
+
+# MRO是 method resolution order，主要用于在多继承时判断方法、属性的调用路径
+print(Student.__mro__)
 ```
 
 动态语言的多态，只关心行为。
 
-## 15. 特殊属性和特殊方法
+🟩 **新式类与旧式(经典)类** 🟩
+
+* 新式类: 以object为基类的类，推荐使用 (Python 3.x)
+* 经典类: 不以 object 为基类的类，不推荐使用 (Python 2.x)
+* 新式类和经典类在多继承时-- 会影响到方法的搜索顺序
+
+```python
+# 为了保证Python 2.x 和 Pthon 3x 兼容!在定义类时，如果没有父类，建议统一继承自 object
+class 类名(object):
+    pass
+```
+
+## 11. 特殊属性和特殊方法
 
 下划线的属性和方法。
 
@@ -742,35 +848,24 @@ class Student(Person):
 | \_\_class\_\_      | 对象所属的类。               |
 | \_\_bases\_\_      | 父类类型的元组。             |
 | \_\_base_\_        | 第一个父类。                 |
-| \_\_mro\_\_        | 类的层次结构。               |
 | \_\_subclasses\_\_ | 子类类型的列表。             |
 
-| 特殊方法           |                            |
-| ------------------ | -------------------------- |
-| \_\_add\_\_()      | 加号操作底层调用的方法     |
-| \_\_len\_\_()      | 内置方法len(lst)调用的方法 |
-| \_\_init\_\_(self) | 初始化对象                 |
-| \_\_new\_\_(cls)   | 创建对象                   |
-| \_\_str\_\_()      | 对象的描述                 |
+| 特殊方法      |                            |
+| ------------- | -------------------------- |
+| \_\_add\_\_() | 加号操作底层调用的方法     |
+| \_\_len\_\_() | 内置方法len(lst)调用的方法 |
 
-## 16. 拷贝
-
-```python
-import copy
-obj2 = copy.copy(obj1) # 浅拷贝
-obj3 = copy.deepcopy(obj1) # 深拷贝
-```
-
-## 17. 模块
+## 12. 模块
 
 一个 .py 文件就是一个模块。
 
 ```python
-import 模块名称 [as 别名]
+import 模块名称 [as 别名]  # 推荐，每次导入一个模块，独占一行
 from 模块名称 import 函数/变量/类
 
 模块名称.变量
 模块名称.函数
+# 使用了from导入的可以直接使用。同名的时候后面的覆盖前面。可以通过取不同的别名解决。
 ```
 
 PyCharm导入自定义模块：(导入之后会自动创建缓存文件pyc)
@@ -874,10 +969,6 @@ os.startfile('路径') # 打开程序
 #### 1.2 others
 
 ```python
-range(stop) # 返回一个[0-stop)的序列，步长为1
-range(start,stop,step)
-
-'{0}{1}'.format('内容1','内容2')
 '{:>8}{:a>8}'.format('内容1','内容2') # '     内容1','aaaaa内容2'， ^<>中左右对其
 # 进制 精度 format等等
 

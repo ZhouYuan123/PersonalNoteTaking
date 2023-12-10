@@ -557,6 +557,7 @@ SELECT CONCAT(emp.name,' worked for ',mgr.name) '别名' FROM XXX
 | EXTRACT(type FROM date)                                      | 返回指定日期中特定的部分，type指定返回的值                   |
 | TIME_TO_SEC(time)                                            | 将time转化为秒并返回结果值。转化的公式为: 小时\*3600 + 分钟\* 60 + 秒 |
 | SEC_TO_TIME(seconds)                                         | 将seconds描述转化为包含小时、分钟和秒的时间                  |
+| ----时间计算                                                 |                                                              |
 | DATE_ADD(datetime, INTERVAL expr type), ADDDATE(date,INTERVAL expr type) | 返回与给定日期时间相差INTERVAL时间段的日期时间               |
 | DATE_SUB(date,INTERVAL expr type)，SUBDATE(date,INTERVALexpr type) | 返回与date相差INTERVAL时间间隔的日期                         |
 | ADDTIME(time1,time2)                                         | 返回time1加上time2的时间。当time2为一个数字时，代表的是秒，可以为负数 |
@@ -566,12 +567,15 @@ SELECT CONCAT(emp.name,' worked for ',mgr.name) '别名' FROM XXX
 | FROM_DAYS(N)                                                 | 返回从0000年1月1日起，N天以后的日期                          |
 | TO_DAYS(date)                                                | 返回日期date距离0000年1月1日的天数                           |
 | LAST_DAY(date)                                               | 返回date所在月份的最后一天的日期                             |
-| MAKEDATE(year,n)                                             | 针对给定年份与所在年份中的天数                               |
-| MAKETIME(hour,minute,second)                                 | 返回一个日期将给定的小时、分钟和秒组合成时间并返回           |
-| PERIOD_ADD(time,n)                                           | 返回time加上n后的时间                                        |
+| MAKEDATE(year,n)                                             | 针对给定年份与所在年份中的天数返回一个日期                   |
+| MAKETIME(hour,minute,second)                                 | 将给定的小时、分钟和秒组合成时间并返回                       |
+| PERIOD_ADD(time,n)                                           | 返回time加上n后的时间 (n是秒)                                |
 |                                                              |                                                              |
 
 ```mysql
+SELECT CURDATE(),CURDATE() + 0,CURTIME(),CURTIME() + 0,NOW() + 0
+FROM DUAL;  # 2023-12-03, 20231203, 1:39:56, 13956, 20231203013956
+
 SELECT EXTRACT(SECOND FROM NOW())
 -- type:
 /*
@@ -621,4 +625,10 @@ MINUTE_SECOND 分钟和秒
 SELECT ADDTIME(NOW(),20),SUBTIME(NOW(),30),SUBTIME(NOW(),'1:1 :3'),DATEDIFF(NOW(),'2021-10-01'),TIMEDIFF(NOW(),'2021-10-25 22:10:10'),FROM_DAYS(366),TO_DAYS('0000-12-25'),LAST_DAY(NOW()),MAKEDATE(YEAR(NOW()),12),MAKETIME(10,21,23),PERIOD_ADD(20200101010101,10)
 FROM DUAL:
 ```
+
+| 日期格式化和解析 | 用法 |
+| ---------------- | ---- |
+|                  |      |
+|                  |      |
+|                  |      |
 

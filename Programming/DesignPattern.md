@@ -1142,6 +1142,153 @@ public class Client {
 
 **State Pattern**
 
+各个状态间存在相互关系。传统switch扩展性弱，每加一个状态要改所有的switch。
+
+对有状态的对象，把复杂的“判新逻辑”提取到不同的状态对象中，允许状态对象在其内部状态发生改变时改变其行为.
+
+```java
+public abstract class LiftState {
+    //定义一个环境角色，也就是封装状态的变化引起的功能变化
+    protected Context context;
+    public void setContext(Context _context){
+        this.context = _context;
+    }
+    //首先电梯门开启动作
+    public abstract void open();
+    //电梯门有开启，那当然也就有关闭了
+    public abstract void close();
+    //电梯要能上能下，运行起来
+    public abstract void run();
+    //电梯还要能停下来
+    public abstract void stop();
+}
+public class Context {
+    //定义出所有的电梯状态
+    public final static OpenningState openningState = new OpenningState();
+    public final static ClosingState closeingState = new ClosingState();
+    public final static RunningState runningState = new RunningState();
+    public final static StoppingState stoppingState = new StoppingState();
+    //定义一个当前电梯状态
+    private LiftState liftState;
+    public LiftState getLiftState() {
+        return liftState;
+    }
+    public void setLiftState(LiftState liftState) {
+        this.liftState = liftState;
+        //把当前的环境通知到各个实现类中
+        this.liftState.setContext(this);
+    }
+    public void open(){
+        this.liftState.open();
+    }
+    public void close(){
+        this.liftState.close();
+    }
+    public void run(){
+        this.liftState.run();
+    }
+    public void stop(){
+        this.liftState.stop();
+    }
+}
+public class OpenningState extends LiftState {
+     //开启当然可以关闭了，我就想测试一下电梯门开关功能
+     @Override
+     public void close() {
+             //状态修改
+             super.context.setLiftState(Context.closeingState);
+             //动作委托为CloseState来执行
+             super.context.close();
+     }
+     //打开电梯门
+     @Override
+     public void open() {
+             System.out.println("电梯门开启...");
+     }
+     //门开着时电梯就运行跑，这电梯，吓死你！
+     @Override
+     public void run() {
+             //do nothing;
+     }
+     //开门还不停止？
+     public void stop() {
+             //do nothing;
+     }
+}
+public class ClosingState extends LiftState{
+    //电梯门关闭，这是关闭状态要实现的动作
+    @Override
+    public void close() {
+        System.out.println("电梯门关闭...");
+    }
+    //电梯门关了再打开
+    @Override
+    public void open() {
+        super.context.setLiftState(Context.openningState);  //置为敞门状态
+        super.context.open();
+    }
+    //电梯门关了就运行，这是再正常不过了
+    @Override
+    public void run() {
+        super.context.setLiftState(Context.runningState); //设置为运行状态
+        super.context.run();
+    }
+    //电梯门关着，我就不按楼层
+    @Override
+    public void stop() {
+        super.context.setLiftState(Context.stoppingState);  //设置为停止状态
+        super.context.stop();
+    }
+}
+public class RunningState extends LiftState {
+    //电梯门关闭？这是肯定的
+    @Override
+    public void close() {
+        //do nothing
+    }
+    //运行的时候开电梯门？你疯了！电梯不会给你开的
+    @Override
+    public void open() {
+        //do nothing
+    }
+    //这是在运行状态下要实现的方法
+    @Override
+    public void run() {
+        System.out.println("电梯上下运行...");
+    }
+    //这绝对是合理的，只运行不停止还有谁敢坐这个电梯？！估计只有上帝了
+    @Override
+    public void stop() {
+        super.context.setLiftState(Context.stoppingState);//环境设置为停止状态
+        super.context.stop();
+    }
+}
+public class StoppingState extends LiftState {
+    //停止状态关门？电梯门本来就是关着的！
+    @Override
+    public void close() {
+        //do nothing;
+    }
+    //停止状态，开门，那是要的！
+    @Override
+    public void open() {
+        super.context.setLiftState(Context.openningState);
+        super.context.open();
+    }
+    //停止状态再运行起来，正常得很
+    @Override
+    public void run() {
+        super.context.setLiftState(Context.runningState);
+        super.context.run();
+    }
+    //停止状态是怎么发生的呢？当然是停止方法执行了
+    @Override
+    public void stop() {
+        System.out.println("电梯停止了...");
+    }
+}
+```
+
 ### 4.6 策略模式
 
 **Strategy Pattern**
