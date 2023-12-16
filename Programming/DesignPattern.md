@@ -1146,6 +1146,143 @@ public class Client {
 
 对有状态的对象，把复杂的“判新逻辑”提取到不同的状态对象中，允许状态对象在其内部状态发生改变时改变其行为.
 
+**传统模式一：没有各个状态之间转换的限制**
+
+```java
+//定义电梯接口
+public interface ILift {
+    void open();
+    void close();
+    void run();
+    void stop();
+}
+//电梯实现类
+public class LiftImp implements ILift{
+    @Override
+    public void open() {
+        System.out.println("电梯开门了……");
+    }
+
+    @Override
+    public void close() {
+        System.out.println("电梯关门了……");
+    }
+
+    @Override
+    public void run() {
+        System.out.println("电梯运行起来了……");
+    }
+
+    @Override
+    public void stop() {
+        System.out.println("电梯停止了……");
+    }
+}
+```
+
+**传统模式二：大量switch，增加状态话扩展差，非常规状态无法实现**
+
+```java
+//接口中增加了状态
+public interface ILift2 {
+    public final static int OPENING_STATE = 1;  //敞门状态
+    public final static int CLOSING_STATE = 2;  //闭门状态
+    public final static int RUNNING_STATE = 3;  //运行状态
+    public final static int STOPPING_STATE = 4; //停止状态
+    void open();
+    void close();
+    void run();
+    void stop();
+}
+public class LiftImp2 implements ILift2 {
+
+    private int state;
+
+    public void setState(int state) {
+        this.state = state;
+    }
+    @Override
+    public void open() {
+        //电梯在什么状态才能开启
+        switch (this.state) {
+            case OPENING_STATE: //闭门状态，什么都不做
+                //do nothing;
+                break;
+            case CLOSING_STATE: //闭门状态，则可以开启
+                System.out.println("电梯开门了……");
+                this.setState(OPENING_STATE);
+                break;
+            case RUNNING_STATE: //运行状态，则不能开门，什么都不做
+                //do nothing;
+                break;
+            case STOPPING_STATE: //停止状态，当然要开门了
+                System.out.println("电梯开门了……");
+                this.setState(OPENING_STATE);
+                break;
+        }
+    }
+    @Override
+    public void close() {
+        //电梯在什么状态下才能关闭
+        switch (this.state) {
+            case OPENING_STATE:  //可以关门，同时修改电梯状态
+                System.out.println("电梯关门了……");
+                this.setState(CLOSING_STATE);
+                break;
+            case CLOSING_STATE:  //电梯是关门状态，则什么都不做
+                //do nothing;
+                break;
+            case RUNNING_STATE: //正在运行，门本来就是关闭的，也什么都不做
+                //do nothing;
+                break;
+            case STOPPING_STATE:  //停止状态，门也是关闭的，什么也不做
+                //do nothing;
+                break;
+        }
+    }
+    @Override
+    public void run() {
+        switch (this.state) {
+            case OPENING_STATE: //敞门状态，什么都不做
+                //do nothing;
+                break;
+            case CLOSING_STATE: //闭门状态，则可以运行
+                System.out.println("电梯运行起来了……");
+                this.setState(RUNNING_STATE);
+                break;
+            case RUNNING_STATE: //运行状态，则什么都不做
+                //do nothing;
+                break;
+            case STOPPING_STATE: //停止状态，可以运行
+                System.out.println("电梯运行起来了……");
+                this.setState(RUNNING_STATE);
+        }
+
+    }
+    @Override
+    public void stop() {
+        switch (this.state) {
+            case OPENING_STATE: //敞门状态，要先停下来的，什么都不做
+                //do nothing;
+                break;
+            case CLOSING_STATE: //闭门状态，则当然可以停止了
+                System.out.println("电梯停止了……");
+                this.setState(CLOSING_STATE);
+                break;
+            case RUNNING_STATE: //运行状态，有运行当然那也就有停止了
+                System.out.println("电梯停止了……");
+                this.setState(CLOSING_STATE);
+                break;
+            case STOPPING_STATE: //停止状态，什么都不做
+                //do nothing;
+                break;
+        }
+    }
+}
+```
+
+**状态模式**
+
 ```java
 public abstract class LiftState {
     //定义一个环境角色，也就是封装状态的变化引起的功能变化

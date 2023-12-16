@@ -500,6 +500,8 @@ print('{0}{1}{0}'.format(name,age))
 print('{0:.3'.format(3.1415926)) # 3位 3.14
 print('{0:.3f'.format(3.1415926)) # 3个小数 3.142
 print(f'{name}{age}')
+
+'{:>6}{:a>6}'.format('内容1','内容2')  # 右对齐。'   内容1','aaa内容2'， ^<> 分别表示中左右对齐
 ```
 
 ### 7.2 其他
@@ -610,12 +612,31 @@ a, b = b, a  # 等号右边是一个元组，小括号被省略了
 | max(item)                    | 返回容器中最大值。如果是字典，比较的是key |
 | min(item)                    |                                           |
 | cmp(item1, item2)            | 小于返回-1。python3中被移除               |
-
-🟩 **input** 🟩
+| range(stop)                  | 返回一个[0-stop)的序列，步长为1           |
+| range(start,stop,step)       | 返回一个[start-stop)的序列, 步长为step    |
 
 ```python
 present = input('请输入你的内容:') #input 函数
 print(present)
+
+eval('1+1')
+eval("__import__('os').system('ls')")
+# 返回结果2。
+# 将字符串当成有效的表达式来求值，并返回计算结果
+# 所谓表达式就是：eval这个函数会把里面的字符串参数的引号去掉，把中间的内容当成Python的代码，eval函数会执行这段代码并且返回执行结果
+
+# sorted(iterable, cmp=None, key=None, reverse=False)，其中
+# iterable是可迭代对象，包括列表、元组、字典、字符串；
+# cmp代表比较函数；
+# key代表迭代对象中的某个属性，如某个元素的下标；
+# reverse代表升序或者降序
+
+add = lambda x,y:x+y
+add(1,2) # 结果是3
+lambda x, y: x*y			# 函数输入是x和y，输出是它们的积x*y
+lambda:None					# 函数没有输入参数，输出是None
+lambda *args: sum(args)		# 输入是任意个数参数，输出是它们的和(隐性要求输入参数必须能进行算术运算)
+lambda **kwargs: 1			# 输入是任意键值对参数，输出是1
 ```
 
 🟩 **print** 🟩
@@ -650,26 +671,6 @@ print("\033[0m")
 | 35     | 45     | 紫红色   |
 | 36     | 46     | 青蓝色   |
 | 37     | 47     | 白色     |
-
-🟩 **others** 🟩
-
-```python
-# 关键字
-import keyword
-print(keyword.kwlist)
-
-# 随机数
-import random
-random.randint(a，b)  # 返回[a，b]之间的整数，包含a和b
-
-range(stop) # 返回一个[0-stop)的序列，步长为1
-range(start,stop,step)
-
-# copy
-import copy
-obj2 = copy.copy(obj1) # 浅拷贝
-obj3 = copy.deepcopy(obj1) # 深拷贝
-```
 
 ## 9. 异常
 
@@ -791,12 +792,19 @@ class Student(object):
         Student.init_flag = True
 ```
 
-| 内置方法名   |                                                        |
-| ------------ | ------------------------------------------------------ |
-| \_\_new\_\_  | 为分配内存空间，返回对象引用。创建对象时，会被自动调用 |
-| \_\_init\_\_ | 为对象的属性设置初始值。对象被初始化时，会被自动调用,  |
-| \_\_del\_\_  | 对象被从内存中销毁前，会被自动调用方法                 |
-| \_\_str\_\_  | 返回对象的描述信息，print 函数输出使用                 |
+| 内置属性或方法     |                                                        |
+| ------------------ | ------------------------------------------------------ |
+| \_\_new\_\_        | 为分配内存空间，返回对象引用。创建对象时，会被自动调用 |
+| \_\_init\_\_       | 为对象的属性设置初始值。对象被初始化时，会被自动调用,  |
+| \_\_del\_\_        | 对象被从内存中销毁前，会被自动调用方法                 |
+| \_\_str\_\_        | 返回对象的描述信息，print 函数输出使用                 |
+| \_\_dict\_\_       | 实例对象、类对象属性的字典。                           |
+| \_\_class\_\_      | 对象所属的类。                                         |
+| \_\_bases\_\_      | 父类类型的元组。                                       |
+| \_\_base_\_        | 第一个父类。                                           |
+| \_\_subclasses\_\_ | 子类类型的列表。                                       |
+| \_\_add\_\_()      | 加号操作底层调用的方法                                 |
+| \_\_len\_\_()      | 内置方法len(lst)调用的方法                             |
 
 🟩 **继承** 🟩
 
@@ -838,49 +846,52 @@ class 类名(object):
     pass
 ```
 
-## 11. 特殊属性和特殊方法
+## 11. 模块
 
-下划线的属性和方法。
-
-| 特殊属性           |                              |
-| ------------------ | ---------------------------- |
-| \_\_dict\_\_       | 实例对象、类对象属性的字典。 |
-| \_\_class\_\_      | 对象所属的类。               |
-| \_\_bases\_\_      | 父类类型的元组。             |
-| \_\_base_\_        | 第一个父类。                 |
-| \_\_subclasses\_\_ | 子类类型的列表。             |
-
-| 特殊方法      |                            |
-| ------------- | -------------------------- |
-| \_\_add\_\_() | 加号操作底层调用的方法     |
-| \_\_len\_\_() | 内置方法len(lst)调用的方法 |
-
-## 12. 模块
-
-一个 .py 文件就是一个模块。
+一个 .py 文件就是一个模块。每一个文件都应该是可以被导入的。
 
 ```python
 import 模块名称 [as 别名]  # 推荐，每次导入一个模块，独占一行
-from 模块名称 import 函数/变量/类
-
 模块名称.变量
 模块名称.函数
+
 # 使用了from导入的可以直接使用。同名的时候后面的覆盖前面。可以通过取不同的别名解决。
+from 模块名称 import 函数/变量/类
+from 模块名称 import *  # 导入所有工具
+
+# 优先搜索当前目录指定模块名的文件，如果有就直接导入。如果没有，再搜索系统目录
+# Python 中每一个模块都有一个内置属性 __file__可以查看模块的完整路径
+import random
+print(random.__file__)
 ```
 
-PyCharm导入自定义模块：(导入之后会自动创建缓存文件pyc)
-
-在模块所在文件夹右击 --> Mark Directory as  Sources Root
-
-package中 默认包含\_\_int\_\_.py文件
+| 模块内置属性 |                                                              |
+| ------------ | ------------------------------------------------------------ |
+| \_\_file\_\_ |                                                              |
+| \_\_name_\_  | 直接执行该模块时，就是：\_\_main\_\_ 如果是被其他文件导入的\_\_name_\_就是模块名 |
+|              |                                                              |
 
 ```python
 if __name__ == '__main__'
 	pass # 只有当前模块作为主程序运行才会执行
-
 ```
 
 🟩 **常用内置模块** 🟩
+
+```python
+# 关键字
+import keyword
+print(keyword.kwlist)
+
+# 随机数
+import random
+random.randint(a，b)  # 返回[a，b]之间的整数，包含a和b
+
+# copy
+import copy
+obj2 = copy.copy(obj1) # 浅拷贝
+obj3 = copy.deepcopy(obj1) # 深拷贝
+```
 
 | 常用内置模块 |                                                              |
 | ------------ | ------------------------------------------------------------ |
@@ -893,18 +904,62 @@ if __name__ == '__main__'
 
 🟩 **第三方模块** 🟩
 
-`pip install 模块名 `： 在线安装， DOS窗口中执行。
+`[sudo ]pip install 模块名 `： 在线安装， DOS窗口中执行。
 
-`python`：进入python交互程序。
+`[sudo ]pip uninstall 模块名 `: 卸载
 
-`import 模块名`：验证是否报错。
+python3.x : `[sudo ]pip3 install 模块名 ` ，`[sudo ]pip3 uninstall 模块名 `
 
-## 18. 编码与持久化
+🟩 **包（Package）** 🟩
+
+* 包是一个包含多个模块的特殊目录
+* 目录下有一个特殊的文件\_\_init\_\_.py
+* 包名的命名方 和变量名一致，小写字母 + 下划线
+
+在模块所在文件夹右击 --> Mark Directory as  Sources Root
+
+new python package操作 => 默认包含\_\_int\_\_.py文件
+
+PyCharm导入自定义模块：(导入之后会自动创建缓存文件pyc)
+
+```python
+# 要在外界使用包中的模块，需要在__int__.py中指定对外界提供的模块列表
+# 从当前目录 导入模块列表
+from . import send_message
+from . import receive_message
+
+# 外界 import 包名
+```
+
+🟩 **发布与安装模块** 🟩
+
+1. 创建setup.py （略）
+2. 构建模块（略）
+3. 生成发布压缩包（略）
+
+安装：`sudo python3 setup.py install`
+
+卸载：直接从安装目录下，把安装模块的 目录 删除就可以（`.__file__` 查找目录）
+
+`$ cd /usr/local/lib/python3.5/dist-packages/`
+
+`$ sudo rm -r 刚刚安装的*`
+
+## 12. 编码与持久化
+
+文本文件: 可以使用文本编辑软件查看, 本质上还是二进制文件。
+
+二进制文件: 不能使用文本编辑软件查看。
 
 Python的解释器使用的是Unicode内存，.py文件在磁盘上使用UTF-8存储外存。
 
 ```python
-#encoding=gbk #指定编码格式
+# coding:gbk #文件首行指定编码格式
+# 或者
+# *-* coding:utf8 *-*
+# 引号前面的u告诉解释器这是一个utf8编码格式的字符串
+hello_str = u"hello世界"
+
 file = open('a.txt', 'a')
 file.write('Python')
 file.writelines(['Python','java']) # 同一行
@@ -912,8 +967,9 @@ file.writelines(['Python','java']) # 同一行
 file.close()
 
 file = open('a.txt', 'r')
-file.read() # 读出所有 file.read(n) n:字符个数
-file.readline() 
+text = file.read()  # 一次性读出所有内容(str), 文件指针移动到文件末尾, 再次调用read()返回空
+file.read(n)  # n:字符个数
+file.readline()  # 每读取一行的未尾已经有了一个'\n'
 file.readlines() # 返回列表
 file.seek(2) # 跳过字节的个数 seek(offset[,whence]) offset:负数反向。whence：0，从开头开始计算。1：从当前位置计算。2：从文件尾开始计算。
 file.tell() # 告诉指针当前位置
@@ -925,15 +981,17 @@ with open('a.txt', 'r') as file: # file 文件重写了上下文管理器
     pass 
 ```
 
-| 打开方式 |                        |
-| -------- | ---------------------- |
-| r        | 只读                   |
-| w        | 创建或者覆盖           |
-| a        | 创建或者追加           |
-| b        | 以二进制打开，rb or wb |
-| +        | 读写方式打开           |
+| 打开方式 |                                                              |
+| -------- | ------------------------------------------------------------ |
+| r        | 只读。如果文件不存在，会抛出异常                             |
+| w        | 创建或者覆盖                                                 |
+| a        | 创建或者追加                                                 |
+| r+       | 以读写方式打开文件。文件的指针将会放在文件的开头。如果文件不存在，抛出异常。 |
+| w+       | 以读写方式打开文件。如果文件存在会被覆盖。如果文件不存在，创建新文件。 |
+| a+       | 以读写方式打开文件。如果该文件已存在，文件指针将会放在文件的结尾。如果文件不存在，创建新文件进行写入。 |
+| b        | 以二进制打开，rb or wb                                       |
 
-## 19. os
+## 13. os
 
 ```python
 import os
@@ -944,6 +1002,8 @@ os.startfile('路径') # 打开程序
 
 | os.                                                  |                            |
 | ---------------------------------------------------- | -------------------------- |
+| rename(源文件名，目标文件名)                         | 重命名文件                 |
+| remove(文件名)                                       | 删除文件                   |
 | getcwd()                                             | 返回当前工作目录           |
 | listdir('../文件夹')                                 | 列出文件和目录             |
 | mkdir(path[,mode])<br />makedirs(path1/path2[,mode]) | 创建目录<br />创建多级目录 |
@@ -960,34 +1020,6 @@ os.startfile('路径') # 打开程序
 | splittext(path)  | 分离文件和后缀名。 |
 | basename(path)   | 提取文件名。       |
 | dirname(path)    | 提取目录。         |
-| isdir(path)      |                    |
+| isdir(path)      | 是否是一个目录     |
 
-# NOTE
-
-### 1. 内置函数
-
-#### 1.2 others
-
-```python
-'{:>8}{:a>8}'.format('内容1','内容2') # '     内容1','aaaaa内容2'， ^<>中左右对其
-# 进制 精度 format等等
-
-# sorted(iterable, cmp=None, key=None, reverse=False)，其中
-# iterable是可迭代对象，包括列表、元组、字典、字符串；
-# cmp代表比较函数；
-# key代表迭代对象中的某个属性，如某个元素的下标；
-# reverse代表升序或者降序
-
-add = lambda x,y:x+y
-add(1,2) # 结果是3
-lambda x, y: x*y			# 函数输入是x和y，输出是它们的积x*y
-lambda:None					# 函数没有输入参数，输出是None
-lambda *args: sum(args)		# 输入是任意个数参数，输出是它们的和(隐性要求输入参数必须能进行算术运算)
-lambda **kwargs: 1			# 输入是任意键值对参数，输出是1
-
-eval('1+1') 
-# 结果为2。
-# 将字符串当成有效的表达式来求值，并返回计算结果
-# 所谓表达式就是：eval这个函数会把里面的字符串参数的引号去掉，把中间的内容当成Python的代码，eval函数会执行这段代码并且返回执行结果
-```
 # THE END
