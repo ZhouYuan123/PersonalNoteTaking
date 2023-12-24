@@ -84,6 +84,10 @@ print("Hello World")
 | Function/Method Parameters | lower_with_under   |                                                              |
 | Local Variables            | lower_with_under   |                                                              |
 
+提示: Python 中并没有真正意义的常量，只是通过命名的约定
+
+* 所有字母都是大写的就是常量，开发时不要轻易的修改
+
 ## 3. 数据类型
 
 数字型：整型，浮点型，布尔型，复数型 (complex)。

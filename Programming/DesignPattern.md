@@ -1134,9 +1134,138 @@ public class Client {
 
 **Iterator Pattern**
 
+```java
+/**
+ * 学生实体类
+ */
+public class Student {
+    private String name;
+    private Integer age;
+    public Student(String name,Integer age){
+        this.age=age;
+        this.name=name;
+    }
+}
+
+/**
+ * 实现Iterator接口
+ */
+public interface StudentIterator extends Iterator<Student> {
+}
+
+/**
+ *
+ */
+public class StudentListIterator implements StudentIterator{
+    private List<Student> students;
+    private int index;
+
+    // 入参可以是动态的类型，例如list, 数组等等，从而不同的数据类型可以做到统一处理。
+    public StudentListIterator(List<Student> students) {
+        this.students = students;
+        this.index = 0;
+    }
+
+    public boolean hasNext() {
+        return (index < students.size());
+    }
+
+    public Student next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
+        Student student = students.get(index);
+        index++;
+        return student;
+    }
+}
+
+/**
+ *
+ */
+public interface StudentAggregate {
+    //用于创建具体的迭代器对象
+    StudentIterator iterator();
+    void add(Student student);
+}
+
+/**
+ *
+ */
+public class ClassList implements StudentAggregate{
+    private List<Student> students = new ArrayList<>();
+
+    public StudentIterator iterator() {
+        return new StudentListIterator(students);
+    }
+
+    public void add(Student student) {
+        students.add(student);
+    }
+}
+```
+
 ### 4.4 观察者模式
 
 **Observer Pattern**
+
+```java
+/**
+ * 报纸接口，即被观察者接口
+ */
+public interface Newspaper {
+    void addSubscriber(Subscriber subscriber);
+
+    void removeSubscriber(Subscriber subscriber);
+
+    void notifySubscribers(String message);
+}
+
+/**
+ * 报纸实现类
+ */
+public class NewspaperImpl implements Newspaper{
+    //订阅者集合
+    List<Subscriber> subscribers = new ArrayList<>();
+
+    public void addSubscriber(Subscriber subscriber) {
+        subscribers.add(subscriber);
+    }
+
+    public void removeSubscriber(Subscriber subscriber) {
+        subscribers.remove(subscriber);
+    }
+
+    public void notifySubscribers(String message) {
+        for (Subscriber s : subscribers) {
+            s.update(message);
+        }
+    }
+}
+
+/**
+ * 订阅者（即观察者）接口
+ */
+public interface Subscriber {
+    void update(String message);
+}
+
+public class TestObserver {
+    @Test
+    void testObserver(){
+        Newspaper newspaper = new NewspaperImpl();
+
+        //李老头和王奶奶订阅了报纸
+        Subscriber li = new SubscriberImpl("李老头");
+        Subscriber wang = new SubscriberImpl("王奶奶");
+        newspaper.addSubscriber(li);
+        newspaper.addSubscriber(wang);
+
+        //报纸到了，通知订阅者
+        newspaper.notifySubscribers("今天的报纸到了！！！");
+    }
+}
+```
 
 ### 4.5 状态模式
 
@@ -1568,6 +1697,8 @@ public class Client {
 
 **Mediator Pattern**
 
+![](../imgs/design/mediator.jpg)
+
 ### 4.9 备忘录模式
 
 **Memento Pattern**
@@ -1575,6 +1706,96 @@ public class Client {
 ### 4.10 访问者模式
 
 **Visitor Pattern**
+
+```java
+/**
+ *
+ */
+public interface Visitor {
+    void visit(Spot spot);
+}
+
+/**
+ *
+ */
+public class Tourist implements Visitor{
+
+    public void visit(Spot spot) {
+        System.out.println("游客...");
+        spot.display();
+    }
+}
+
+/**
+ *
+ */
+public interface Spot {
+    void accept(Visitor visitor);
+}
+
+/**
+ *
+ */
+public class Relic implements Spot{
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this); // 将自身传递给访问者
+    }
+
+    public void display() {
+        System.out.println("这是一件珍贵的文物。");
+    }
+}
+
+/**
+ *
+ */
+public class View implements Spot{
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this); // 将自身传递给访问者
+    }
+
+    public void display() {
+        System.out.println("这是一处壮丽的自然风景。");
+    }
+}
+
+/**
+ * 5.对象结构（Object Structure）
+ */
+public class SpotCollection {
+    private List<Spot> spots = new ArrayList<>();
+
+    public void addSpot(Spot spot) {
+        spots.add(spot);
+    }
+
+    public void accept(Visitor visitor) {
+        for (Spot spot : spots) {
+            spot.accept(visitor);
+        }
+    }
+}
+
+/**
+ * 访问者模式测试类
+ */
+public class TestVisitor {
+
+    void testVisitor(){
+        //创建对象结构
+        SpotCollection spotCollection = new SpotCollection();
+        //添加元素
+        spotCollection.addSpot(new Relic());
+        spotCollection.addSpot(new View());
+
+        Visitor tourist = new Tourist();
+        //景点接受游客的访问
+        spotCollection.accept(tourist);
+    }
+}
+```
 
 ### 4.11 解释器模式
 
