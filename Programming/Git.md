@@ -268,11 +268,39 @@ git log -S function_name
 | git stash branch newBranchName | 从贮藏创建branch         |
 | git stash --patch              | 分批贮藏                 |
 
-**patch**
+### 4.6 patch
 
 ```bash
 git format-patch <commit-range> #生成补丁
 git am [-3] name.patch # 应用补丁 -3:三方合并
+
+# 打包最近的一个patch
+$ git format-patch HEAD^
+
+# 打包最近的两个patch
+$ git format-patch HEAD^^
+# 可以使用git format-patch -n,两者是等价的
+
+# 某次提交以后的所有patch
+# 082352c add d.txt
+# 不包含此次提交
+$ git format-patch -s 082352c
+# 等价
+$ git format-patch 082352c
+
+# 某两次提交之间的所有patch
+# 不包含start的提交
+# 46409d9 add e.txt
+# 082352c add d.txt
+# d8f4266 add c.txt
+# a5e5961 add b.txt
+$ git format-patch a5e5961..46409d9
+0001-add-c.txt.patch
+0002-add-d.txt.patch
+0003-add-e.txt.patch
+
+# 包含start的提交
+$ git format-patch a5e5961^..46409d9
 ```
 
 ## 5. .gitignore

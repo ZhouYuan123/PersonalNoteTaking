@@ -1703,6 +1703,71 @@ public class Client {
 
 **Memento Pattern**
 
+```java
+public class Memento {
+   private String state;
+
+   public Memento(String state){
+      this.state = state;
+   }
+
+   public String getState(){
+      return state;
+   }
+}
+
+public class Originator {
+   private String state;
+
+   public void setState(String state){
+      this.state = state;
+   }
+
+   public String getState(){
+      return state;
+   }
+
+   public Memento saveStateToMemento(){
+      return new Memento(state);
+   }
+
+   public void getStateFromMemento(Memento Memento){
+      state = Memento.getState();
+   }
+}
+
+public class CareTaker {
+   private List<Memento> mementoList = new ArrayList<Memento>();
+
+   public void add(Memento state){
+      mementoList.add(state);
+   }
+
+   public Memento get(int index){
+      return mementoList.get(index);
+   }
+}
+
+public class MementoPatternDemo {
+   public static void main(String[] args) {
+      Originator originator = new Originator();
+      CareTaker careTaker = new CareTaker();
+      originator.setState("State #1");
+      originator.setState("State #2");
+      careTaker.add(originator.saveStateToMemento());
+      originator.setState("State #3");
+      careTaker.add(originator.saveStateToMemento());
+      originator.setState("State #4");
+
+      System.out.println("Current State: " + originator.getState());
+      originator.getStateFromMemento(careTaker.get(0));
+      System.out.println("First saved State: " + originator.getState());
+      originator.getStateFromMemento(careTaker.get(1));
+      System.out.println("Second saved State: " + originator.getState());
+   }
+}
+```
+
 ### 4.10 访问者模式
 
 **Visitor Pattern**
@@ -1797,9 +1862,80 @@ public class TestVisitor {
 }
 ```
 
+扩展：双分派模式。
+
 ### 4.11 解释器模式
 
 **Interpreter Pattern**
+
+主要角色如下：
+
+* 抽象表达式（IExpression）：负责定义一个解释方法 interpret，交由具体子类进行具体解释。
+* 终结符表达式（Terminal Expression）：实现文法中与终结符有关的解释操作。通常一个解释器中只有一个终结符表达式，但有多个实例，对应不同的终结符。
+* 非终结符表达式（Nonterminal Expression）：实现文法中与非终结符有关的解释操作。
+* 上下文环境类（Context）：包含解释器之外的全局信息。它一般用来存放文法中各个终结符所对应的具体值。
+
+```java
+// 抽象表达式
+public abstract class AbstractExpression{
+    public abstract int interpret(Context context);
+}
+
+// 终结符表达式
+public class Variable extends AbstractExpression {
+	//声明存储变量名的成员变量
+    private String name;
+    public Variable(string name) {
+        this.name = name;
+    }
+	public int interpret(Context context) {
+        //直接返回变量的值
+        return context.getValue(this);
+    }
+}
+
+// 非终结符表达式
+public class Plus extends AbstractExpression {
+    //+号左边的表达式
+    private AbstractExpression left;
+    //+号右边的表达式
+    private AbstractExpression right;
+    public Plus(AbstractExpression left, AbstractExpression right){
+        this.left = left;
+        this.right = right;
+    }
+    public int interpret(Context context) {
+        // 将左边表达式的结果和右边表达式的结果进行相加
+        return left.interpret(context) + right.interpret(context);
+    }
+}
+
+public class Context {
+    private Map<Variable,Integer> map = new HashMap<Variable, Integer>();
+
+    public void assign(Variable var, Integer value) {
+        map.put(var, value);
+    }
+    public int getValue(Variable var) {
+        return map.get(var);
+    }
+}
+
+public class Client {
+    public static void main(string[] args) {
+        Variable a = new Variable("a");
+        Variable b = new Variable("b");
+        Variable c = new Variable("c");
+        Variable d = new Variable("d");
+        context.assign(a, 1);
+        context.assign(b, 2);
+        context.assign(c, 3);
+        context.assign(d, 4);
+        AbstractExpression expression = new Minus(a,new plus(new Minus(b,c),d));
+        expression.interpret(context);
+    }
+}
+```
 
 
 
