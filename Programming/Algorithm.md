@@ -151,10 +151,12 @@ public void postorder(TreeNode node) {
 }
 ```
 
-* 二叉排序树(Binary SortTree) ：插入，查找，删除都很块。
-  * 叶子节点(没有子节点的节点)
-  * 节点的权(节点值)
-  * 树的高度(最大层数)
+二叉排序树(Binary SortTree) ：插入，查找，删除都很块。
+* 叶子节点(没有子节点的节点)
+* 节点的权(节点值)
+* 树的高度(最大层数)
+
+线索化二叉树 (Threaded Binary Tree)：
 
 ## 3. 复杂度
 
@@ -425,6 +427,10 @@ void radixSort(int[] nums) {
         countingSortDigit(nums, exp);
 }
 ```
+
+🟩 **8. 「堆排序 heap sort」**🟩
+
+大顶堆: 父节点总是大于或等于子节点。
 
 ## 6. 其他
 

@@ -18,6 +18,13 @@
 
 方法的完整表示方式是:  可见性  名称(参数列表)[ : 返回类型]
 
+```tex
+class Example {
+	- name : String
+	+ work() : void
+	# method2(int par1, String par2):int
+}
+```
 ```mermaid
 classDiagram
 class Example {
@@ -30,17 +37,17 @@ class Example {
 
 <font color=blue>**== 关联关系(Association) ==**</font>
 
-表示类之间的引用关系
+表示类之间的引用关系。关联关系是类与类之间最常用的一种关系，分为一般关联关系、聚合关系和组合关系。
 
 箭头指向：
 
-* 单向关联用一个带箭头的实线表示，箭头从使用类指向被关联的类；
-* 双向关联用没有箭头的实线来表示;
+* 单向关联用一个带箭头的实线表示，箭头从使用类指向被关联的类 `-->`；
+* 双向关联用没有箭头的实线来表示 `--`;
 * 自关联
 
 ```mermaid
 classDiagram
-Student --> Course
+Customer --> Address
 Customer -- Product
 Node --> Node
 class Customer{
@@ -57,6 +64,8 @@ class Node{
 上图中在Customer类中维护一个List\<Product>，表示一个顾客可以购买多个商品;在Product类中维护一个Customer类型的成员变量表示这个产品被哪个顾客所购买。
 
 <font color=blue>**== 聚合关系(Aggregation) ==**</font>
+
+箭头：`o--`
 
 聚合关系是关联关系的一种，是强关联关系，是整体和部分之间的关系。
 
@@ -75,6 +84,8 @@ University o-- Teacher
 
 <font color=blue>**== 组合关系(Composition) ==**</font>
 
+箭头：`*--`
+
 组合表示类之间的整体与部分的关系，但它是一种更强烈的聚合关系。
 
 ```mermaid
@@ -86,6 +97,8 @@ class Mouth
 Head *-- Mouth
 ```
 <font color=blue>**== 依赖关系(Dependency) ==**</font>
+
+箭头：`<..`
 
 依赖关系是一种使用关系，它是对象之间耦合度最弱的一种关联方式，是临时性的关联。
 
@@ -105,6 +118,8 @@ Car <.. Driver
 
 <font color=blue>**== 继承关系(Inheritance) ==**</font>
 
+箭头：`<|--`
+
 继承关系是对象之间耦合度最大的一种关系。
 
 ```mermaid
@@ -112,6 +127,8 @@ classDiagram
 Person <|-- Student
 ```
 <font color=blue>**== 实现关系(Realization) ==**</font>
+
+箭头：`<|..`
 
 ```mermaid
 classDiagram
@@ -266,6 +283,51 @@ private Singleton() {
 1. 抽象产品 : 定义了产品的规范，描述了产品的主要特性和功能.
 2. 具体产品 : 实现或者继承抽象产品的子类
 3. 具体工厂 : 提供了创建产品的方法，调用者通过该方法来创建产品。
+
+```java
+/**
+ * 抽象产品
+ */
+public abstract class Computer {
+    public abstract void setOperationSystem();
+}
+
+/**
+ * 具体产品
+ */
+public class MacComputer extends Computer {
+    @Override
+    public void setOperationSystem() {
+        System.out.println("Mac笔记本安装Mac系统");
+    }
+}
+public class MiComputer extends Computer {
+    @Override
+    public void setOperationSystem() {
+        System.out.println("小米笔记本安装Win10系统");
+    }
+}
+
+/**
+ * 具体工厂
+ */
+public class SimpleComputerFactory {
+    public static Computer makeComputer(String brand) {
+        Computer computer=null;
+        switch (brand) {
+            case "mac":
+                computer=new MacComputer();
+                break;
+            case "mi":
+                computer=new MiComputer();
+                break;
+            default:
+                break;
+        }
+        return computer;
+    }
+}
+```
 
 **工厂方法模式 Factory Method Pattern**
 

@@ -76,6 +76,9 @@ char ch; // char 在默认情况下既不是没有符号，也不是有符号, �
 #include <stdbool.h>
 bool myBool = true; // 非0值都是true
 int myInt = myBool; // 隐式转换 bool to int
+
+int a = int(99.9);
+int a = (int)99.9;
 ```
 
 ### 2.2 构造类型
@@ -788,7 +791,7 @@ void * realloc (void * memblock, size_t size);// memblock：原先开辟的内�
 
 <font color=blue>**1. 算术操作符**</font>
 
-`+ - * / %`
+`+ - * / %` ：有一个值为浮点数则返回值是浮点数。
 
 <font color=blue>**2. 移位操作符**</font>
 

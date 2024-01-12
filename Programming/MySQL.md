@@ -655,9 +655,49 @@ SELECT GET_FORMAT(DATE, 'USA')
 FROM DUAL;
 ```
 
-| 流程控制函数              |                                                 |
-| ------------------------- | ----------------------------------------------- |
-| IF(value, value1, value2) | 如果value的值为TRUE，返回value1，否则返回value2 |
-|                           |                                                 |
-|                           |                                                 |
+| 流程控制函数                                                 |                                                 |
+| ------------------------------------------------------------ | ----------------------------------------------- |
+| IF(value, value1, value2)                                    | 如果value的值为TRUE，返回value1，否则返回value2 |
+| IFNULL(value1, value2)                                       | 如果value1不为NULL，返回value1，否则返回value2  |
+| CASE WHEN 条件1 THEN 结果1 WHEN 条件2 THEN 结果2 ....[ELSE result] END | 相当于Java的if...else if...else...              |
+| CASE expr WHEN 常量值1 THEN 值1 WHEN 常量值2 THEN 值2 ... [ELSE 值n] END | 相当于Java的switch...case..                     |
+
+```mysql
+SELECT last_name,salary,IF(salary >= 6000,'高工资','低工资') "details"
+FROM employees;
+SELECT last_name,salary,CASE WHEN salary >= 15000 THEN '白骨精'
+							 WHEN salary >= 10000 THEN '潜力股'
+							 ELSE '草根' END "details"
+FROM employees;
+SELECT last_name,salary,CASE dep_id WHEN 15 THEN '白骨精'
+									WHEN 10 THEN '潜力股'
+									ELSE 5 END "details"
+FROM employees;
+```
+
+| 加密                        |                                                              |
+| --------------------------- | ------------------------------------------------------------ |
+| PASSWORD(str)               | 返回字符串str的加密版本，41位长的字符串。加密结果不可逆，常用于用户的密码加密。（8.0弃用） |
+| MD5(str)                    | 返回字符串str的md5加密后的值，也是一种加密方式。若参数为NULL，则会返回NULL。加密结果不可逆 |
+| SHA(str)                    | 从原明文密码str计算并返回加密后的密码字符串，当参数为NULL时，返回NULL。SHA加密算法比MD5更加安全。加密结果不可逆 |
+| ENCODE(value,password_seed) | 返回使用password_seed作为加密密码加密value后的值（8.0弃用）  |
+| DECODE(value,password_seed) | 返回使用password_seed作为加密密码解密value后的值（8.0弃用）  |
+
+| MySQL信息函数                                        |                                                          |
+| ---------------------------------------------------- | -------------------------------------------------------- |
+| VERSION()                                            | 返回当前MySQL的版本号                                    |
+| CONNECTION_ID()                                      | 返回当前MySQL服务器的连接数                              |
+| DATABASE()，SCHEMA()                                 | 返回MySQL命令行当前所在的数据库                          |
+| USER()，CURRENT_USER()、SYSTEM USER(),SESSION_USER() | 返回当前连接MySQL的用户名，返回结果格式为"主机名@用户名” |
+| CHARSET(value)                                       | 返回字符串value自变量的字符集                            |
+| COLLATION(value)                                     | 返回字符串value的比较规则                                |
+
+| 其他函数                       |                                                              |
+| ------------------------------ | ------------------------------------------------------------ |
+| FORMAT(value,n)                | 返回对数字value进行格式化后的结果数据。n表示四舍五入 后保留到小数点后n位 |
+| CONV(value,from,to)            | 将value的值进行不同进制之间的转换                            |
+| INET_ATON(ipvalue)             | 将以点分隔的IP地址转化为一个数字                             |
+| INET_NTOA(value)               | 将数字形式的IP地址转化为以点分隔的IP地址                     |
+| BENCHMARK(n,expr)              | 将表达式expr重复执行n次。用于测试MySQL处理expr表达式所耗费的时间 |
+| CONVERT(value USING char_code) | 将value所使用的字符编码修改为char_code                       |
 

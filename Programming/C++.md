@@ -84,6 +84,9 @@ int abc {123}; // 🟥意在希望任意数据类型都可以使用{}🟥
 int rheas = {123};
 int abc {}; 	// abc = 0
 int rheas = {}; // rheas = 0
+
+int a = int(99.9);
+int a = (int)99.9;
 ```
 
 文档注释 : `/** 文档注释 */`
@@ -154,7 +157,7 @@ copy(vec.cbegin(), vec.cend(), ostream_iterator<int>(cout, "分割符"));
 // 排序 使用algorithm 中的 sort()
 ```
 
-## 4. 指针
+## 4. 指针与内存
 
 `nullptr` : 空指针，0；
 
@@ -167,7 +170,7 @@ refValue = 10; // *refValue = 10;
 const double& d = 12.3; // 常量引用
 ```
 
-## 5. 动态内存
+**动态内存**
 
 ```c++
 int * p = new int;
@@ -562,12 +565,7 @@ void operation()(string test)
 
 ![](../imgs/Cpp/nooverloadoperation.jpg)
 
-## 10. 类型转换
 
-```c++
-int a = int(99.9);
-int a = (int)99.9;
-```
 
 ## 2. 文件操作
 
