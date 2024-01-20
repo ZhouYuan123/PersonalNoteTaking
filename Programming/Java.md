@@ -2,7 +2,7 @@
 
 ## 1. 简介
 
-### 1.1 基础知识
+**基础知识**
 
 冯诺依曼体系结构：输入，输出，存储，运算和控制 (Central Processing Unit)。
 
@@ -22,7 +22,7 @@ GUI: Graphical  User Interface
 
 CLI: Command Line Interface
 
-### 1.2 常见DOS命令
+**常见DOS命令**
 
 
 | 命令     |                        |
@@ -32,7 +32,7 @@ CLI: Command Line Interface
 | del      | 删除文件               |
 | del 目录 | 提示是否删除目录下文件 |
 
-### 1.3 历史
+**历史**
 
 机器语言，汇编语言，高级语言。
 
@@ -92,9 +92,9 @@ SUN (Stanford University Network)
 
 "Write once, Run Anywhere"
 
-JDK包括了JRE。
+JDK = JRE + 开发工具集 (例如 Javac 编译工具等 );
 
-javadoc命令生成文档注释。
+JRE = JVM + Java SE 标准类库;
 
 一个文件中多个类会生成多个字节码文件。
 
@@ -104,11 +104,23 @@ true, false, null不是关键字。保留字： goto, const.
 
 强类型语言。
 
+🟦 **安装目录** 🟦
+
+* bin：存放一些可执行程序，如javac.exe（Java编译器）、java.exe（Java运行工具）、jar.exe（打包工具）和javadoc.exe（文档生成工具）等。
+* include：由于JDK是通过C和C++实现的，因此在启动时需要引入一些C语言的头文件，该目录就是用于存放这些头文件的。
+* jre：Java运行时环境的根目录，它包含Java虚拟机，运行时的类包、Java应用启动器以及一个bin目录（windows下包含dll文件等），但不包含开发环境中的开发工具。也有一个lib目录，包含一些jar包(rt.jar等)。
+* legal目录：通常包含了一些法律相关的文档和许可证文件。它主要用于提供有关JDK 8的许可和使用条款的信息。
+* lib目录：lib是library的缩写，意为Java类库或库文件，是开发工具使用的归档包文件。
+* javafx-src.zip：该压缩文件内存放的是Java FX（Java图形用户界面工具）所有核心类库的源代码。
+* src.zip：src.zip为src文件夹的压缩文件，src中放置的是JDK核心类的源代码，通过该文件可以查看Java基础类的源代码。
+* LICENSE和release：版权、许可文件。
+* README等说明性文档。
+
 ## 2. 数据类型
 
 Java方法的参数传递机制只有一种，就是值(地址值)传递。
 
-### 2.1 基本数据类型
+🟦 **基本数据类型** 🟦
 
 
 |         | 大小                                                                                                                                                                         |
@@ -122,7 +134,7 @@ Java方法的参数传递机制只有一种，就是值(地址值)传递。
 | char    | 2 byte  '\u0043' Unicode值是一个字符，CodeChars.pdf所有字符集。有且一个字符。a:97， A:65。默认值是0或者‘\u0000’。 (A == 65)? 是 true.                                      |
 | boolean | Java规范中，没有明确指出boolean的大小。在《Java虚拟机规范》给出了4个字节，和boolean数组1个字节的定义，具体还要看虚拟机实现是否按照规范来，所以1个字节、4个字节都是有可能的。 |
 
-### 2.2 数组
+🟦 **数组** 🟦
 
 `int [] arr = {1, 2, 3, 4, 5}`: 可以省略等号右边的 new int []
 
@@ -132,7 +144,7 @@ new int \[2\]\[3\]，一维元素默认是地址值。
 
 new int \[2\]\[\]，一维元素默认是null。
 
-### 2.3 进制
+🟦 **进制** 🟦
 
 二进制 （binary）, 0b或者0B开头。
 
@@ -142,7 +154,7 @@ new int \[2\]\[\]，一维元素默认是null。
 
 十六进制 （hex）, 0x或者0X开头。
 
-### 2.4 运算符
+🟦 **运算符** 🟦
 
 `>>>` : 无符号右移，没有 `<<<`
 

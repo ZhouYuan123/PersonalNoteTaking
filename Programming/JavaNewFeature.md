@@ -1,3 +1,10 @@
+# Java Versions
+
+## JEP和JSR
+
+* JEP(JDK Enhancement Proposals): jdk 改进提案，每当需要有新的设想时候，JEP 可以在JCP(java community Process)之前或者同时提出非正式的规范(specification)，被正式认可的 JEP 正式写进 JDK 的发展路线图并分配版本号。
+* JSR(Java Specification Requests): java 规范提案，新特性的规范出现在这一阶段，是指向JCP(Java Community Process)提出新增一个标准化技术规范的正式请求。请求可以来自于小组/项目、JEP、JCP成员或者 java 社区(community)成员的提案，每个 java 版本都由相应的JSR支持。
+
 ## Java 8
 
 2014年3月18日。<font color=red>**LTS (Long-Term-Support)**</font>
@@ -237,38 +244,67 @@ try(InputStreamReader reader = new InputStreamReader(System.in)){
 
 2017年9月21日。
 
+java 9 提供了超过 150 项新功能特性，包括备受期待的模块化系统可交互的 REPL 工具: jshell，JDK 编译工具，Java 公共 API 和私有代码，以及安全增强、扩展提升、性能管理改善等。可以说 Java 9 是一个庞大的系统工程，完全做了个整体改变。
+
 1. 目录改变
 
-   > /jre : 被移除 
+   ![](../imgs/JavaNewFeature/jdk8.jpg)
+
+   ![](../imgs/JavaNewFeature/jdk9.jpg)
+
+   > /jre : 被移除
+   >
+   > /jre/bin 移动到 /bin
    >
    > /src.zip --> /lib/src.zip
-   >
 
 2. modularity
+
+   1. Java 运行环境的膨胀和臃肿。每次JVM启动的时候，至少会有30~60MB的内存加载，主要原因是IVM需要加载rt.jar，不管其中的类是否被classloader加载，第一步整个jar都会被JVM加载到内存当中去(而模块化可以根据模块的需要加载程序运行需要的class) --> jlink工具, 订制运行时环境。
+   2. 模块(module)的概念，就是在package外再裹一层。也就是说,用模块来管理各个package,通过声明某个package暴露，不声明默认就是隐藏。因此，模块化使得代码组织上更安全，因为它可以指定哪些部分可以暴露，哪些部分隐藏。
+
 
 ```java
 // 创建 module-info.java
 module name{
-    exports packagepath;
+    // exports package path
+    exports com.bean;
 }
 module name{
-    requires packagepath;
+    // requires module name
+    requires java9demo;
 }
 ```
 
-3. jShell命令
+​	![](../imgs/JavaNewFeature/java9module.jpg)
 
-   可以让java像脚本一样运行。
+3. jShell命令 (REPL工具 Read-Evaluate-Print Loop)
 
-   jshell --> 开启命令行模式。
+   ![](../imgs/JavaNewFeature/jshell.jpg)
+
+   可以重复定义方法名，会覆盖。
+
+   可以tab补全。
+
+   没有受检异常。
 
    > /help: 查看可用命令。
    >
-   > /edit: 查看已经编辑。
+   > /edit: 查看已经编辑所有代码并支持修改。
    >
-   > /imports: 查看已经导入
+   > /edit 方法名: 修改方法。
    >
-   > /open: 类似脚本语言 
+   > /imports: 查看已经导入 (默认导入的包)
+   >
+   > /open 文件名: 类似脚本语言，执行这个文件。
+   >
+   > /list: 查看历史操作。
+   >
+   > /vars: 查看定义的变量
+   >
+   > /method: 查看定义的方法
+   >
+   > /exit: 退出
 
 4. 接口中可以定义private方法。
 
