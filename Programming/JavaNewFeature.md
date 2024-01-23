@@ -219,7 +219,7 @@ JDK 7: 只能
 
 JDK 8: 可以
 
-> 静态方法：public static 只能通过接口调用。
+> 静态方法 (只能通过接口调用)：public static + 方法体。
 >
 > 默认方法：public default.
 >
@@ -232,6 +232,24 @@ JDK 8: 可以
 ### 6. try
 
 ```java
+// jdk 7
+InputStreamReader reader = null;
+try {
+    reader = new InputStreamReader(System.in);
+    reader.read();
+} catch (I0Exception e) {
+    e.printstackTrace();
+} finally {
+    //资源的关闭操作
+    if(reader != null){
+        try {
+            reader.close();
+        } catch (I0Exception e) {
+            e.printstackTrace();
+        }
+    }
+}
+
 // 自动关闭流
 try(InputStreamReader reader = new InputStreamReader(System.in)){
 
@@ -240,11 +258,17 @@ try(InputStreamReader reader = new InputStreamReader(System.in)){
 }
 ```
 
+### 7. 其他
+
+支持Javascript运行
+
 ## Java 9
 
 2017年9月21日。
 
-java 9 提供了超过 150 项新功能特性，包括备受期待的模块化系统可交互的 REPL 工具: jshell，JDK 编译工具，Java 公共 API 和私有代码，以及安全增强、扩展提升、性能管理改善等。可以说 Java 9 是一个庞大的系统工程，完全做了个整体改变。
+java 9 提供了超过 150 项新功能特性，91个JEP。
+
+包括备受期待的模块化系统可交互的 REPL 工具: jshell，JDK 编译工具，Java 公共 API 和私有代码，以及安全增强、扩展提升、性能管理改善等。可以说 Java 9 是一个庞大的系统工程，完全做了个整体改变。
 
 1. 目录改变
 
@@ -308,14 +332,43 @@ module name{
 
 4. 接口中可以定义private方法。
 
+   ```java
+   interface MyInterface{
+
+       // jdk 7: 只能声明全局常量(public static final)和抽象方法(public abstract)
+       void method1();
+
+       // jdk 8: 声明静态方法 和 默认方法
+       public static void method2() {
+           System.out.println("method2");
+       }
+       default void method3() {
+           System.out.println("method3");
+           method4();
+       }
+
+       // jdk 9: 声明私有方法
+       private void method4() {
+           System.out.println("私有方法");
+       }
+   }
+   ```
+
 5. 钻石操作符：匿名内部类可以省略指定泛型。
+
+   ```java
+   // jdk 8
+   Set<String> set = new HashSet<String>(){};
+   // jdk 9
+   Set<String> set = new HashSet<>(){};
+   ```
 
 6. try 语句自动关闭流
 
 ```java
 // 可以在try外面实例化, reader此时是final
 InputStreamReader reader = new InputStreamReader(System.in);
-try(reader){
+try(reader){ // 默认成为final变量。多个对象用分号隔开
 
 } catch (IOException e) {
     e.printStackTrace();
@@ -327,10 +380,16 @@ try(reader){
 
 ```java
 // JDK 9之前
-Collections.unmodifiablelist(list); // contains: 调用入参list的contains方法
-Arrays.asList(); // contains入参可以为空
+List<String> list = new ArrayList<>();
+list.add("aaa");
+list.add("bbb");
+list.add("ccc");
+List<String> newList = Collections.unmodifiablelist(list); // contains: 调用入参list的contains方法
+// 或者
+newList = Collections.unmodifiableList(Arrays.asList(1,2,3)); // contains入参可以为空
+
 // JDK 9
-List.of() // contains的入参 Objects.requireNonNull(o);
+List.of("aaa", "bbb", "ccc") // contains的入参 Objects.requireNonNull(o);
 ```
 
 9. Input Stream加强。
@@ -349,13 +408,19 @@ try (InputStream is = cl.getResourceAsStream("hello.txt");
 
 ```java
 // takeWhile(Predicate<? super T>) 一旦出现不满足就结束，后面数据丢弃。
-List<Integer> list = Arrays.asList(45,43, 76，87，42，77，90， 73，67，88);
+List<Integer> list = Arrays.asList(45,43,76,87,42,77,90,73,67,88);
 list.stream().takeWhile(x -> x < 50).forEach(System.out::println);// 45,43
+
 // dropWhile(Predicate<? super T>) 一旦出现不满足就结束，后面数据全保留。
-// of(T... t), 可以包含null值，可以多个null值，但不能单个null值。
-Stream.of(1，2,3,null);
+
+// of(T... t), 可以包含null值，可以多个null值，但不能单独null值。
+Stream.of(1,2,3,null);// .count()是4
 // ofNullable(T t), 可以单个null值。
-Stream.of(null); // .count()是0，打印空“”
+Stream.ofNullable(null); // .count()是0，打印空“”
+
+// 新的 iterate() 重载
+// 以前
+Stream.iterate(0, x -> x + 1).limit(5).forEach(System.out::println); // 0 1 2 3 4
 // 中间多了一个Predicate<? super T> hasNext参数的重载方法。
 Stream.iterate(0, x -> x < 7, x -> x + 2).limit(5).forEach(System.out::println);//0 2 4 6
 ```
@@ -364,30 +429,88 @@ Stream.iterate(0, x -> x < 7, x -> x + 2).limit(5).forEach(System.out::println);
 
     ```java
     List<String> list = new ArrayList<>();
-    list.add("Tom");list.add("Jerry");list.add("Tim");
+    list.add("Tom");
+    list.add("Jerry");
+    list.add("Tim");
     Optional<List<String>> optional = Optional.ofNullable(list);
     Stream<List<String>> stream = optional.stream();
+    stream.forEach(System.out::println); // [Tom Jerry Tim]
     stream.flatMap(x -> x.stream()).forEach(System.out::printIn); // Tom Jerry Tim
     ```
-    
-12. Javascript 引擎升级：Nashorn
 
 12. 禁止变量取名直接就是`_`, 编译报错。
 
+13. 多版本jar支持。多版本兼容 JAR 功能能让你创建仅在特定版本的 Java 环境中运行库程序时选择使用的 class 版本。
+
+14. 多分辨率图像 API. Java 程序在高分辨率屏幕上看起来很小。程序只需要提供一组不同分辨率的图像，而API会根据当前设备的分辨率自动选择合适的图像。
+
+15. 全新的 HTTP 客户端 API
+
+    1. HTTP，用于传输网页的协议，早在1997 年就被采用在目前的 1.1版本 (1999年) 中。直到 2015 年，HTTP2 才成为标准。
+    2. HttpClient.java
+
+16. 移除
+
+    1. Applet API
+
+17. 其他
+
+    1. 智能编译工具 sjavac
+    2. 统一的 JVM 日志系统
+    3. javadoc支持 HTML5支持 search
+    4. Javascript 引擎升级：Nashorn。JDK 9 包含一个用来解析 Nashorn 的 ECMAScript 语法树的 API。 这个 API 使得IDE 和服务端框架不需要依赖 Nashorn 项目的内部实现类， 就能够分析ECMAScript 代码。
+    5. AOT (试验阶段)
+
+
 ## Java 10
 
-2018年3月21日。
+2018年3月21日。109个新特性，12个JEP。
 
-1. 局部变量类型推断。
+> JEP 286: 局部变量的类型推断。该特性在社区讨论了很久并做了调查，可查看 JEP 286 调查结果
+>
+> JEP 296: 将 JDK 的多个代码仓库合并到一个储存库中
+>
+> JEP 304: 垃圾收集器接口。通过引入一个干净的垃圾收集器（GC）接口，改善不同垃圾收集器的源码隔离性。
+>
+> JEP 307: 向 G1 引入并行 Full GC
+>
+> JEP 310: 应用类数据共享。为改善启动和占用空间，在现有的类数据共享（“CDS”）功能上再次拓展，以允许应用类放置在共享存档中
+>
+> JEP 312: 线程局部管控。允许停止单个线程，而不是只能启用或停止所有线程
+>
+> JEP 313: 移除 Native-Header Generation Tool (javah)
+>
+> JEP 314: 额外的 Unicode 语言标签扩展。包括：cu (货币类型)、fw (每周第一天为星期几)、rg (区域覆盖)、tz (时区) 等
+>
+> JEP 316: 在备用内存设备上分配堆内存。允许 HotSpot 虚拟机在备用内存设备上分配 Java 对象堆
+>
+> JEP 317: 基于 Java 的 JIT 编译器 (试验版本)
+>
+> JEP 319: 根证书。开源 Java SE Root CA 程序中的根证书
+>
+> JEP 322: 基于时间的版本发布模式。“Feature releases” 版本将包含新特性，“Update releases” 版本仅修复 Bug
+
+1. 局部变量类型推断。var不是一个关键字。
 
 ```java
 var num = 10;
 for(var i : list){
     
 }
+// 以下写法会编译错误
+var num1; // 没有初始化
+var num1 = null;
+var sup = () -> Math.random();
+var con = System.out::println;
+var arr = {1,2,3,4}; // 数组正确的静态初始化 int[] arr = {1,2,3,4};
+public var method(var num); // 不能是方法返回值类型, 不能是参数类型
+var num = 10; // 不能是成员变量，因为成员变量会存在默认值。
+try(){
+}catch(var e){ // 不能是异常类型
+}
 ```
 
-2. `List.copyOf()` : 
+2. `List.copyOf()` : 创建一个只读集合。
 
 ```java
 //示例1:
@@ -403,7 +526,41 @@ System.out.printn(list2 == copy2); // false
 
 ## Java 11
 
-2018年9月26日。<font color=red>**LTS (Long-Term-Support)**</font>
+2018年9月26日。<font color=red>**LTS (Long-Term-Support)**</font> 更新17个JEP。
+
+> JEP 181: 嵌套类可见性控制
+>
+> JEP 309: 动态文件常量
+>
+> JEP 315: 改进 Aarch64 Intrinsics
+>
+> JEP 318: Epsilon–一个无操作的垃圾收集器
+>
+> JEP 320: 删除 Java EE 和 CORBA 模块
+>
+> JEP 321: HttpClient
+>
+> JEP 323: 用于 Lambda 参数的局部变量语法
+>
+> JEP 324: Curve25519 和 Curve448 算法的密钥协议
+>
+> JEP 327: Unicode 10
+>
+> JEP 328: Flight Recorder(飞行记录器)
+>
+> JEP 329: haCha20 和 Poly1305 加密算法支持
+>
+> JEP 330: Launch Single-File Source-Code Programs（启动单一文件的源代码程序）
+>
+> JEP 331: 低开销的 Heap Profiling
+>
+> JEP 332: Transport Layer Security (TLS) 1.3支持
+>
+> JEP 333: ZGC: A Scalable Low-Latency Garbage Collector（可伸缩低延迟垃圾收集器）
+>
+> JEP 335: 弃用 Nashorn JavaScript 引擎
+>
+> JEP 336: 弃用 Pack200 工具和 API
 
 1. String 增强
 
