@@ -427,16 +427,22 @@ Stream.iterate(0, x -> x < 7, x -> x + 2).limit(5).forEach(System.out::println);
 
 11. Optional类中stream()的使用
 
-    ```java
-    List<String> list = new ArrayList<>();
-    list.add("Tom");
-    list.add("Jerry");
-    list.add("Tim");
-    Optional<List<String>> optional = Optional.ofNullable(list);
-    Stream<List<String>> stream = optional.stream();
-    stream.forEach(System.out::println); // [Tom Jerry Tim]
-    stream.flatMap(x -> x.stream()).forEach(System.out::printIn); // Tom Jerry Tim
-    ```
+```java
+List<String> list = new ArrayList<>();
+list.add("Tom");
+list.add("Jerry");
+list.add("Tim");
+Optional<List<String>> optional = Optional.ofNullable(list);
+Stream<List<String>> stream = optional.stream(); // value非空，返回仅包含此value的Stream;否则，返回一个空的Stream
+stream.forEach(System.out::println); // [Tom Jerry Tim]
+stream.flatMap(x -> x.stream()).forEach(System.out::printIn); // Tom Jerry Tim
+
+// value非空，执行参数1功能;如果value为空，执行参数2功能
+optional.ifPresentOrElse(Consumer<? super T> action, Runnable emptyAction);
+
+// value非空，返回对应的Optional;value为空，返回形参封装的Optional
+Optional<T> or(Supplier<? extends Optional<? extends T>>supplier);
+```
 
 12. 禁止变量取名直接就是`_`, 编译报错。
 
@@ -484,7 +490,7 @@ Stream.iterate(0, x -> x < 7, x -> x + 2).limit(5).forEach(System.out::println);
 >
 > JEP 316: 在备用内存设备上分配堆内存。允许 HotSpot 虚拟机在备用内存设备上分配 Java 对象堆
 >
-> JEP 317: 基于 Java 的 JIT 编译器 (试验版本)
+> JEP 317: 基于 Java 的 JIT 编译器 (试验版本) (JIT jdk 1.2)
 >
 > JEP 319: 根证书。开源 Java SE Root CA 程序中的根证书
 >
@@ -524,6 +530,13 @@ System.out.printn(list2 == copy2); // false
 // 本身就是只读集合，没有必要再新创建集合。
 ```
 
+3. Optional
+
+```java
+// value非空，返回value; 否则抛异常NoSuchElementException
+T orElseThrow();
+```
+
 ## Java 11
 
 2018年9月26日。<font color=red>**LTS (Long-Term-Support)**</font> 更新17个JEP。
@@ -538,7 +551,7 @@ System.out.printn(list2 == copy2); // false
 >
 > JEP 320: 删除 Java EE 和 CORBA 模块
 >
-> JEP 321: HttpClient
+> JEP 321: Http Client (Standard)
 >
 > JEP 323: 用于 Lambda 参数的局部变量语法
 >
@@ -570,10 +583,14 @@ System.out.printn(list2 == copy2); // false
 "".stripTrailing();
 "".stripLeading();
 "".repeat(n); // 复制次数。
-"".ines.count();
+"".lines.count(); // 行数, 根据\n区分
 
 readString();
 writeString();
+String str = Files.readString(Path.of("123.txt"));
+String modified = modify(str);
+Files.writeString(Path.of("123-mod.txt"), modified);
+
 Path path = Files.writeString(Files.createTempFile("test", ".txt"), "This was posted on JD");
 String s = Files.readString(path);
 ```
@@ -581,15 +598,21 @@ String s = Files.readString(path);
 2. Optional增强
 
 ```java
-isEmpty();
+isEmpty(); // 判断value是否为空
 ```
 
 3. lambda参数可以加注解。
-4. 全新的http客户端API。
-5. 可以直接 `java Hello.java` 执行文件。
-6. 废弃 Nashorn。
-7. ZGC
-7. 反射内部类。getNestHost()、getNestMembers() 和 isNestmateOf()。
+
+4. 全新的http客户端API。再次更新`Java.net.HttpClient.java`
+
+5. 可以直接 `java Hello.java` 执行文件。(只会执行第一个类包含的main方法)
+
+6. 废弃 Nashorn。（只能用GraalVM虚拟机）
+
+7. ZGC，A Scalable Low-Latency Garbage Collector (Experimental)
+
+8. 反射内部类。getNestHost()、getNestMembers() 和 isNestmateOf()。
+
 7. 新的 Collection.toArray(IntFunction<T[]> generator) 方法
 
 ```java
@@ -610,7 +633,7 @@ String[] strings = list.toArray(String[]::new);
 
 ```java
 // Relative path foo/bar/baz
-Path.of("foo/bar/baz");
+Path tmp = Path.of("foo/bar/baz");
 Path.of("foo", "bar/baz");
 Path.of("foo", "bar", "baz");
 
@@ -619,29 +642,75 @@ Path.of("/foo/bar/baz");
 Path.of("/foo", "bar", "baz");
 Path.of("/", "foo", "bar", "baz");
 // 要定义绝对路径，在 Linux 和 macOS 上，第一部分必须以“/”开头，Windows 上以驱动器号开头，例如 “C:”。
+
+Path tmp = Path.of(URI.create("http://codefx.org"));
+```
+
+11. lamda 表达式更新
+
+```java
+// Predicate.not(Predicate)
+Stream.of("a", "b", "", "c").filter(Predicate.not(String::isBlank))
+.forEach(System.out::println); // a b c
+
+// "Pattern:asMatchPredicate" 处理正则表达式. JDK 8
+Pattern nonWordCharacter = Pattern.compile("\\W");
+Stream.of("abc", "def").filter(nonWordCharacter.asPredicate()).forEach(System.out::println);
+
+// "Pattern:asMatchPredicate" JDK 11
+// asPredicate 会检查字符串或者其字串是否符合这个正则（他的行为像 s -> this.matcher(s).find() ）
+// asMatchPredicate 只会检查整个字符串是否符合这个正则（他的行为像 s -> this.matcher(s).matchs()）
 ```
 
 ## Java 12
 
-2019年3月19日。
+2019年3月19日。8个JEP
 
-1. switch改动.
+> JEP 189: Shenandoah: A Low-Pause-Time Garbage Collector (Experimental) ：新增一个名为 Shenandoah 的垃圾回收器，它通过在 Java 线程运行的同时进行疏散 (evacuation) 工作来减少停顿时间。
+>
+> JEP 230: Microbenchmark Suite：新增一套微基准测试，使开发者能够基于现有的 Java Microbenchmark Harness（JMH）轻松测试 JDK 的性能，并创建新的基准测试。
+>
+> JEP 325: Switch Expressions (Preview) ：对 switch 语句进行扩展，使其可以用作语句或表达式，简化日常代码。
+>
+> JEP 334: JVM Constants API ：引入一个 API 来对关键类文件 (key class-file) 和运行时工件的名义描述（nominal descriptions）进行建模，特别是那些可从常量池加载的常量。
+>
+> JEP 340: One AArch64 Port, Not Two ：删除与 arm64 端口相关的所有源码，保留 32 位 ARM 移植和 64 位 aarch64 移植。
+>
+> JEP 341: Default CDS Archives ：默认生成类数据共享（CDS）存档。
+>
+> JEP 344: Abortable Mixed Collections for G1 ：当 G1 垃圾回收器的回收超过暂停目标，则能中止垃圾回收过程。
+>
+> JEP 346: Promptly Return Unused Committed Memory from G1 ：改进 G1 垃圾回收器，以便在空闲时自动将 Java 堆内存返回给操作系统。
+
+预览：预览语言功能的想法是在 2018年初被引入Java 中的，本质上讲，这是一种引入新特性的测试版的方法。通过这种方式，能够根据用户反馈进行升级、更改。在极端情况下，如果没有被很好的接纳，则可以完全删除该功能。预览功能的关键在于它们没有被包含在Java SE 规范中。
+
+1. switch改动.（预览）
 
 ```java
+switch(fruit){
+    case PEAR -> System.out.println("4");
+    case APPLE,GRAPE,MANGO -> System.out.println("5");
+    case ORANGE,PAPAYA -> System.out.println("6");
+    default ->new IllegalStateException("No Such Fruit:" + fruit);
+}
+
 int dayNumber = switch (day) {
- case MONDAY, FRIDAY, SUNDAY -> 6;
- case TUESDAY                -> 7;
- case THURSDAY, SATURDAY     -> 8;
- case WEDNESDAY              -> 9;
- default                      -> throw new IllegalStateException("Huh? " + day);
+    case MONDAY, FRIDAY, SUNDAY -> 6;
+    case TUESDAY                -> 7;
+    case THURSDAY, SATURDAY     -> 8;
+    case WEDNESDAY              -> 9;
+    default                     -> throw new IllegalStateException("Huh? " + day);
 }
 ```
 2. String
 
 ```java
+// indent 方法给每一行前面都加空格
+String result = "foo".indent(4);
 String result = "foo\nbar\nbar2".indent(4);
-// 调用 indent 方法会自动添加一个换行符号\n，
+
 public <R> R transform(Function<? super String, ? extends R> f);
+String info1 = "hello".transform(info -> info + "world"); // hello world
 String.transform(StringUtils::toCamelCase)；
 ```
 3. Files
@@ -656,14 +725,30 @@ Files.mismatch(Path, Path);
 // 例子：3.6M比3,600,000容易读得多
 // Java 12 引入了一个叫做 NumberFormat.getCompactNumberInstance(Locale, NumberFormat.Style)的静态方法。用于创建紧凑数字表示形式，
 NumberFormat fmt = NumberFormat.getCompactNumberInstance(Locale.US, NumberFormat.Style.SHORT);
-String result = fmt.format(1000); // 1k
+String result = fmt.format(1000); // 1k or 1千
 ```
+
+5. Shenandoah GC: 低停顿时间的GC (预览)
+
+   主要目标是 99.9% 的暂停小于 10ms,暂停与堆大小无关等。
+
+6. JVM 常量 API `java.lang.constant`.实现包中借口，加载从常量池，速度更快。
 
 ## Java 13
 
-2019年9月17日。
+2019年9月17日。5个JEP
 
-1. switch 
+> JEP 350：动态CDS档案
+>
+> JEP-351：ZGC：取消提交未使用的内存
+>
+> JEP-353：重新实现旧版套接字API
+>
+> JEP-354：switch表达式（预览）
+>
+> JEP-355：文本块（预览）
+
+1. switch新的关键字yield（预览）
 
 ```java
 // yield与return的区别在于，yield只会跳出switch块，return是跳出当前方法或循环。
@@ -680,8 +765,13 @@ final String typeOfDay = switch (day) {
 };
 // "Day Off"
 ```
+2. 文本块（预览）
+
 ```java
-// Java13 预览版: Text Block
+// Text Block
+// 不需要再通过 \n 逐行拼接 (依旧支持额外的 \n \t 等转义字符)
+// 文本块中的双引号不再需要转义， 如果需要显示三引号：\""" 表示三个引号
+// 文本块可以跟字符串拼接
 String json2 = """
         {
           "wechat": "hellokanshan",
@@ -690,6 +780,36 @@ String json2 = """
           "mpName": "看山的小屋"
         }
         """;
+
+String text1 = """
+abc"""; // length: 3
+String text2 = """
+abc
+"""; // lenght: 4 (最后多一个\n)
+String text3 = "abc"; // text1 == text3 != text2);
+
+String text4 = """
+"""; // 表示空字符串
+
+// 根据行结束符的位置自动删除多余空格
+String text5 = """
+  abc
+   def
+  """; // abc前面两个空格去除，def前面保留一个空格。每行结尾空格删除
+
+// 占位替换 $
+String type = "abc";
+String code1 ="""
+public void print($type o) {
+    System.out.println(objects.tostring(o));
+}
+""".replace("$type", type);
+
+String code2 =String.format("""
+public void print(%s o) {
+    System.out.println(objects.tostring(o));
+}
+""", type);
 ```
 
 ## Java 14
