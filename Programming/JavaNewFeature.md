@@ -1,13 +1,26 @@
 # Java Versions
 
-## JEP和JSR
+## 名词解释
 
 * JEP(JDK Enhancement Proposals): jdk 改进提案，每当需要有新的设想时候，JEP 可以在JCP(java community Process)之前或者同时提出非正式的规范(specification)，被正式认可的 JEP 正式写进 JDK 的发展路线图并分配版本号。
+
 * JSR(Java Specification Requests): java 规范提案，新特性的规范出现在这一阶段，是指向JCP(Java Community Process)提出新增一个标准化技术规范的正式请求。请求可以来自于小组/项目、JEP、JCP成员或者 java 社区(community)成员的提案，每个 java 版本都由相应的JSR支持。
+
+* Java11开始小步快跑，快速迭代。
+
+  * 孵化器模块(Incubator/孵化版/实验版)
+
+    尚未定稿的API/工具，主要用于从Java社区收集使用反馈，稳定性无保障，后期有较大可能性移除
+
+    使用预览 *-Xlint:preview 重新编译。*
+
+  * 预览特性(Preview/预览版)
+
+    规格已成型，实现已确定，但还未最终定稿。这些特性还是存在被移除的可能性，但一般来说最后都会被固定下来
 
 ## Java 8
 
-2014年3月18日。<font color=red>**LTS (Long-Term-Support)**</font>
+2014年3月18日。<font color=red>**LTS (Long-Term-Support)**</font> 50+ JEP
 
 ### 1. Lambda
 
@@ -446,16 +459,20 @@ Optional<T> or(Supplier<? extends Optional<? extends T>>supplier);
 
 12. 禁止变量取名直接就是`_`, 编译报错。
 
-13. 多版本jar支持。多版本兼容 JAR 功能能让你创建仅在特定版本的 Java 环境中运行库程序时选择使用的 class 版本。
+13. new Integer(int) 废弃。(Java 16 forRemoval)
 
-14. 多分辨率图像 API. Java 程序在高分辨率屏幕上看起来很小。程序只需要提供一组不同分辨率的图像，而API会根据当前设备的分辨率自动选择合适的图像。
+    推荐使用`Integer.valueOf(int)`。
+
+14. 多版本jar支持。多版本兼容 JAR 功能能让你创建仅在特定版本的 Java 环境中运行库程序时选择使用的 class 版本。
+
+15. 多分辨率图像 API. Java 程序在高分辨率屏幕上看起来很小。程序只需要提供一组不同分辨率的图像，而API会根据当前设备的分辨率自动选择合适的图像。
 
 15. 全新的 HTTP 客户端 API
 
     1. HTTP，用于传输网页的协议，早在1997 年就被采用在目前的 1.1版本 (1999年) 中。直到 2015 年，HTTP2 才成为标准。
     2. HttpClient.java
 
-16. 移除
+17. 移除
 
     1. Applet API
 
@@ -537,7 +554,7 @@ System.out.printn(list2 == copy2); // false
 T orElseThrow();
 ```
 
-## Java 11
+## Java 11 (LTS)
 
 2018年9月26日。<font color=red>**LTS (Long-Term-Support)**</font> 更新17个JEP。
 
@@ -684,7 +701,7 @@ Stream.of("abc", "def").filter(nonWordCharacter.asPredicate()).forEach(System.ou
 
 预览：预览语言功能的想法是在 2018年初被引入Java 中的，本质上讲，这是一种引入新特性的测试版的方法。通过这种方式，能够根据用户反馈进行升级、更改。在极端情况下，如果没有被很好的接纳，则可以完全删除该功能。预览功能的关键在于它们没有被包含在Java SE 规范中。
 
-1. switch改动.（预览）
+1. switch改动.（预览）（正式版：Java 14）
 
 ```java
 switch(fruit){
@@ -728,9 +745,14 @@ NumberFormat fmt = NumberFormat.getCompactNumberInstance(Locale.US, NumberFormat
 String result = fmt.format(1000); // 1k or 1千
 ```
 
-5. Shenandoah GC: 低停顿时间的GC (预览)
+5. Shenandoah GC: 低停顿时间的GC (预览)（正式版：Java 15）
 
    主要目标是 99.9% 的暂停小于 10ms,暂停与堆大小无关等。
+
+   Shenandoah和ZGC的关系呢:
+
+   * 相同点: 性能几乎可认为是相同的
+   * 不同点: ZGC是Oracle JDK的，根正苗红。而shenandoah只存在于Open JDK中，因此使用时需注意你的JDK版本
 
 6. JVM 常量 API `java.lang.constant`.实现包中借口，加载从常量池，速度更快。
 
@@ -738,17 +760,17 @@ String result = fmt.format(1000); // 1k or 1千
 
 2019年9月17日。5个JEP
 
-> JEP 350：动态CDS档案
+> JEP 350：动态CDS档案 (类数据共享机制Class Data Sharing, 多个JVM之间共享)
 >
-> JEP-351：ZGC：取消提交未使用的内存
+> JEP-351：ZGC：Uncommit Unused Memory 未使用的堆内存归还操作系统
 >
-> JEP-353：重新实现旧版套接字API
+> JEP-353：重新实现旧版套接字API `java.net.Socket`
 >
 > JEP-354：switch表达式（预览）
 >
 > JEP-355：文本块（预览）
 
-1. switch新的关键字yield（预览）
+1. switch新的关键字yield（预览）（正式版：Java 14）
 
 ```java
 // yield与return的区别在于，yield只会跳出switch块，return是跳出当前方法或循环。
@@ -765,7 +787,7 @@ final String typeOfDay = switch (day) {
 };
 // "Day Off"
 ```
-2. 文本块（预览）
+2. 文本块（预览）（正式版：Java 15）
 
 ```java
 // Text Block
@@ -812,11 +834,45 @@ public void print(%s o) {
 """, type);
 ```
 
+3. 新增 FileSystems.newFileSystem
+
 ## Java 14
 
-2020年3月17日。
+2020年3月17日。16个JEP
 
-1. instanceof
+> JEP 305: instanceof的模式匹配 (预览)
+>
+> JEP 343: 打包工具 (Incubator)
+>
+> JEP 345: G1的NUMA内存分配优化
+>
+> JEP 349: JFR (JDK Flight Recorder) 事件流
+>
+> JEP 352: 非原子性的字节缓冲区映射
+>
+> JEP 358: 友好的空指针异常
+>
+> JEP 359: Records (预览)
+>
+> JEP 361: Switch 表达式 (标准)
+>
+> JEP 362: 弃用Solaris和SPARC端口
+>
+> JEP 363: 移除 CMS （Concurrent Mark Sweep）垃圾收集器
+>
+> JEP 364: macOS 系统上的ZGC
+>
+> JEP 365: Windows系统上的ZGC
+>
+> JEP 366: 弃用ParallelScavenge + SerialOld GC组合
+>
+> JEP 367: 移除Pack200 Tools和API
+>
+> JEP 368: 文本块 (第二个预览版)
+>
+> JEP 370: 外部存储器API (Incubator)
+
+1. instanceof (预览)（正式版：Java 16）
 
 ```java
 if (!(obj instanceof String str)) {
@@ -828,41 +884,44 @@ if (!(obj instanceof String str)) {
 if (obj instanceof String str && str.length() > 5) {.. str.contains(..)..}
 if (obj instanceof String str || str.length() > 5) {.. str.contains(..)..}
 ```
-2. record
+2. record (预览)（正式版：Java 16）
 
 ```java
+// record 是一种全新的类型，它本质上是一个 final 类，(默认且只能继承Record类)
+// 所有属性都是private final 修饰，它会自动编译出 public get、hashcode、equals、toString 等方法，减少了代码编写量。
+// 还可以声明静态的属性、静态的方法、构造器、实例方法
+// 不可以非静态属性，abstract，不能继承其他类
+public record Cat(String name, Integer age) {
+}
+
 public class Test {
     public static void main(String[] args) {
         test();
     }
-    // record 是一种全新的类型，它本质上是一个 final 类，
-    // 同时所有的属性都是 final 修饰，它会自动编译出 public get hashcode 、equals、toString 等方法，减少了代码编写量。
     private static void test() {
         Cat c1 = new Cat("tomcat", 1);
-        Cat c3 = new Cat("tomcat", 1);
-        Cat c2 = new Cat("jerry", 2);
-        System.out.println(c1);
-        System.out.println(c2);
-        System.out.println(c1 == c3); // true
+        Cat c2 = new Cat("tomcat", 1);
+        Cat c3 = new Cat("jerry", 2);
+        System.out.println(c1 == c2); // true
+        System.out.println(c1.name()); // 类似于原有的针对于实例变量的get()
     }
-}
-record Cat(String name, Integer age) {
 }
 
 // 在 java.lang.Class 中引入了下面两个新方法：
 RecordComponent[] getRecordComponents()
 boolean isRecord()   
 ```
-3. Text block
+3. Text block (预览)（正式版：Java 15）
 
 ```java
-// 其一，用\表示换行。其二，是用\s表示一个空格
 // 不使用文本块
 String literal = "two escape sequences first is for newlines " +
 "and, second is to signify white space " +
 "or single space.";
  
-// 使用 \ 看起来像这样：实际内容是在同一行
+// 其一，用\换行书写，实际同一行。
+// 其二，用\s表示一个空格
+// 使用 \ 看起来像这样：实际内容是在同一行 (取消换行操作)
 String text = """
                 two escape sequences first is for newlines \
                 and, second is to signify white space \
@@ -870,31 +929,83 @@ String text = """
                 """;
 ```
 
+4. JEP 358: Helpful NullPointerExceptions
+
+`-XX:+ShowCodeDetailsInExceptionMessages` VM options中开启，可以显示具体行的具体位置空指针
+
 ## Java 15
 
-2020年9月15日。
+2020年9月15日。14个JEP.
 
-1. 权限控制
+> 339    Edwards-Curve Digital Signature Algorithm (EdDSA)    爱德华兹曲线数字签名算法
+>
+> 360    Sealed Classes (Preview)    密封类(预览)
+>
+> 371    Hidden Classes    隐藏类
+>
+> 372    Remove the Nashorn JavaScript Engine    移除nasorn JavaScript引擎
+>
+> 373    Reimplement the Legacy DatagramSocket API    重新实现旧的DatagramSocket API
+>
+> 374    Disable and Deprecate Biased Locking    禁用和弃用偏置锁
+>
+> 375    Pattern Matching for instanceof (Second Preview)    模式匹配的instanceof(第二次预览)(并没有任何修改)
+>
+> 377    ZGC: A Scalable Low-Latency Garbage Collector    ZGC:一个可扩展的低延迟垃圾收集器
+>
+> 378    Text Blocks    文本块
+>
+> 379    Shenandoah: A Low-Pause-Time Garbage Collector    Shenandoah:低暂停时间垃圾收集器
+>
+> 381    Remove the Solaris and SPARC Ports    移除Solaris和SPARC端口
+>
+> 383    Foreign-Memory Access API (Second Incubator)    外部内存访问API(第二个孵化器)
+>
+> 384    Records (Second Preview)    记录(第二次预览)(并没有任何修改)
+>
+> 385    Deprecate RMI Activation for Removal    建议移除RMI激活
+
+1. Sealed Classes (Preview)（正式版：Java 17）
 
 ```java
+// sealed 密封的类，permits指定继承的类
 public abstract sealed class Person permits Employee, Manager {
     //...
 }
+
+// 任何继承密封类的类本身必须被声明为final、non-sealed的或sealed的。
 final class Employee extends Person {
 }
 
+// non-sealed 类，与一般的类没有区别
 non-sealed class Manager extends Person {
 }
-// 任何继承密封类的类本身必须被声明为final、non-sealed的或sealed的。这可以确保类的层次结构保持在有限的范围内被编译器识别
+
+// 如果没有一个密封的类，编译器就不能合理地确定所有可能的子类都被我们的 if-else 语句所覆盖。如果末尾没有 else 子句，编译器可能会发出警告，表明我们的逻辑没有涵盖所有的情况。
 if (person instanceof Employee) {
     return ((Employee) person).getEmployeeId();
 } else if (person instanceof Manager) {
     return ((Manager) person).getSupervisorId();
 }
-// 如果没有一个密封的类，编译器就不能合理地确定所有可能的子类都被我们的 if-else 语句所覆盖。如果末尾没有 else 子句，编译器可能会发出警告，表明我们的逻辑没有涵盖所有的情况。
 ```
 
-2. `TreeMap` 新引入了下面这些方法：
+2. Hidden Classes(隐藏类)
+
+   该提案通过启用标准 API 来定义无法发现且具有有限生命周期的隐藏类，从而提高 JVM 上所有语言的效率。JDK内部和外部的框架将能够动态生成类，而这些类可以定义隐藏类。通常来说基于JVM的很多语言都有动态生成类的机制，这样可以提高语言的灵活性和效率。
+
+   * 隐藏类天生为框架设计的，在运行时生成内部的class。
+
+   * 隐藏映只能通过反射访问，不能直接被其他类的字节码访问。
+
+   * 隐藏类可以独立于其他类加载、卸载，这可以减少框架的内存占用。
+
+   Hidden classes就是不能直接被其他class的二进制代码使用的class。Hidden classes主要被一些框架用来生成运行时类，但是这些类不是被用来直接使用的，而是通过反射机制来调用。比如
+
+   * 不会将lambda表达式转换成为专门的类，而是在运行时将相应的字节码动态生成相应的类对象。
+   * 另外使用动态代理也可以为某些类生成新的动态类。
+
+3. `TreeMap` 新引入了下面这些方法：
+
    - `putIfAbsent()`
    - `computeIfAbsent()`
    - `computeIfPresent()`
@@ -903,7 +1014,41 @@ if (person instanceof Employee) {
 
 ## Java 16
 
-2021年3月16日。
+2021年3月16日。17个JEP.
+
+> 338    Vector API(孵化器)
+>
+> 347    启用 C++14 语言功能 (在 JDK 源代码中)
+>
+> 357    从 Mercurial 迁移到 Git
+>
+> 369    迁移到 GitHub
+>
+> 376    ZGC:并发线程堆栈处理
+>
+> 380    Unix 域套接字通道
+>
+> 386    Alpine Linux 端囗
+>
+> 387    弹性元空间
+>
+> 388    Windows/AArch64
+>
+> 389    端口外链 API(孵化器)
+>
+> 390    基于值的类的警告
+>
+> 392    打包工具
+>
+> 393    外内存访问API(第三孵化器)
+>
+> 394    instanceof 的模式匹配
+>
+> 395    Records
+>
+> 396    默认情况下强封装JDK内部
+>
+> 397    密封类(第二次预览)
 
 1. 使用反射执行接口中的默认实现方法
 2. DateTimeFormatter 的一个新成员是日周期符号 "B"，它提供了一个上午/下午格式的替代方案。
