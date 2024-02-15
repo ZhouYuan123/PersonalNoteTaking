@@ -545,6 +545,8 @@ var list2 = new ArrayLis<String>();
 var copy2 = List.copyof(Iist2);
 System.out.printn(list2 == copy2); // false
 // 本身就是只读集合，没有必要再新创建集合。
+
+// 新方法 toUnmodifiableList、toUnmodifiableSet 和 toUnmodifiableMap 已添加到 Stream 包中的 Collectors 类，这些方法适合于将 stream 最终转换成不可变集合
 ```
 
 3. Optional
@@ -836,6 +838,12 @@ public void print(%s o) {
 
 3. 新增 FileSystems.newFileSystem
 
+java.nio.file.FileSystems 添加了三个新方法，使可以更方便的使用 FileSystem.
+
+- newFileSystem(Path)
+- newFileSystem(Path, Map<String, ?>)
+- newFileSystem(Path, Map<String, ?>, ClassLoader)
+
 ## Java 14
 
 2020年3月17日。16个JEP
@@ -932,6 +940,13 @@ String text = """
 4. JEP 358: Helpful NullPointerExceptions
 
 `-XX:+ShowCodeDetailsInExceptionMessages` VM options中开启，可以显示具体行的具体位置空指针
+
+5. 货币
+
+```Java
+final NumberFormat format = NumberFormat.getCurrencyInstance(Locale.CHINA);
+System.out.println(format.format(0.5)); // ¥0.50
+```
 
 ## Java 15
 
@@ -1069,17 +1084,69 @@ List<Integer> ints = lst.stream().map(Integer::parseInt).collect(Collectors.toLi
 List<Integer> ints = lst.stream().map(Integer::parseInt).toList();
 ```
 
-## Java 17
+4. new Integer(int) 在这个版本 forRemoval
 
-2021年9月14日。<font color=red>**LTS (Long-Term-Support)**</font>
+5. Integer 类增加注解 `@jdk.internal.ValueBased`
 
-1. 随机生成器RandomGenerator
+   ```java
+   // 对`@jdk.internal.ValueBased`注解加入了基于值的类的告警，在 Synchronized 同步块中使用值类型，将会在编译期和运行期产生警告，甚至是异常。
+   public void inc(Integer count) {
+       for (int i = 0; i < 10; i++) {
+           new Thread(() -> {
+               synchronized (count) { // 这里会产生编译警告
+                   count++;
+               }
+           }).start();
+       }
+   }
+   ```
+
+## Java 17 (LTS)
+
+2021年9月14日。<font color=red>**LTS (Long-Term-Support)**</font> 14个JEP
+
+> 306：恢复始终严格的浮点语义
+>
+> 356：增强型伪随机数发生器
+>
+> 382：新的 macOS 渲染管道
+>
+> 391：macOS/AArch64 端口
+>
+> 398：弃用即将删除的 Applet API
+>
+> 403：强封装JDK的内部API
+>
+> 406：Switch模式匹配（预览）
+>
+> 407：删除 RMI 激活
+>
+> 409：密封类
+>
+> 410：删除实验性 AOT 和 JIT 编译器
+>
+> 411：弃用即将删除安全管理器
+>
+> 412：外部函数和内存 API（孵化器）
+>
+> 414：Vector API（第二次进行特性孵化）
+>
+> 415：特定于上下文的反序列化过滤器
+
+1. 增强伪随机数字生成 RandomGenerator
    1. `SplittableRandomGenerator`
    2. `JumpableRandomGenerator`
    3. `LeapableRandomGenerator`
    4. `ArbitrarilyJumpableRandomGenerator`
 
-2. switch （预览）
+
+```java
+RandomGenerator randomGenerator = RandomGenerator.of("L32X64MixRandom");
+int randomInt = randomGenerator.nextInt();
+System.out.println("randomInt = " + randomInt);
+```
+
+2. switch （预览）（正式版：Java 21）
 
 ```java
 // Old code
@@ -1125,9 +1192,106 @@ static void testFooBar(String s) {
     switch (s) {
         case null         -> System.out.println("Oops");
         case "Foo", "Bar" -> System.out.println("Great");
+        case int[] ia     -> System.out.println("Array of ints of length " + ia.length);
         default           -> System.out.println("Ok");
     }
 }
 ```
 
+3. 引入工具类 java.util.HexFormat 提供了十六进制和格式化和解析。
+
+```java
+System.out.println(HexFormat.fromHexDigits("5e"));//94
+// 获取字符在十六进制中表示的数据
+System.out.println(HexFormat.fromHexDigit('A'));// 10
+byte b = 94;
+System.out.println(HexFormat.of().toHexDigits(b));// 5e
+System.out.println(HexFormat.fromHexDigit('X'));// 异常 ：not a hexadecimal digit
+```
+
+4. 添加 java.time.InstantSource
+
+```java
+InstantSource system = InstantSource.system();
+// 等价于 System.currentTimeMillis()
+System.out.println(system.millis());
+InstantSource oneDayLater = InstantSource.offset(system, Duration.ofDays(1L));
+System.out.println(oneDayLater.millis());
+```
+
+5. 获取字符集
+
+```java
+// 获取系统的原生字符集名称。windows 系统默认设置会输出 GBK
+System.out.println(System.getProperty("native.encoding"));
+
+// 检查Java应用程序是否与一个控制台环境关联，并打印该环境的字符集名称。
+Console console = System.console();
+if(console!=null){
+    System.out.println(console.charset());
+}
+// 虚拟机是否具有控制台取决于底层平台，还取决于调用虚拟机的方式。如果虚拟机从一个交互式命令行开始启动，且没有重定向标准输入和输出流，那么其控制台将存在，并且通常连接到键盘并从虚拟机启动的地方显示。如果虚拟机是自动启动的（例如，由后台作业调度程序启动），那么它通常没有控制台。
+```
+## Java 18
+
+2022年3月22日。 9个JEP
+
+> 400：默认 UTF-8 字符编码
+>
+> 408：简单的 Web 服务器
+>
+> 413：Javadoc 中支持代码片段
+>
+> 416：使用方法句柄重新实现反射核心功能
+>
+> 417：Vector API（三次孵化）
+>
+> 418：互联网地址解析 SPI
+>
+> 419：Foreign Function & Memory API (第二次孵化）
+>
+> 420：switch 表达式（二次预览）
+>
+> 421：Deprecate Finalization for Removal
+
+1. 废弃Object中的finalize方法，Thread中的stop方法将在未来被移除,
+2. `@snippet` , 简化包含示例代码的 api 文档
+
+```java
+// 在之前, 可能要使用 html 的 pre 标签加 @code 标签,像这样:
+/**
+<pre>{@code
+    lines of source code
+}</pre>
+*/
+
+// 现在
+/**
+ * The following code shows how to use {@code Optional.isPresent}:
+ * {@snippet :
+ * if (v.isPresent()) {
+ *     System.out.println("v: " + v.get());
+ * }
+ * }
+ */
+```
+
+3. 其他
+
+```java
+// 当给定的字符名称不被支持时,回退到默认值
+Charset charset = Charset.forName("utf-9", StandardCharsets.UTF_8);
+System.out.println("charset = " + charset);// charset = UTF-8
+
+// 引入新的系统属性 java.properties.date ,支持程序控制调用 java.util.Properties::store 时使用的默认日期注释.
+Properties properties = new Properties();
+properties.setProperty("host", "java.com");
+StringWriter writer = new StringWriter();
+properties.store(writer, "test configuration");
+System.out.println(writer);
+// 默认输出会带上当前时间的日期注释(第二行):
+#test configuration
+#Mon Nov 28 19:20:58 CST 2022
+host=java.com
+```
 # END
