@@ -211,3 +211,130 @@ class ItExamples {
 ```
 
 10. Lambda expressions
+
+```java
+val l = [ String s, int i | s + i ]
+println(l.apply("s", 10)) // "s10"
+val (String, int)=>String l = [ String s, int i | s + i ] // 参数类型和返回值类型
+val (String, int)=>String l = [ s, i | s + i ] // omit
+def execute((String, int)=>String f) { // 作为入参
+    f.apply("s", 10)
+}
+execute([s, i | s + i]) // 调用
+
+class LambdaExamples {
+ def static execute((String,int)=>String f) {
+     f.apply("s", 10)
+ }
+ def static void main(String[] args) {
+     val c = "aaa"
+     println(execute([ s, i | s + i + c ])) // prints s10aaa
+ }
+}
+
+val list = newArrayList("Second", "First", "Third")
+Collections.sort(list, [arg0, arg1 | arg0.compareToIgnoreCase(arg1)]) // 应用在函数式接口
+Collections.sort(list)[arg0, arg1 | arg0.compareToIgnoreCase(arg1)] // 可以放在括号外面
+strings.findFirst[s | s.startsWith("F")] // 如果只有一个参数，省略方法括号
+strings.findFirst[it.startsWith("F")] // 如果只有一个参数，省略定义，直接用it
+strings.findFirst[startsWith("F")] // 省略使用 "."
+Collections.sort(list)[$0.compareToIgnoreCase($1)] // 省略参数定义，用$数字表示
+
+// sample
+personList = newArrayList(
+ new Person("James", "Smith", 50),
+ new Person("John", "Smith", 40),
+ new Person("James", "Anderson", 40),
+ new Person("John", "Anderson", 30),
+ new Person("Paul", "Anderson", 30))
+val result = personList.filter[firstname.startsWith("J")].sortBy[age].take(3).map[surname + ", " + firstname].join("; ")
+println(result) // Anderson, John; Smith, John; Anderson, James
+```
+11. Multi-line template expressions
+
+![](../imgs/xtext/multiline.jpg)
+
+ ```java
+ // 打印出
+public void m() {
+    /* body of m */
+    System.out.println("Hello");
+    return;
+}
+ ```
+12. Additional operators
+
+ ```java
+ o?.m // if (o != null) o.m
+ ?: //  x ?: y returns x if it is not null and y otherwise
+ // equivalent to: if (o != null) o.toString else 'default'
+result = o?.toString ?: 'default'
+
+return eINSTANCE.createEntity => [ name = "MyEntity"]
+// It is equivalent to:
+val entity = eINSTANCE.createEntity
+entity.name = "MyEntity"
+return entity
+ ```
+13. Xtend provides Dispatch Methods for polymorphic method invocation
+
+ ```java
+ def dispatch typeToString(BasicType type) {
+     type.typeName
+}
+def dispatch typeToString(EntityType type) {
+    type.entity.name
+}
+def toString(AttributeType attributeType) {
+    attributeType.elementType.typeToString // 不需要使用 instanceof
+}
+ ```
+14. Enhanced switch expressions
+
+```java
+def String switchExample(Entity e, Entity specialEntity) {
+ switch e {
+ case e.name.length > 0 : "has a name"
+ case e.superType != null : "has a super type"
+ case specialEntity : "special entity"
+ default: ""
+ }
+ // 如果是Boolean就匹配true，其他的匹配equals。结果方法返回
+}
+def toString(AttributeType attributeType) {
+ val elementType = attributeType.elementType
+ switch elementType {
+ BasicType: // elementType is a BasicType here
+ elementType.typeName
+ EntityType: // elementType is an EntityType here
+ elementType.entity.name
+ }
+}
+def toString(AttributeType attributeType) {
+ val elementType = attributeType.elementType
+ if (elementType instanceof BasicType)
+ elementType.typeName // elementType is a BasicType here
+ else if (elementType instanceof EntityType)
+ elementType.entity.name // elementType is an EntityType here
+}
+```
+
+```java
+@Data class Person { // @ata 自动生成 constructor getter hashcode equals toString方法
+ String firstname
+ String surname
+ int age
+}
+```
+## 4. Code Generation
+
+```java
+class EntitiesGenerator extends AbstractGenerator {
+ override void doGenerate(Resource res, IFileSystemAccess2 fsa, IGeneratorContext context) {
+ // TODO implement me
+ // accepts an EMF Resource,
+ resource.allContents.toIterable.filter(Entity) // retrieve all the Entity objects
+ "entities/" + entity.name + ".java" // generate all the Java classes
+ }
+}
+```
