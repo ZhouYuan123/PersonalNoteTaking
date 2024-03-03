@@ -1294,4 +1294,175 @@ System.out.println(writer);
 #Mon Nov 28 19:20:58 CST 2022
 host=java.com
 ```
+
+## Java 19
+
+2022年9月20日。7个JEP
+
+> 405: Record Patterns (Preview) - Record模式（预览）
+>
+> 422: Linux/RISC-V Port - Linux/RISC-V 移植
+>
+> 424: Foreign Function & Memory API (Preview) - 外部函数和内存API（预览）
+>
+> 425: Virtual Threads (Preview) - 虚拟线程（预览）
+>
+> 426: Vector API (Fourth Incubator) - 向量API（第4次孵化）
+>
+> 427: Pattern Matching for switch (Third Preview) - switch模式匹配（第3次预览）
+>
+> 428: Structured Concurrency (Incubator) - 结构化并发（孵化）
+
+1. Record模式（预览）（正式版：Java 21）
+
+```java
+// 在使用 instanceof 后，可以进行类型转换。
+if(dog1 instanceof Dog dogTemp){
+    System.out.println(dogTemp.name());
+}
+// 甚至可以在使用 instanceof 时直接得到 Record 中的变量引用。
+if(dog1 instanceof Dog(String name,Integer age)){
+    System.out.println(name+":"+age);
+}
+Shape shape = new Circle(10);
+switch(shape) {
+
+  case Circle(double radius):
+    System.out.println("The shape is Circle with area: " + Math.PI * radius * radius);
+    break;
+
+  case Square(double side):
+    System.out.println("The shape is Square with area: " + side * side);
+    break;
+
+  case Rectangle(double length, double width):
+    System.out.println("The shape is Rectangle with area: + " + length * width);
+    break;
+
+  default:
+    System.out.println("Unknown Shape");
+    break;
+}
+```
+
+2. FFM API（预览）
+
+```java
+// 获取 C 库函数的 radixsort 方法句柄，然后使用它对 Java 数组中的四个字符串进行排序。
+// 1. 在C库路径上查找外部函数
+Linker linker = Linker.nativeLinker();
+SymbolLookup stdlib = linker.defaultLookup();
+MethodHandle radixSort = linker.downcallHandle(stdlib.lookup("radixsort"), ...);
+// 2. 分配堆上内存以存储四个字符串
+String[] javaStrings = { "mouse", "cat", "dog", "car" };
+// 3. 分配堆外内存以存储四个指针
+SegmentAllocator allocator = MemorySegment.implicitAllocator();
+MemorySegment offHeap = allocator.allocateArray(ValueLayout.ADDRESS, javaStrings.length);
+// 4. 将字符串从堆上复制到堆外
+for (int i = 0; i < javaStrings.length; i++) {
+    // 在堆外分配一个字符串，然后存储指向它的指针
+    MemorySegment cString = allocator.allocateUtf8String(javaStrings[i]);
+    offHeap.setAtIndex(ValueLayout.ADDRESS, i, cString);
+}
+// 5. 通过调用外部函数对堆外数据进行排序
+radixSort.invoke(offHeap, javaStrings.length, MemoryAddress.NULL, '\0');
+// 6. 将(重新排序的)字符串从堆外复制到堆上
+for (int i = 0; i < javaStrings.length; i++) {
+    MemoryAddress cStringPtr = offHeap.getAtIndex(ValueLayout.ADDRESS, i);
+    javaStrings[i] = cStringPtr.getUtf8String(0);
+}
+assert Arrays.equals(javaStrings, new String[] {"car", "cat", "dog", "mouse"});  // true
+```
+
+3. 虚拟线程（预览）（正式版：Java 21）
+
+线程和进程一样，都是一项昂贵的资源，JDK 将 Thread 线程实现为操作系统线程的包装器，也就是说成本很高，而且数量有限。也因此我们会使用线程池来管理线程，同时限制线程的数量。比如常用的 Tomcat 会为每次请求单独使用一个线程进行请求处理，同时限制处理请求的线程数量以防止线程过多而崩溃；这很有可能**在 CPU 或网络连接没有耗尽之前，线程数量已经耗尽**，从而限制了 web 服务的吞吐量。
+
+![](../imgs/JavaNewFeature/virtual_thread.jpg)
+
+* 至少几千的并发任务量
+* 任务为io密集型
+* 注意：虚拟线程只是增加程序的吞吐量，并不能提高程序的处理速度
+* 执行synchronized同步代码(会导致携带器阻塞，所以建议使用ReentrantLock替换掉synchronized)
+* 从内存空间上来说，虚拟线程的栈空间可以看作是一个大块的栈对象，它被存储在了java堆中，相比于单独存储对象，堆中存储虚拟线程的栈会造成一些空间的浪费，这点在后续的java版本中应该会得到改善，当然这样也是有一些好处的，就是可以重复利用这部分栈空间，不用多次申请开辟新的内存地址。虚拟线程的栈空间最大可以达到平台线程的栈空间容量。
+  * 通过Thread构造方法创建的线程都是平台线程
+  * 虚拟线程是守护线程，不能通过setDaemon方法改成非守护线程
+  * 虚拟线程的优先级是默认的5，不能被修改，将来的版本可能允许修改
+  * 虚拟线程不支持stop()，suspend()，resume()方法
+
+* 平台线程(platform thread): 指java中的线程，比如通过Executors.newFixedThreadPool()创建出来的线程，我们称之为平台线程。虚拟线程并不会直接分配给cpu去执行，而是通过调度器分配给平台线程，平台线程再被调度器管理。
+
+![](../imgs/JavaNewFeature/virtual_thread2.jpg)
+
+```java
+// 方式1
+Runnable task = () -> System.out.println("执行任务");
+// 创建虚拟线程并运行
+Thread.startVirtualThread(task);
+
+// 方式2
+Thread vt1 = Thread.ofVirtual().name("名字").unstarted(task);
+// 平台线程 Thread t = Thread.ofplatform().name(“name").priority(0).daemon(true).start(task);
+vt1.start();//启动虚拟线程
+vt1.isVirtual(); // true 表示虚拟线程
+
+// 方式3
+long start = System.currentTimeMillis();
+try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+    IntStream.range(0, 100_000).forEach(i -> {
+        executor.submit(() -> {
+            Thread.sleep(1000);
+            return i;
+        });
+    });
+} // executor.close() 会被自动调用
+// 提交了 10 万个虚拟线程，每个线程休眠 1 秒钟，1秒左右完成
+System.out.println("耗时:" + (System.currentTimeMillis() - start)+"ms");
+// 执行后发现 1.3 秒执行完毕
+
+//4、通过 ThreadFactory 创建
+CustomThread customThread = new CustomThread();
+ThreadFactory factory = Thread.ofVirtual().factory();
+Thread thread = factory.newThread(customThread);
+thread.start();
+```
+
+4. 其他
+
+java.lang.Character 支持了 unicode 14.0 , unicode 新增了 838 个字符, 目前一共 144697 个字符.
+
+下面是示例代码,演示使用新增的 emoji 表情字符:
+
+```java
+// 人戴皇冠表情字符 unicode 编码: 1FAC5
+// 由于这个字符是超过16位的,需要使用代理(surrogate)转换成两个16位单元
+// 1FAC5 转换后是 D83E + DEC5
+String  personWithCrown = "\uD83E\uDEC5";
+System.out.println(personWithCrown);
+// unicode 代理(Surrogate)转换, 可使用这个在线工具: https://www.russellcottrell.com/greek/utilities/SurrogatePairCalculator.htm
+
+// 新增系统属性 stdout.encoding 和 stderr.encoding
+// java.time.format.DateTimeFormatter/DateTimeFormatterBuilder 添加了新方法, 允许额外定义本地化日期的格式.
+// 之前的版本 只能使用 FormatStyle 定义好的 4 种格式
+DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL);
+LocalDateTime now = LocalDateTime.now();
+System.out.println(now.format(formatter));// 2023年2月1日星期三
+// 新版本使用 ofLocalizedPattern 自定义本地化日期格式
+// 这个方法有很多限制, 格式要求和当前的语言环境有关, 测试环境是 zh-CN
+DateTimeFormatter customFormat = DateTimeFormatter.ofLocalizedPattern("yyyyMMd");
+System.out.println(now.format(customFormat));// 公元 2023/2/1
+
+//新增加了几个方法可以方便的创建 HashMap 和 HashSet。
+HashMap.newHashMap
+LinkedHashMap.newLinkedHashMap
+WeakHashMap.newWeakHashMap
+HashSet.newHashSet
+LinkedHashSet.newLinkedHashSet
+// 上面这些新增的方法都有一个参数，可以指定初始容量，和直接调用构造器是一样的。
+HashMap<Object, Object> hashMap = HashMap.newHashMap(2);
+hashMap.put("A",1);
+hashMap.put("B",2);
+System.out.println(hashMap.get("A"));
+```
+
 # END
