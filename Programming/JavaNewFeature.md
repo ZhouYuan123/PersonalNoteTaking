@@ -1465,4 +1465,114 @@ hashMap.put("B",2);
 System.out.println(hashMap.get("A"));
 ```
 
+## Java 20
+
+2023 年 3 月 21 日。7个JEP
+
+> 429   Scoped Values (Incubator) 作用域值 Scoped Value（孵化器）
+>
+> 432   Record Patterns (Second Preview) Record 模式（第二预览版）
+>
+> 433   Pattern Matching for switch (Fourth Preview) switch 模式匹配（第四预览版）
+>
+> 434   Foreign Function & Memory API (Second Preview) 外部函数内存 API（第二预览版）
+>
+> 436   Virtual Threads (Second Preview) 虚拟线程（第二个预览版）
+>
+> 437   Structured Concurrency (Second Incubator) 结构化并发（第二个孵化器版本）
+>
+> 438   Vector API (Fifth Incubator) Vector API（第五个孵化器版本）
+
+## Java 21 (LTS)
+
+2023年9月19日。<font color=red>**LTS (Long-Term-Support)**</font> 15个JEP
+
+> JEP 430：String Templates（字符串模板）（预览）
+>
+> JEP 431：Sequenced Collections（序列化集合）
+>
+> JEP 439：Generational ZGC (分代ZGC)
+>
+> JEP 440：Record Patterns（记录模式）
+>
+> JEP 441：Pattern Matching for switch（switch 的模式匹配）
+>
+> JEP 442：Foreign Function & Memory API（外部函数和内存 API）
+>
+> JEP 443：Unnamed Patterns and Variables（未命名模式和变量)
+>
+> JEP 444：Virtual Threads（虚拟线程）
+>
+> JEP 445：Unnamed Classes and Instance Main Methods（未命名类和实例 main 方法 ）
+>
+> JEP 446：Scoped Values (Preview) (作用域值)（预览）
+>
+> JEP 448：Vector API (Sixth Incubator)（孵化器第六阶段）
+>
+> JEP 449：Deprecate the Windows 32-bit x86 Port for Removal（弃用 Windows 32 位 x86 移植）
+>
+> JEP 451：Prepare to Disallow the Dynamic Loading of Agents（准备禁止动态加载代理）
+>
+> JEP 452：Key Encapsulation Mechanism API（密钥封装机制 API）
+>
+> JEP 453：Structured Concurrency (Preview)（预览）
+
+1. 字符串模板（预览）
+
+```java
+String sport ="basketball";
+String msg = STR."I like \{sport}"; // STR 对应 java.lang.StringTemplate
+
+// 在STR中可以进行基本的运算(支持三元运算)
+int x=10, y=20;
+String result = STR."\{x} + \{y} = \{x + y}"; // 10 + 20 = 30
+String msg = STR."The file \{filePath} \{file.exists() ? "does":"does not" } exist";
+
+// 调用方法，属性
+String result = STR."获取一个随机数:\{Math.random()}”;
+String result = STR."int最大值是: \{Integer.MAX_VALUE}";
+String[] cars ={"bmw","benz","audi"};
+String result = STR."\{cars[0]},\{cars[1]},\{cars[2]}";
+
+// 拼接多行数据
+String json = STR."""
+{
+    "name": "\{name}”,
+    "phone": "\{phone}”,
+    "address": "\{address}"
+}
+""";
+
+// 自定义模板
+var INTER = StringTemplate.Processor.of((StringTemplate st) -> {
+    StringBuilder sb = new StringBuilder();
+    Iterator<String> fragIter = st.fragments().iterator();
+    for (Object value : st.values()) {
+        sb.append(fragIter.next()); // 字符串中的字面量
+        sb.append(value);
+    }
+    sb.append(fragIter.next());
+    return sb.toString();
+});
+
+// 对于还有格式化需求的，提供了java.util.FMT
+record Rectangle(String name, double width, double height) {
+    double area() {
+        return width * height;
+    }
+}
+Rectangle[] zone = new Rectangle[] {
+    new Rectangle("Alfa", 17.8, 31.4),
+    new Rectangle("Bravo", 9.6, 12.4),
+    new Rectangle("Charlie", 7.1, 11.23)
+};
+String table = FMT."""
+    Description     Width    Height     Area
+    %-12s\{zone[0].name}  %7.2f\{zone[0].width}  %7.2f\{zone[0].height}     %7.2f\{zone[0].area()}
+    %-12s\{zone[1].name}  %7.2f\{zone[1].width}  %7.2f\{zone[1].height}     %7.2f\{zone[1].area()}
+    %-12s\{zone[2].name}  %7.2f\{zone[2].width}  %7.2f\{zone[2].height}     %7.2f\{zone[2].area()}
+    \{" ".repeat(28)} Total %7.2f\{zone[0].area() + zone[1].area() + zone[2].area()}
+""";
+System.out.println(table);
+```
 # END
