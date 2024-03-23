@@ -2,11 +2,13 @@
 
 ## 1. 缩写
 
+DSLs (Domain Specific Languages)  are programming languages or specification languages that target a specific problem domain.
+
 EMF (Eclipse Modeling Framework) : http://www.eclipse.org/modeling/emf
 
-GPL (General Purpose Languages)
+GPL (General Purpose Languages) for instance, Java or C
 
-ANTLR (ANother Tool for Language Recognition) pronounced Antler
+ANTLR (ANother Tool for Language Recognition) pronounced Antler, ANTLR, 是一个功能强大的解析器生成器。它可以根据输入的文法（grammar）生成解析器和词法分析器（lexer），用于将输入的文本或数据流解析为抽象语法树（AST）
 
 AST (Abstract Syntax Tree)
 
@@ -14,15 +16,78 @@ MWE2 (Modeling Workflow Engine 2)
 
 JDT (Java Development Tools)
 
-## 2. xtext
+## 2. DSL
 
-Xtext is an Eclipse framework for implementing programming languages and  DSLs.
+The tags help a computer to process XML, but they surely distract people when they have to read and write XML files.
+
+```xml
+<people>
+    <person>
+        <name>James</name>
+        <surname>Smith</surname>
+        <age>50</age>
+    </person>
+    <person employed="true">
+        <name>John</name>
+        <surname>Anderson</surname>
+        <age>40</age>
+    </person>
+</people>
+```
+
+```java
+person {
+    name=James
+    surname=Smith
+    age=50
+}
+person employed {
+    name=John
+    surname=Anderson
+    age=40
+}
+```
+```java
+James Smith (50)
+John Anderson (40) employed
+```
+
+实现DSL的步骤
+
+1. 确定DSL语言样子
+2. lexical analysis,词法分析是把程序分割成一个个 Token 的过程。
+   1. two identifiers
+   2. the separator (
+   3. one integer literal
+   4. the separator )
+   5. the optional keyword employed
+3. syntactic analysis， 语法分析是把程序的结构识别出来，并形成一棵便于由计算机处理的抽象AST语法树。
+4. semantic analysis ， 语义分析是消除语义模糊，给这棵树生成一些属性信息.
+5. IDE integration。
+6. Syntax highlighting
+7. Background validation
+8. Error markers
+9. Content assist
+10. Quickfixes
+11. Outline
+12. Automatic build
+
+## 3. xtext
+
+Xtext is an open source Eclipse framework for implementing Domain Specific Languages together with their integration in the Eclipse IDE.
 
 documentation: https://www.eclipse.org/Xtext/documentation/
 
 Git repository: https://github.com/LorenzoBettini/packtpub-xtext-book-2nd-examples
 
 创建一个名为 org.example.entities 的 xtext 项目
+
+1. Start Eclipse and navigate to File | New | Project.... In the dialog, navigate to the Xtext category and select Xtext Project.
+2. In the next dialog, you should specify the following names:
+  1. Project name: `org.example.entities`
+  2. Name: `org.example.entities.Entities`
+  3. Extensions: entities
+3. Press Finish.
 
 ```java
 grammar org.example.entities.Entities with org.eclipse.xtext.common.Terminals
@@ -57,6 +122,15 @@ BasicType:
 EntityType:
 	entity=[Entity];
 ```
+
+Run As MWE2 Workflow --> run a new Eclipse instance -
+
+During the MWE2 workflow execution, Xtext will generate artifacts related to the UI editor for your DSL, but most important of all, it will derive an ANTLR specification from the Xtext grammar with all the actions to create the AST while parsing.
+
+```
+Attribute: type=[Entity] (array?='[' ']')? name=ID ';';
+```
+Since we split the two square brackets into two separate tokens, spaces between the brackets are allowed in the editor. Indeed, spaces are automatically discarded, unless they are explicit in the token definition. In general, spaces in keywords should be avoided.
 
 ## 3. xtend
 
