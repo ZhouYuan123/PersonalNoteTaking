@@ -158,6 +158,8 @@ Brute-Force: BF算法。简单匹配算法，采用的是穷举的思路。优�
 
 ## 2. 非线性结构
 
+### 2.1 树
+
 * 叶子节点(没有子节点的节点)
 * 节点的权(节点值)
 * 树的高度(最大层数)
@@ -312,6 +314,66 @@ void HuffmanTree(HNodeType HuffNode[],int n){
 
 0010001001 --> cad
 
+### 2.2 图
+
+多对多的关系，G=(V,E)，Graph=(Vertex, edge)
+
+V:顶点(数据元素)的有穷非空集合;E: 边的有穷集合。
+
+* 无向图: 每条边都是无方向的
+* 有向图: 每条边都是有方向的
+* 完全图: 任意两个点都有一条边相连 (有n *（n-1）/ 2 条边)
+* 弧：有向图的边 （出度边，入度边）
+* 稀疏图: 有很少边或弧的图(e<nlog<sup>n</sup>)
+* 稠密图: 有较多边或弧的图。
+* 网: 边/弧带权的图。
+* 邻接: 有边/弧相连的两个顶点之间的关系。
+* 关联(依附) :边/弧与顶点之间的关系。
+* 顶点的度: 与该顶点相关联的边的数目，记为TD(V)
+  * 有向图中分入度ID(V)和出度OD(V)
+* 路径: 接续的边构成的顶点序列。
+* 路径长度: 路径上边或弧的数目/权值之和。
+* 回路，简单路径，非简单路径
+* 连通图 和 强连通图
+
+1. 数组表示法（领接矩阵）
+   1. 建立一个顶点表(记录各个顶点信息)和一个邻接矩阵(表示各个顶点之间关系)，对于无边(弧)用这个符号表示：∞
+2. 链式
+   1. 顶点: 按编号顺序将顶点数据存储在一维数组中;
+   2. 关联同一顶点的边(以顶点为尾的弧) 用线性链表存储
+3. 十字链表
+4. 邻接多重表
+
+**图的遍历：**从已给的连通图中某一顶点出发，沿着一些边访遍图中所有的顶点，且使每个顶点仅被访问一次，就叫做图的遍历。
+
+**最小生成树Minimum Spanning Tree：** 给定一个无向网络在该网的所有生成树中，使得各边权值之和最小的那棵生成树称为该网的最小生成树，也叫最小代价生成树。
+
+* 普里姆(Prim)算法: 把图中的点分成两部分，一部分是已经选择的, 另一部分是未选择的。O(n<sup>2</sup>) n为顶点数。适合稠密图。
+
+![](../imgs/algorithm/prim.jpg)
+
+* 克鲁斯卡尔(Kruskal) 算法：贪心算法选择边。O(eloge) e为边数。适合稀疏图。
+
+**单源最短路径 —— Dijkstra(迪杰斯特拉)算法** O(n^2)
+
+【1】不断运行广度优先算法找可见点，计算可见点到源点的距离长度
+
+【2】从当前已知的路径中选择长度最短的将其顶点加入S作为确定找到的最短路径的顶点。
+
+![](../imgs/algorithm/Dijkstra.jpg)
+
+**所有顶点间的最短路径 —— 用Floyd(弗洛伊德)算法** O(n^3)
+
+![](../imgs/algorithm/Floyd.jpg)
+
+**拓扑排序**
+
+可以用来检 AOV 网是否存在环方法
+
+**关键路径**
+
+![](../imgs/algorithm/keypath.jpg)
+
 ## 3. 复杂度
 
 时间频度T(n): 一个算法花费的时间与算法中语句的执行次数成正比例，哪个算法中语句执行次数多，它花费时间就多。一个算法中的语句执行次数称为语句频度或时间频度。
@@ -338,13 +400,57 @@ void HuffmanTree(HNodeType HuffNode[],int n){
 
 尾递归和单向递归可以转换成循环结构
 
-## 5. 排序算法
+## 5. 查找算法
+
+查找算法的评价指标： 关键字的平均比较次数，也称平均查找长度ASL(Average Search Length)
+
+线性表：顺序查找，二分查找，分块查找。
+
+1. 二叉排序树 (Binary Sort Tree)
+
+又称为二叉搜索树、二叉查找树。
+
+左子树所有结点小于根节点，右子树所有结点大于等于根节点。
+
+形态均衡和不均衡：O(log<sub>2</sub><sup>n</sup>)，O(n)
+
+2. 平衡二叉树 (Balanced  Binary Tree) (AVL 是大学教授 G.M. Adelson-Velsky 和 E.M. Landis 名称的缩写)
+
+   1. 左子树与右子树的高度之差的绝对值小于等于1 (平衡因子BF)
+
+   2. 左子树和右子树也是平衡二又排序树。
+
+      插入数据二叉树失衡
+
+      ![](../imgs/algorithm/BF.jpg)
+
+      ![](../imgs/algorithm/BF2.jpg)
+
+   散列表 (Hash table，也叫哈希表)
+
+   解决哈希冲突：
+
+   1. 开放定址法(开地址法)
+      1. 线性探测 （寻找下一个空的散列地址）
+      2. 二次探测法（d<sub>i</sub>为增量序列 1<sup>2</sup>，-1<sup>2</sup>，2<sup>2</sup>，-2<sup>2</sup>, …，q<sup>2</sup>）
+   2. 链地址法(拉链法)
+
+## 6. 排序算法
+
+排序方法的分类
+
+* 按数据存储介质：内部排序和外部排序
+* 按化较器个数:  串行排序和并行排序
+* 按主要操作: 比较排序和基数排序
+* 按辅助空间：原地排序和非原地排序 （辅助空间O(1）
+* 按稳定性: 稳定排序和非稳定排序
+* 按自然性: 自然排序和非自然排序 (输入数据越有序是否排序的速度越快)
 
 ![](../imgs/algorithm/sort.jpg)
 
 ![](../imgs/algorithm/complex8.png)
 
-🟩 **1. 冒泡排序 (Bubble Sort)** 🟩
+### 1. 冒泡排序 (Bubble Sort)
 
 ![](../imgs/algorithm/BubbleSort.gif)
 
@@ -370,93 +476,9 @@ void bubbleSortWithFlag(int[] nums) {
 }
 ```
 
-🟩 **2. 选择排序 (Selection Sort)** 🟩
+### 2. 快速排序 (Quick Sort)
 
-![](../imgs/algorithm/SelectionSort.gif)
-
-```java
-/* 选择排序 */
-void selectionSort(int[] nums) {
-    int n = nums.length;
-    // 外循环：未排序区间为 [i, n-1]
-    for (int i = 0; i < n - 1; i++) {
-        // 内循环：找到未排序区间内的最小元素
-        int k = i;
-        for (int j = i + 1; j < n; j++) {
-            if (nums[j] < nums[k])
-                k = j; // 记录最小元素的索引
-        }
-        // 将该最小元素与未排序区间的首个元素交换
-        int temp = nums[i];
-        nums[i] = nums[k];
-        nums[k] = temp;
-    }
-}
-```
-
-- **非稳定排序**：元素 `nums[i]` 有可能被交换至与其相等的元素的右边，导致两者相对顺序发生改变。
-
-🟩 **3. 「插入排序 insertion sort」** 🟩
-
-![](../imgs/algorithm/InsertionSort.gif)
-
-```java
-/* 插入排序 */
-void insertionSort(int[] nums) {
-    // 外循环：已排序元素数量为 1, 2, ..., n
-    for (int i = 1; i < nums.length; i++) {
-        int base = nums[i];
-        int j = i - 1;
-        // 内循环：将 base 插入到已排序部分的正确位置
-        while (j >= 0 && nums[j] > base) {
-            nums[j + 1] = nums[j]; // 将 nums[j] 向右移动一位
-            j--;
-        }
-        nums[j + 1] = base;        // 将 base 赋值到正确位置
-    }
-}
-```
-
-**插入排序的使用频率显著高于冒泡排序和选择排序**，主要有以下原因。
-
-- 冒泡排序基于元素交换实现，需要借助一个临时变量，共涉及 3 个单元操作；插入排序基于元素赋值实现，仅需 1 个单元操作。因此，**冒泡排序的计算开销通常比插入排序更高**。
-- 选择排序在任何情况下的时间复杂度都为 \(O(n^2)\) 。**如果给定一组部分有序的数据，插入排序通常比选择排序效率更高**。
-- 选择排序不稳定，无法应用于多级排序。
-
-🟩 **4. 「希尔排序 shell sort」** 🟩
-
-![](../imgs/algorithm/shellSort.jpg)
-
-```java
-void shellSort(arr) {
-    int len = arr.length;
-    int temp = 0;
-    for (int gap = len / 2; gap > 0; gap /= 2) {
-        for (int i = gap; i < len; i++) {
-            // 1. 交换法
-            for(int j = i - gap; j>=0; j-=gap){
-                if(arr[j] > arr[j+gap]){
-                    temp = arr[j];
-                    arr[j] = arr[j + gap];
-                    arr[j + gap] = temp;
-                }
-            }
-            //2. 移位法
-            var base = arr[i];
-            var j = i - gap;
-            while (j >= 0 && arr[j - gap] > base) {
-                 arr[j] = arr[j - gap];
-                 j -= gap;
-            }
-            arr[j] = base;
-        }
-    }
-}
-```
-
-🟩 **5. 「快速排序 quick sort」** 🟩
-
-是对冒泡排序的一种改进。
+是对冒泡排序的一种改进。找pivot（枢轴、中心点)，然后将数据划分为左右两个部分。
 
 ```java
 /* 元素交换 */
@@ -493,6 +515,78 @@ void quickSort(int[] nums, int left, int right) {
     quickSort(nums, pivot + 1, right);
 }
 ```
+
+### 3. 插入排序 (Insertion Sort)
+
+![](../imgs/algorithm/InsertionSort.gif)
+
+```java
+/* 插入排序 */
+void insertionSort(int[] nums) {
+    // 外循环：已排序元素数量为 1, 2, ..., n
+    for (int i = 1; i < nums.length; i++) {
+        int base = nums[i];
+        int j = i - 1;
+        // 内循环：将 base 插入到已排序部分的正确位置
+        while (j >= 0 && nums[j] > base) { // 可以使用哨兵去除 j>=0 的判断
+            nums[j + 1] = nums[j]; // 将 nums[j] 向右移动一位
+            j--;
+        }
+        nums[j + 1] = base;        // 将 base 赋值到正确位置
+    }
+}
+```
+
+**插入排序的使用频率显著高于冒泡排序和选择排序**，主要有以下原因。
+
+- 冒泡排序基于元素交换实现，需要借助一个临时变量，共涉及 3 个单元操作；插入排序基于元素赋值实现，仅需 1 个单元操作。因此，**冒泡排序的计算开销通常比插入排序更高**。
+- 选择排序在任何情况下的时间复杂度都为 \(O(n^2)\) 。**如果给定一组部分有序的数据，插入排序通常比选择排序效率更高**。
+- 选择排序不稳定，无法应用于多级排序。
+
+🟩 **改进：** 🟩
+
+1. 使用哨兵
+
+2. **「折半插入排序 binary insertion sort」**： 利用二分法查找需要插入的位置。
+
+### 4. 希尔排序 (Shell Sort)
+
+因为前面插入排序在”有序“的时候效率最高，因此，一开始就让整个序列基本有序
+
+![](../imgs/algorithm/shellSort.jpg)
+
+```java
+void shellSort(arr) {
+    int len = arr.length;
+    int temp = 0;
+    for (int gap = len / 2; gap > 0; gap /= 2) {
+        for (int i = gap; i < len; i++) {
+            // 1. 交换法
+            for(int j = i - gap; j>=0; j-=gap){
+                if(arr[j] > arr[j+gap]){
+                    temp = arr[j];
+                    arr[j] = arr[j + gap];
+                    arr[j + gap] = temp;
+                }
+            }
+            //2. 移位法
+            var base = arr[i];
+            var j = i - gap;
+            while (j >= 0 && arr[j - gap] > base) {
+                 arr[j] = arr[j - gap];
+                 j -= gap;
+            }
+            arr[j] = base;
+        }
+    }
+}
+```
+
+**总结 ：**
+
+* 如何选择最佳d序列，目前尚未解决
+* 最后一个增量值必须为1，无除了1之外的公因子
+* 不宜在链式存储结构上实现
 
 🟩 **6. 「归并排序 merge sort」** 🟩
 
@@ -594,7 +688,33 @@ void radixSort(int[] nums) {
 
 大顶堆: 父节点总是大于或等于子节点。
 
-## 6. KMP 算法
+### 2. 选择排序 (Selection Sort)
+
+![](../imgs/algorithm/SelectionSort.gif)
+
+```java
+/* 选择排序 */
+void selectionSort(int[] nums) {
+    int n = nums.length;
+    // 外循环：未排序区间为 [i, n-1]
+    for (int i = 0; i < n - 1; i++) {
+        // 内循环：找到未排序区间内的最小元素
+        int k = i;
+        for (int j = i + 1; j < n; j++) {
+            if (nums[j] < nums[k])
+                k = j; // 记录最小元素的索引
+        }
+        // 将该最小元素与未排序区间的首个元素交换
+        int temp = nums[i];
+        nums[i] = nums[k];
+        nums[k] = temp;
+    }
+}
+```
+
+- **非稳定排序**：元素 `nums[i]` 有可能被交换至与其相等的元素的右边，导致两者相对顺序发生改变。
+
+## 7. KMP 算法
 
 Knuth Morris Pratt算法（三个人名）：解决寻找最大子串问题。
 
@@ -604,7 +724,7 @@ Knuth Morris Pratt算法（三个人名）：解决寻找最大子串问题。
 
 且主串S的指针i不必回溯！可提速到O(n+m)！
 
-## 6. 其他
+## 8. 其他
 
 🟩 **查找** 🟩
 
