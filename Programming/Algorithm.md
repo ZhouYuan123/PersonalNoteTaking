@@ -156,9 +156,9 @@ Brute-Force: BF算法。简单匹配算法，采用的是穷举的思路。优�
 
 第一个元素表头，除表头外其他元素叫表尾。
 
-## 2. 非线性结构
+## 3. 非线性结构
 
-### 2.1 树
+### 3.1 树
 
 * 叶子节点(没有子节点的节点)
 * 节点的权(节点值)
@@ -247,7 +247,7 @@ public void postorder(TreeNode node) {
 }
 ```
 
-**二叉排序树(Binary SortTree)** ：插入，查找，删除都很块。
+**二叉排序树(Binary SortTree)** ：左值小，右值大。插入，查找，删除都很块。
 
 **线索化二叉树 (Threaded Binary Tree)**：利用二又链表中的空指针域（前驱和后继是按照遍历的顺序）
 
@@ -314,53 +314,87 @@ void HuffmanTree(HNodeType HuffNode[],int n){
 
 0010001001 --> cad
 
-### 2.2 图
+**平衡二叉树 (Balanced  Binary Tree)** 见《查找算法》
+
+**B树 (B-tree)**
+
+B: balanced
+
+**23树 (B-tree)**，B星数，B+树，红黑树
+
+### 3.2 图
 
 多对多的关系，G=(V,E)，Graph=(Vertex, edge)
 
 V:顶点(数据元素)的有穷非空集合;E: 边的有穷集合。
 
+* 顶点或结点 (vertex)
+* 边 (edge)
+* 路径: 接续的边构成的顶点序列
 * 无向图: 每条边都是无方向的
 * 有向图: 每条边都是有方向的
+* 权 (weight)
+* 网: 边/弧带权的图
 * 完全图: 任意两个点都有一条边相连 (有n *（n-1）/ 2 条边)
 * 弧：有向图的边 （出度边，入度边）
 * 稀疏图: 有很少边或弧的图(e<nlog<sup>n</sup>)
 * 稠密图: 有较多边或弧的图。
-* 网: 边/弧带权的图。
 * 邻接: 有边/弧相连的两个顶点之间的关系。
 * 关联(依附) :边/弧与顶点之间的关系。
 * 顶点的度: 与该顶点相关联的边的数目，记为TD(V)
   * 有向图中分入度ID(V)和出度OD(V)
-* 路径: 接续的边构成的顶点序列。
 * 路径长度: 路径上边或弧的数目/权值之和。
 * 回路，简单路径，非简单路径
 * 连通图 和 强连通图
 
+图的表示方式有两种: 二维数组(邻接矩阵)，数组链表(邻接表)
+
 1. 数组表示法（领接矩阵）
+
+   ![](../imgs/algorithm/Graph.jpg)
+
    1. 建立一个顶点表(记录各个顶点信息)和一个邻接矩阵(表示各个顶点之间关系)，对于无边(弧)用这个符号表示：∞
+
 2. 链式
+
+   ![](../imgs/algorithm/Graph2.jpg)
+
    1. 顶点: 按编号顺序将顶点数据存储在一维数组中;
    2. 关联同一顶点的边(以顶点为尾的弧) 用线性链表存储
+
 3. 十字链表
+
 4. 邻接多重表
 
 **图的遍历：**从已给的连通图中某一顶点出发，沿着一些边访遍图中所有的顶点，且使每个顶点仅被访问一次，就叫做图的遍历。
 
+DFS: Depth-First-Search
+
+![](../imgs/algorithm/DFS.jpg)
+
+BFS: Breadth-First Search
+
 **最小生成树Minimum Spanning Tree：** 给定一个无向网络在该网的所有生成树中，使得各边权值之和最小的那棵生成树称为该网的最小生成树，也叫最小代价生成树。
 
-* 普里姆(Prim)算法: 把图中的点分成两部分，一部分是已经选择的, 另一部分是未选择的。O(n<sup>2</sup>) n为顶点数。适合稠密图。
+* 普里姆(Prim)算法: 把图中的点分成两部分，一部分是已经选择的, 另一部分是未选择的, 每次选择到两部分之间最短边。O(n<sup>2</sup>) n为顶点数。适合稠密图。
 
 ![](../imgs/algorithm/prim.jpg)
 
-* 克鲁斯卡尔(Kruskal) 算法：贪心算法选择边。O(eloge) e为边数。适合稀疏图。
+`V1-V3-V6-V4-V2-V5 `
 
-**单源最短路径 —— Dijkstra(迪杰斯特拉)算法** O(n^2)
+* 克鲁斯卡尔(Kruskal) 算法：贪心算法选择边。每次选择最小边，不构成回路就选择。O(eloge) e为边数。适合稀疏图。
+
+**单源最短路径 —— Dijkstra(迪杰斯特拉)算法** O(n^2) 算所有顶点间最短路径 O(n^3)
 
 【1】不断运行广度优先算法找可见点，计算可见点到源点的距离长度
 
 【2】从当前已知的路径中选择长度最短的将其顶点加入S作为确定找到的最短路径的顶点。
 
 ![](../imgs/algorithm/Dijkstra.jpg)
+
+1. V2是最短路径
+2. 查看从V0经过V2到各点的最短路径
+3. 以此类推
 
 **所有顶点间的最短路径 —— 用Floyd(弗洛伊德)算法** O(n^3)
 
@@ -374,7 +408,7 @@ V:顶点(数据元素)的有穷非空集合;E: 边的有穷集合。
 
 ![](../imgs/algorithm/keypath.jpg)
 
-## 3. 复杂度
+## 4. 复杂度
 
 时间频度T(n): 一个算法花费的时间与算法中语句的执行次数成正比例，哪个算法中语句执行次数多，它花费时间就多。一个算法中的语句执行次数称为语句频度或时间频度。
 
@@ -418,7 +452,7 @@ V:顶点(数据元素)的有穷非空集合;E: 边的有穷集合。
 
    1. 左子树与右子树的高度之差的绝对值小于等于1 (平衡因子BF)
 
-   2. 左子树和右子树也是平衡二又排序树。
+   2. 左子树和右子树也是平衡二叉排序树。
 
       插入数据二叉树失衡
 
@@ -479,6 +513,8 @@ void bubbleSortWithFlag(int[] nums) {
 ### 2. 快速排序 (Quick Sort)
 
 是对冒泡排序的一种改进。找pivot（枢轴、中心点)，然后将数据划分为左右两个部分。
+
+![](../imgs/algorithm/QuickSort.gif)
 
 ```java
 /* 元素交换 */
@@ -588,7 +624,47 @@ void shellSort(arr) {
 * 最后一个增量值必须为1，无除了1之外的公因子
 * 不宜在链式存储结构上实现
 
-🟩 **6. 「归并排序 merge sort」** 🟩
+### 5. 选择排序 (Selection Sort)
+
+![](../imgs/algorithm/SelectionSort.gif)
+
+```java
+/* 选择排序 */
+void selectionSort(int[] nums) {
+    int n = nums.length;
+    // 外循环：未排序区间为 [i, n-1]
+    for (int i = 0; i < n - 1; i++) {
+        // 内循环：找到未排序区间内的最小元素
+        int k = i;
+        for (int j = i + 1; j < n; j++) {
+            if (nums[j] < nums[k])
+                k = j; // 记录最小元素的索引
+        }
+        // 将该最小元素与未排序区间的首个元素交换
+        int temp = nums[i];
+        nums[i] = nums[k];
+        nums[k] = temp;
+    }
+}
+```
+
+- **非稳定排序**：元素 `nums[i]` 有可能被交换至与其相等的元素的右边，导致两者相对顺序发生改变。
+
+### 6. 堆排序 (Heap Sort）
+
+利用堆这种数据结构所设计的一种排序算法。堆积是一个近似完全二叉树的结构，并同时满足堆积的性质：即子结点的键值或索引总是小于（或者大于）它的父节点。
+
+大根堆: 父节点总是大于或等于子节点。
+
+![](../imgs/algorithm/HeapSort.gif)
+
+### 7. 归并排序 (Merge Sort)
+
+- 把长度为n的输入序列分成两个长度为n/2的子序列；
+- 对这两个子序列分别采用归并排序；
+- 将两个排序好的子序列合并成一个最终的排序序列。
+
+![](../imgs/algorithm/MergeSort.gif)
 
 ```java
 /* 合并左子数组和右子数组 */
@@ -631,7 +707,11 @@ void mergeSort(int[] nums, int left, int right) {
 }
 ```
 
-🟩 **7. 「基数排序 radix sort」** 🟩
+### 8. 基数排序 (Radix Sort)
+
+基数排序是按照低位先排序，然后收集；再按照高位排序，然后再收集；依次类推，直到最高位。
+
+![](../imgs/algorithm/RadixSort.gif)
 
 ```java
 /* 获取元素 num 的第 k 位，其中 exp = 10^(k-1) */
@@ -684,37 +764,66 @@ void radixSort(int[] nums) {
 }
 ```
 
-🟩 **8. 「堆排序 heap sort」** 🟩
+## 8. 十种算法
 
-大顶堆: 父节点总是大于或等于子节点。
-
-### 2. 选择排序 (Selection Sort)
-
-![](../imgs/algorithm/SelectionSort.gif)
+### 1. 二分查找 (Binary Search)
 
 ```java
-/* 选择排序 */
-void selectionSort(int[] nums) {
-    int n = nums.length;
-    // 外循环：未排序区间为 [i, n-1]
-    for (int i = 0; i < n - 1; i++) {
-        // 内循环：找到未排序区间内的最小元素
-        int k = i;
-        for (int j = i + 1; j < n; j++) {
-            if (nums[j] < nums[k])
-                k = j; // 记录最小元素的索引
+int mid = Begin + 1/2 * (End - Begin);
+int mid = Begin + ((X - A[Begin] / (A[End] - A[Begin])) * (End - Begin));
+```
+
+### 2. 分治算法 (Divide and Conquer)
+
+汉诺塔 Tower of Hanoi
+
+如果我们有 n>=2情况，我们总是可以看做是两个盘：1.最下边的盘 2.上面的盘
+
+1. 上面的盘 A->B
+2. 最下边的盘 A->C
+3. B塔的所有盘 B->C
+
+```java
+public class Hanoilmpl {
+
+    public static void hanoi(int n, char A, char B, char C) {
+        if (n == 1) {
+            move(A, C);
+        } else {
+            hanoi(n - 1, A, C, B);//将n-1个盘子由A经过C移动到B
+            move(A, C);             //执行最大盘子n移动
+            hanoi(n - 1, B, A, C);//剩下的n-1盘子，由B经过A移动到C
         }
-        // 将该最小元素与未排序区间的首个元素交换
-        int temp = nums[i];
-        nums[i] = nums[k];
-        nums[k] = temp;
+    }
+
+    private static void move(char A, char C) {//执行最大盘子n的从A-C的移动
+        System.out.println("move:" + A + "--->" + C);
+    }
+
+    public static void main(String[] args) {
+        System.out.println("移动汉诺塔的步骤：");
+        hanoi(3, 'a', 'b', 'c');
     }
 }
 ```
 
-- **非稳定排序**：元素 `nums[i]` 有可能被交换至与其相等的元素的右边，导致两者相对顺序发生改变。
+### 3. 动态规划 (Dynamic Programming)
 
-## 7. KMP 算法
+背包问题
+
+01背包问题
+
+`dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - v[i]] + w[i])`，
+
+i：表示物品数量，
+
+j：表示背包容量，
+
+v\[i]：表示第i个物品的体积，
+
+w[i]：表示第i个物品的价值。
+
+### 4. KMP 算法
 
 Knuth Morris Pratt算法（三个人名）：解决寻找最大子串问题。
 
@@ -724,16 +833,33 @@ Knuth Morris Pratt算法（三个人名）：解决寻找最大子串问题。
 
 且主串S的指针i不必回溯！可提速到O(n+m)！
 
-## 8. 其他
+### 5. 贪心算法 (Greedy)
+
+在每一步选择中都采取当前状态下的最优决策的算法。
+
+### 6. 普利姆算法 (Prim)
+
+见 **2.2 最小生成树Minimum Spanning Tree**
+
+### 7. 克鲁斯卡尔算法 (Kruskal)
+
+见 **2.2 最小生成树Minimum Spanning Tree**
+
+### 8. 迪杰斯特拉算法 (Dijkstra)
+
+见 **2.2 单源最短路径**
+
+### 9.  弗洛伊德算法 (Floyd)
+
+见 **2.2 所有顶点间的最短路径**
+
+### 10. 骑士周游问题
+
+## 9. 其他
 
 🟩 **查找** 🟩
 
 线性查找，二分查找，插值查找。
-
-```java
-int mid = Begin + 1/2 * (End - Begin);
-int mid = Begin + ((X - A[Begin] / (A[End] - A[Begin])) * (End - Begin));
-```
 
 斐波那契查找法。
 
