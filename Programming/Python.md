@@ -22,7 +22,9 @@ Python三大特点：完全面向对象 (一切皆对象)，强大标准库，�
 
 Files --> 下载第二个：[Windows x86-64 executable installer](https://www.python.org/ftp/python/3.8.1/python-3.8.1-amd64.exe)
 
-运行： 
+安装：勾选 Add Python 3.10 to PATH --> customize installation --> disable path length limit --> dos中输入`python` 验证
+
+**运行：**
 
 IDLE: 开发环境。new file: 写长的代码
 
@@ -34,7 +36,9 @@ Python module docs: 已经安装的。
 
 **安装PyCharm**
 
-community 下载这个就可以。
+https://www.jetbrains.com.cn/en-us/pycharm/download/?section=windows --> 下载community社区版
+
+new project --> 自定义location --》选择Previously configured interpreter --》add interpreter --》选择System interpreter(会自动读取到环境变量指定的python.exe) --> create
 
 打开当前项目之后，会在项目根目录出现 `.idea` 目录。保存项目相关的信息，例如: 解释器版本、项目
 包含的文件等等。
@@ -50,19 +54,22 @@ home下面出现配置目录隐藏文件。
 ```python
 #!/usr/bin/python
 print("Hello World")
+
+# 单行注释。
+"""
+没有多行注释，但是可以用三引号（单引号或者双引号）充当多行注释。
+"""
 ```
 
 执行：`python xxx.py` or `python3 xxx.py` （python3的命令）
 
 **node：**脚本第一行，shebang，只对 Linux/Unix 用户适用。
 
-`#` : 单行注释。没有多行注释，但是可以用三引号（单引号或者双引号）充当多行注释。
-
 `# TODO(author)` : 用于标记将要做的 (pycharm拥有TODO视图)。
 
 `#coding:GBK` : 文档第一行申明编码类型。
 
-🟩 命名规范 🟩
+🟩 **命名规范** 🟩
 
 * 字母、下划线 和 数字 组成。
 
@@ -90,9 +97,9 @@ print("Hello World")
 
 ## 3. 数据类型
 
-数字型：整型，浮点型，布尔型，复数型 (complex)。
+数字(number)：整数(int)，浮点数(float)，布尔(bool)，复数 (complex)。
 
-非数字型：字符串，列表，元组，字典等。
+非数字型：字符串(string)，列表(list)，元组(tuple)，集合(set)，字典(dictionary)。
 
 **int:** 0b: 二进制。0o：八进制。0x: 十六进制。
 

@@ -2,22 +2,22 @@
 
 ## 1. 搜索
 
-| 功能                   | Eclipse                                | IDEA              | PyCharm | Typora |      |
-| ---------------------- | -------------------------------------- | ----------------- | ------- | ------ | ---- |
-| 快速查找               | Ctrl + k                               |                   |         |        |      |
-| 全局搜索               | Ctrl + h                               |                   |         |        |      |
-| 查文件                 | Ctrl + shift + r 【不包括jar】         |                   |         |        |      |
-| 历史打开文件           | Alt + F -->`Recent Files`              | Ctrl + E          |         |        |      |
-| 查看class              | Ctrl + click [F3] 【Ctrl shift t [h]】 | Ctrl + N          |         |        |      |
-| 查看被调用             | Ctrl + Alt + h [g]                     |                   |         |        |      |
-| 回到上一个             | alt + left                             | alt + left        |         |        |      |
-| 查看继承结构           | Ctrl + t [F4]                          | Ctrl +[shift +] H |         |        |      |
-| 搜方法 [显示outline]   | Ctrl + o                               | Alt + 7           |         |        |      |
-| 正向增量查找           | Ctrl + W                               |                   |         |        |      |
-| 显示当前editor下拉列表 | Ctrl + E                               |                   |         |        |      |
-| 切换已经打开的文件     | Ctrl + pg Up/pg Down                   |                   |         |        |      |
-| 列出包含字符串的行     | Ctrl + Shift + U                       |                   |         |        |      |
-|                        |                                        |                   |         |        |      |
+| 功能                   | Eclipse                                | IDEA              | Typora |      |
+| ---------------------- | -------------------------------------- | ----------------- | ------ | ---- |
+| 快速查找               | Ctrl + k                               |                   |        |      |
+| 全局搜索               | Ctrl + h                               |                   |        |      |
+| 查文件                 | Ctrl + shift + r 【不包括jar】         |                   |        |      |
+| 历史打开文件           | Alt + F -->`Recent Files`              | Ctrl + E          |        |      |
+| 查看class              | Ctrl + click [F3] 【Ctrl shift t [h]】 | Ctrl + N          |        |      |
+| 查看被调用             | Ctrl + Alt + h [g]                     |                   |        |      |
+| 回到上一个             | alt + left                             | alt + left        |        |      |
+| 查看继承结构           | Ctrl + t [F4]                          | Ctrl +[shift +] H |        |      |
+| 搜方法 [显示outline]   | Ctrl + o                               | Alt + 7           |        |      |
+| 正向增量查找           | Ctrl + W                               |                   |        |      |
+| 显示当前editor下拉列表 | Ctrl + E                               |                   |        |      |
+| 切换已经打开的文件     | Ctrl + pg Up/pg Down                   |                   |        |      |
+| 列出包含字符串的行     | Ctrl + Shift + U                       |                   |        |      |
+|                        |                                        |                   |        |      |
 
 ## 2. 编辑
 
@@ -79,17 +79,22 @@
 
 ## 5. PyCharm
 
-| 功能           |              |
-| -------------- | ------------ |
-| Ctrl + Alt + L | 格式化       |
-| Ctrl + d       | 快速复制一样 |
-| Ctrl + F2      | 终止程序     |
-| Shift + F8     | 跳出         |
-| Shift + F9     | debug执行    |
-| Shift + F10    | 执行脚本     |
-| F7             | 进入         |
-| F8             | 单步执行     |
-| F9             | resume       |
+| 功能           |                    |
+| -------------- | ------------------ |
+| Ctrl + Alt + L | 格式化             |
+| Ctrl + F2      | 终止程序           |
+| Shift + F8     | 跳出               |
+| Shift + F9     | debug执行          |
+| Shift + F10    | 执行脚本           |
+| F7             | 进入               |
+| F8             | 单步执行           |
+| F9             | resume             |
+| 打开设置       | Ctrl + Alt + S     |
+| 快速复制       | Ctrl + D           |
+| 移动当前行     | Alt + shift + 方向 |
+| 运行代码       | Ctrl + shift + f10 |
+| 重命名文件     | shift + f6         |
+|                |                    |
 
 # 2. Snipaste
 
@@ -102,6 +107,8 @@ Esc: 取消固定
 shift：切换RGB进制
 
 c: 直接复制颜色
+
+复制截屏：ctrl + c
 
 # 3. xmind
 

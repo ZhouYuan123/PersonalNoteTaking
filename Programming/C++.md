@@ -9,20 +9,28 @@
 1983年底，C++正式被命名。
 
 ```c++
-#include <iostream>
+#include <iostream> // a PREPROCESSOR directive, 该编译指令导致预处理器将iostream文件的内容添加到程序中。这是一种典型的预处理器操作:在源代码被编译之前，替换或添加文本。
 using namespace std;
-int main()
+int main(void)
 {
     cout << "Hello World" << endl;
     return 0;
 }
 ```
 
+C++ 融合了3种不同的编程方式： **过程性语言 + OOP + 泛型编程**
+
+文件后缀: `cpp, cxx, cc`
+
+编译：`g++ 1.cpp`, 运行：`./a.out` (通常,main()被启动代码调用,而启动代码是由编译器添加到程序中的,是程序和操作系统(UNIX、Windows7或其他操作系统)之间的桥梁。事实上，该函数头描述的是main()和操作系统之间的接口。) 存在一些例外情况。例如,在 Windows编程中,可以编写一个动态链接库(DLL)模块,这是其他 Windows程序可以使用的代码。由于 DLL 模块不是独立的程序，因此不需要 main()。用于专用环境的程序--单片机，只需要代码地址，也不需要main.
+
 ## 2. 与C
 
 C++是C语言的超集，任何有效的C程序都是有效的C++程序。
 
 C提供了低级硬件访问，OOP提供了高级抽象。
+
+版本: **C++98**，**C++11**，**C++17**
 
 🟩 **头文件** 🟩
 
@@ -40,6 +48,9 @@ C提供了低级硬件访问，OOP提供了高级抽象。
 
 ```c++
 // 1. cout
+cout << "25"; // printf("%s\n", "25");
+cout << 25; // printf("%d\n", 25);
+
 // 强制以小数的方式显示
 cout << fixed;
 
@@ -88,6 +99,8 @@ int rheas = {}; // rheas = 0
 int a = int(99.9);
 int a = (int)99.9;
 ```
+
+当行注释：`//`
 
 文档注释 : `/** 文档注释 */`
 

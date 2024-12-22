@@ -2,7 +2,13 @@
 
 ## 1. 简介
 
-开放源代码的关系型数据库管理系统。支持千万级别数据量的存储。1995年瑞典MySQL AB (创始人Michael Widenius) 公司开发。MySQL 的创造者担心MySQL有闭源的风险，因此创建了 MySQL的分支项目 MariaDB。
+开放源代码的关系型数据库管理系统。
+
+支持千万级别数据量的存储。
+
+1995年瑞典MySQL AB (创始人Michael Widenius) 公司开发。
+
+MySQL 的创造者担心MySQL有闭源的风险，因此创建了 MySQL的分支项目 MariaDB。
 
 发布之后语法几乎没有变化。
 
@@ -11,17 +17,34 @@
 
 <font color=green>**安装与配置**</font>
 
-官网：www.mysql.com
+官网：www.mysql.com （社区版，企业版，集群版，高级集群版）
 
-Downloads --> 企业版/社区版(MySQL Community(GPL) Downloads) --> MySQL Community Server --> MySQL Installer MSI Go to Download Page --> 非web版本
+Downloads --> 企业版/社区版(MySQL Community(GPL) Downloads) --> MySQL Community Server --> MySQL Installer MSI, Go to Download Page --> 非web版本
 
-Install --> custom --> select MySQL Server 8.0.34 - X64 to right --> select the right MySQL Server 8.0.34 - X64 to select advanced options to modify the path (server folder, data folder) --> execute --> config type: development computer --> 取消开机自启动
+Install --> custom --> select MySQL Server 8.0.34 - X64 to right --> select the right MySQL Server 8.0.34 - X64 to select "**advanced options**" to modify the path (server folder, data folder) --> execute --> config type: development computer --> (root password: abc123)--> 服务名“**MySQL80**”下面：取消开机自启动 --> finish
 
-环境变量配置：bin目录加入到path
+环境变量配置：bin目录直接加入到系统path中
+
+检验：`mysql --version`
+
+服务启动：
+
+1. `services.msc`
+2. `net start mysql服务名(80)`
+
+**连接数据库：**
+
+```bash
+mysql -u用户名 [-P port号码] [-h 指定IP] -p密码 # windows
+mysql -u用户名 -p密码 -h主机名 或 localhost # Linux
+quit # 退出
+SHOW DATABASES;
+USE database_name;
+```
 
 查看字符集：登录mysql之后，
 show variables like 'character\_%';
-show variables like 'collation\_%';
+show variables like 'collation\_%'; 字符大小比较规则
 
 修改字符集：安装的data路径/my.ini 中添加
 
@@ -33,9 +56,14 @@ character-set-server=utf8
 collation-server=utf8_general_ci
 ```
 
+使用Navicat 11连接lySql8.0错误`2059 chching_sha_2password`
+
+1. 升级客户端
+2. 或者修改用户登录加码规则`ALTER USER '用户名'@localhost IDENTIFIED WITH mysql_native_password BY '密码'`
+
 ## 2. 数据库
 
-`net start mysql服务名(80)` ：启动MySQL服务。
+**DB-Engines Ranking:** https://db-engines.com/en/ranking
 
 DB: 数据库 (Database)
 
@@ -44,8 +72,13 @@ DB: 数据库 (Database)
 DBMS: 数据库管理系统 (Database Management System)
 
 * 是一种操纵和管理数据库的大型软件，用于建立、使用和维护数据库，对数据库进行统一管理和控制。用户通过数据库管理系统访问数据库中表内的数据。
-* RDBMS： 把复杂的数据结构归结为简单的 二元关系
+* RDBMS： 把复杂的数据结构归结为简单的 **二元关系**（即二维表格形式）
 * 非RDBMS，基于键值对存储数据，不需要经过SQL层的解析性能非常高。同时，通过减少不常用的功能，进一步提高性能。
+
+ORM(Object Relational Mapping)体现:
+
+* E-R(entity-relationship，实体-联系)模型中有三个主要概念是:实体集、属性、联系集。
+* 一个实体集(class)对应于数据库中的一个表(table)，一个实体(instance)则对应于数据库表中的一行(row)，也称为一条记录(record)。一个属性(attribute)对应于数据库表中的一列(column)，也称为一个字段(field)。
 
 <font color=green>**其他DBMS**</font>
 
@@ -84,8 +117,6 @@ IBM公司出品，取自Information 和Unix的结合，它是第一个被移植�
 * 列式数据库: HBase
 * 图形数据库: InfoGrid
 
-**DB-Engines Ranking:** https://db-engines.com/en/ranking
-
 ## 3. SQL
 
 SQL: 结构化查询语言 (Structured Query Language)
@@ -99,13 +130,6 @@ SQL: 结构化查询语言 (Structured Query Language)
 1974 年，IBM 研究员发布了一篇揭开数据库技术的论文《SEQUEL：一门结构化的英语查询语言》，直到今天这门结构化的查询语言并没有太大的变化。SQL92, SQL99两个标准。
 
 **命令行执行已有sql：** source d:\mysqldb .sql
-
-**连接数据库：**
-
-```bash
-mysql -u用户名 -p密码 # windows
-mysql -u用户名 -p密码 -h主机名 或 localhost # Linux
-```
 
 ### 3.1 规则规范
 
@@ -137,11 +161,6 @@ MySQL 在 Windows 环境下是大小写不敏感的，MySQL 在 Linux 环境下�
 * DDL (Data Definition Languages 数据定义语言)
 
 这些语句定义了不同的数据库、表、视图、索引等数据库对象，还可以用来创建、删除、修改数据库和数据表的结构。主要的语句关键字包括 CREATE 、DROP、ALTER、RENAME 等
-
-```mysql
-SHOW DATABASES;
-USE database_name;
-```
 
 * DML (Data Manipulation Languages 数据操作语言)
 
