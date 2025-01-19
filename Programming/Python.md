@@ -59,6 +59,9 @@ print("Hello World")
 """
 没有多行注释，但是可以用三引号（单引号或者双引号）充当多行注释。
 """
+
+abc = 10
+print("abc: ", abc)
 ```
 
 执行：`python xxx.py` or `python3 xxx.py` （python3的命令）
@@ -69,7 +72,7 @@ print("Hello World")
 
 `#coding:GBK` : 文档第一行申明编码类型。
 
-🟩 **命名规范** 🟩
+🟩 **标识符命名规范** 🟩
 
 * 字母、下划线 和 数字 组成。
 
@@ -99,19 +102,36 @@ print("Hello World")
 
 数字(number)：整数(int)，浮点数(float)，布尔(bool)，复数 (complex)。
 
-非数字型：字符串(string)，列表(list)，元组(tuple)，集合(set)，字典(dictionary)。
+非数字型：字符串(str)，列表(list)，元组(tuple)，集合(set)，字典(dic)。
 
 **int:** 0b: 二进制。0o：八进制。0x: 十六进制。
 
 **float:**
 
-**bool:** True = 1, False = 0. 可以直接参与数值结算。
+**bool:**
+
+* print出来是 True or False
+* True = 1, False = 0. 可以直接参与数值结算。
 
 * 0的布尔值为False，非0布尔值为True.
 
-**str:** 单引号和双引号只能在一行，三单引号三双引号可以在多行。
+**str:**
+
+* 单引号和双引号只能在一行，三单引号三双引号可以在多行。
+* 可以使用转义字符 `\`
+* 可以直接用 `+` 进行字符串拼接，但不能跟非 str 类型拼接
 
 python2.x中存在 **long** 类型
+
+**数据类型转换：**无法转化会 ValueError
+
+`type(variable)` : 返回数据类型，`<class 'str'>`
+
+`int(variable)` : 不能转小数字符串
+
+`  float(variable)` :
+
+`str(variable)` :
 
 ```python
 # 数字类型
@@ -133,16 +153,6 @@ i + "10"  # error
 # Unicode表规定什么字符用什么数字。UTF-8决定什么字符用几个字节。
 ```
 
-**数据类型转换：**无法转化会 TypeError
-
-`type(variable)` : 返回数据类型
-
-`int(variable)` : 不能转小数字符串
-
-`  float(variable)` :
-
-`str(variable)` :
-
 ## 4. 运算符
 
 **算术运算符 :**  先幂然后乘除再加减
@@ -150,6 +160,7 @@ i + "10"  # error
 `+ - * / //(整除) % **(幂运算)` 
 
 ```tex
+4 / 2 = 2.0
 10 / 20 = 0.5
 9 // 2 = 4
 2 ** 3 = 8
@@ -169,7 +180,7 @@ i + "10"  # error
 
 一个变量组成：标识（id），类型，值。
 
-`==`：比较值。
+`==, !=, >=`：比较值, 可以比较str。
 
 `is, is not  ` : 比较id, 类似 `id(x) == id(y)`。 python 中对 `None` 进行判断建议使用 `is`
 
@@ -494,23 +505,30 @@ s = "%05d" % n  # 00123
 🟩 **格式化字符串** 🟩
 
 ```python
+# 占位符：%s, %d, %f
 name = "name"
 age = 18
+message = "我是%s" % name # 我是name
+message = "我是%s%s" % (name, age) # 我是name18, 可以用%s接受int类型
 
 print('%s%d' % (name, age))  # %d: 十进制 %x:十六进制
 info = ('zs', 18)  # 元组类型
 print('%s 的年龄是 %d' % info)
 
+# "m.n" 控制宽度和小数点精度（宽度比本身数字还小则忽视不生效）
 print('%10d' % 99)  # 10表示宽度, 左边8个空格 (超过就按原格式输出)
 print('%010d' % 99)  # 10表示宽度, 左边8个0
-print('%.3f' % 3.1415926)  # 3个小数  3.142
+print('%.3f' % 3.1415926)  # 3个小数  3.142 (四舍五入)
 print('%010.3f' % 3.1415926)  # 同时设置  000003.142
 print('%010.3f%%' % 3.1415926)  # %%打印%  000003.142%
+
+# 快速格式化 f"内容{变量/表达式}内容" (不做精度控制，原样输出)
+print(f'我是{name}{age}')
+print(f'我是{1+1}') # 可以直接是表达式
 
 print('{0}{1}{0}'.format(name,age))
 print('{0:.3'.format(3.1415926)) # 3位 3.14
 print('{0:.3f'.format(3.1415926)) # 3个小数 3.142
-print(f'{name}{age}')
 
 '{:>6}{:a>6}'.format('内容1','内容2')  # 右对齐。'   内容1','aaa内容2'， ^<> 分别表示中左右对齐
 ```
@@ -627,7 +645,8 @@ a, b = b, a  # 等号右边是一个元组，小括号被省略了
 | range(start,stop,step)       | 返回一个[start-stop)的序列, 步长为step    |
 
 ```python
-present = input('请输入你的内容:') #input 函数
+#input 函数
+present = input('请输入你的内容:')
 print(present)
 
 eval('1+1')

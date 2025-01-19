@@ -653,7 +653,7 @@ TreeSet: 按照指定属性进行排序。只能存储相同类型对象。必�
 
 Hashtable：JDK1.0
 
-HashMap: 可以存储null键，null值。 数组 + 链表 + 红黑树（JDK1.8）
+HashMap: 可以存储null键，null值。 数组 + 链表 + 红黑树（JDK1.8）数据插入的时间复杂度认为是常数级别。
 
 LinkedHashMap：遍历效率高于HashMap。
 

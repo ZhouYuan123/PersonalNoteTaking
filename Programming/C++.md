@@ -24,7 +24,7 @@ C++ 融合了3种不同的编程方式： **过程性语言 + OOP + 泛型编程
 
 编译：`g++ 1.cpp`, 运行：`./a.out` (通常,main()被启动代码调用,而启动代码是由编译器添加到程序中的,是程序和操作系统(UNIX、Windows7或其他操作系统)之间的桥梁。事实上，该函数头描述的是main()和操作系统之间的接口。) 存在一些例外情况。例如,在 Windows编程中,可以编写一个动态链接库(DLL)模块,这是其他 Windows程序可以使用的代码。由于 DLL 模块不是独立的程序，因此不需要 main()。用于专用环境的程序--单片机，只需要代码地址，也不需要main.
 
-## 2. 与C
+🟩 **与C** 🟩
 
 C++是C语言的超集，任何有效的C程序都是有效的C++程序。
 
@@ -32,25 +32,43 @@ C提供了低级硬件访问，OOP提供了高级抽象。
 
 版本: **C++98**，**C++11**，**C++17**
 
-🟩 **头文件** 🟩
+ **头文件** 
 
 转换后的C加上前缀C，没有扩展名，例如 `cstdio`, `cmath`，`ctype`等。
 
 `#include <cstdio> ` : `cstdio` 源文件中还是 `#include <stdio.h> `
 
-🟩 **char** 🟩
+ **char** 
 
 `\n ` 与 `endl` : 前者只换行，后者换行并 + `fflush(stdin)`(立即输出)
+
+```c++
+cout << "25"; // printf("%s\n", "25");
+cout << 25; // printf("%d\n", 25);
+```
 
 `wchar_t` : 宽字符类型, 可以表示扩展字符集. C++11新增的类型:char16_t 和 char32_t
 
 新的数据类型string。
 
-```c++
-// 1. cout
-cout << "25"; // printf("%s\n", "25");
-cout << 25; // printf("%d\n", 25);
+## 2. 数据类型
 
+| 整型      | 长度                                                        |
+| --------- | ----------------------------------------------------------- |
+| char      | 8bit                                                        |
+| short     | short 至少 16 位                                            |
+| int       | int 至少与 short 一样长                                     |
+| long      | long 至少 32 位，且至少与 int 一样长                        |
+| long long | long long 至少 64 位，且至少与 long 一样长。(**C++11新增**) |
+
+## 3. cin和cout流
+
+```c++
+// cin
+int abc;
+cin >> abc;
+
+// cout
 // 强制以小数的方式显示
 cout << fixed;
 
@@ -108,7 +126,7 @@ int a = (int)99.9;
 * 面向对象：是把事务分解成为一个个对象，然后由对象之间分工与合作
   * 特点：封装，继承，多态
 
-## 3. vector
+## 4. vector
 
 <font color="green">**数组**</font>
 
@@ -170,7 +188,7 @@ copy(vec.cbegin(), vec.cend(), ostream_iterator<int>(cout, "分割符"));
 // 排序 使用algorithm 中的 sort()
 ```
 
-## 4. 指针与内存
+## 5. 指针与内存
 
 `nullptr` : 空指针，0；
 
@@ -200,6 +218,12 @@ delete [] intArray;
 STL和Boost C++
 
 ![](../imgs/Cpp/function.jpg)
+
+```c++
+#include <cmath>
+int x = sqrt(6.25); // 平分根: 2.5
+double pow(double, double); // 平方
+```
 
 ### 6.2 引用
 
@@ -580,9 +604,9 @@ void operation()(string test)
 
 
 
-## 2. 文件操作
+## 11. 文件操作
 
-### 2.1 文本文件格式
+### 11.1 文本文件格式
 
 文本以ASCII码的形式存储在计算机中。
 
@@ -623,7 +647,7 @@ if(ifs.is_open()){
 ifs.close();
 ```
 
-### 2.2 二进制文件
+### 11.2 二进制文件
 
 二进制存储，无法读懂。
 

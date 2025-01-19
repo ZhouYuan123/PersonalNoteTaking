@@ -6,7 +6,10 @@
 
 支持千万级别数据量的存储。
 
-1995年瑞典MySQL AB (创始人Michael Widenius) 公司开发。
+* 1995年瑞典MySQL AB (创始人Michael Widenius) 公司开发。
+* 2008年，MySQL被SUN公司收购
+* 2009年，0racle收购SUN公司，进而oracle就获取了MySQL
+* 2016年，MySQL8.0.0版本推出
 
 MySQL 的创造者担心MySQL有闭源的风险，因此创建了 MySQL的分支项目 MariaDB。
 
@@ -31,6 +34,13 @@ Install --> custom --> select MySQL Server 8.0.34 - X64 to right --> select the 
 
 1. `services.msc`
 2. `net start mysql服务名(80)`
+
+<font color=green>**卸载：**</font>
+
+1. 卸载软件
+2. 手动删除数据库文件。...\MySQL Server 8.0\Data
+3. MySQL的环境变量删除
+4. MySQL的服务进入注册表删除。 (regedit)
 
 **连接数据库：**
 
@@ -164,12 +174,12 @@ MySQL 在 Windows 环境下是大小写不敏感的，MySQL 在 Linux 环境下�
 
 * DML (Data Manipulation Languages 数据操作语言)
 
-用于添加、删除、更新和查询数据库记录，并检查数据完整性。主要的语句关键字包括 INSERT、DELETE、UPDATE、SELECT 等
+用于添加、删除、更新和查询数据库记录，并检查数据完整性。主要的语句关键字包括 INSERT、DELETE、UPDATE、**SELECT** 等
 
 * DCL (Data Control Languages 数据控制语言)
 
 用于定义数据库、表、字段、用户的访问权限和安全级别。
-主要的语句关键字包括GRANT、REVOKE、COMMIT、ROLLBACK、SAVEPOINT 等
+主要的语句关键字包括GRANT、REVOKE、**COMMIT**、**ROLLBACK**、SAVEPOINT 等
 
 ( SELECT会单独拿出来叫DQL 数据查询语言 )
 
@@ -177,18 +187,12 @@ MySQL 在 Windows 环境下是大小写不敏感的，MySQL 在 Linux 环境下�
 
 ### 3.3 DQL
 
-```mysql
--- 显示表结构
-DESCRIBE 表名;
-DESC 表名;
-```
-
 #### 3.3.1 select
 
 🟦 **SELECT** 🟦
 
 ```mysql
-SELECT 1 + 1, 3*2 [DUAL]; # DUAL 是伪表
+SELECT 1 + 1, 3*2 [FROM DUAL]; # DUAL 是伪表
 -- 返回
 +-----+
 | 1+1 |
@@ -199,7 +203,7 @@ SELECT 1 + 1, 3*2 [DUAL]; # DUAL 是伪表
 -- 别名, 使用双引号
 SELECT 列名1 别名1,列名2 别名2
 FROM 表名;
-SELECT 列名1,列名2 AS 别名2
+SELECT 列名1,列名2 AS 别名2 # AS: alias
 FROM 表名;
 SELECT 列名1 AS 别名1,列名2 "别名2"
 FROM 表名;
@@ -207,7 +211,7 @@ FROM 表名;
 -- 去除重复行
 SELECT DISTINCT 列名1
 FROM 表名;
-SELECT DISTINCT 列名1,列名2 # 两个都不重复才会去重
+SELECT DISTINCT 列名1,列名2 # 两个都不重复才会去重 (没有实际意义)
 FROM 表名;
 SELECT 列名1,DISTINCT 列名2 # 报错
 FROM 表名;
@@ -218,6 +222,10 @@ SELECT * FROM `order`;
 -- 查询常数，每一行数据都会添加
 SELECT 列名1,列名2,'abc'
 FROM 表名;
+
+-- 显示表结构
+DESCRIBE 表名;
+DESC 表名;
 ```
 
 🟦 **WHERE** 🟦

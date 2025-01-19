@@ -516,7 +516,7 @@ void bubbleSortWithFlag(int[] nums) {
 }
 ```
 
-### 2. 快速排序 (Quick Sort)
+### 2. 快速排序 (Quick Sort)(最优选)
 
 是对冒泡排序的一种改进。找pivot（枢轴、中心点)，然后将数据划分为左右两个部分。
 
@@ -669,7 +669,7 @@ void selectionSort(int[] nums) {
 
 ![](../imgs/algorithm/HeapSort.gif)
 
-### 7. 归并排序 (Merge Sort)
+### 7. 归并排序 (Merge Sort)(稳定最优选)
 
 - 把长度为n的输入序列分成两个长度为n/2的子序列；
 - 对这两个子序列分别采用归并排序；
