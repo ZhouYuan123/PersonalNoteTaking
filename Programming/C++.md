@@ -53,22 +53,33 @@ cout << 25; // printf("%d\n", 25);
 
 ## 2. 数据类型
 
-| 整型      | 长度                                                        |
-| --------- | ----------------------------------------------------------- |
-| char      | 8bit                                                        |
-| short     | short 至少 16 位                                            |
-| int       | int 至少与 short 一样长                                     |
-| long      | long 至少 32 位，且至少与 int 一样长                        |
-| long long | long long 至少 64 位，且至少与 long 一样长。(**C++11新增**) |
+| 整型      | 长度                                                         |
+| --------- | ------------------------------------------------------------ |
+| char      | 1 byte                                                       |
+| short     | short 至少 2 byte                                            |
+| int       | int 至少与 short 一样长                                      |
+| long      | long 至少 8 byte，且至少与 int 一样长                        |
+| long long | long long 至少 8 byte，且至少与 long 一样长。(**C++11新增**) |
+
+```c++
+int emus;    // 局部变量值不定义，这个值会是任意值。
+int emus{7}; // 使用大括号初始化器。这种方式适合任意数据类型。
+```
+
+
 
 ## 3. cin和cout流
 
 ```c++
-// cin
-int abc;
-cin >> abc;
+// 1. cout
+int chest = 42;    // cout: 42
+int waist = 0x42;  // cout: 66
+int inseam = 042;  // cout: 34
+cout << hex;
+cout << waist: // 打印出：42
+cout << oct;
+cout << inseam: // 打印出：42
 
-// cout
 // 强制以小数的方式显示
 cout << fixed;
 
@@ -223,6 +234,9 @@ STL和Boost C++
 #include <cmath>
 int x = sqrt(6.25); // 平分根: 2.5
 double pow(double, double); // 平方
+
+#include <climits> // 定义了基本数据类型最大最小值
+int n_int = INT_MAX;
 ```
 
 ### 6.2 引用

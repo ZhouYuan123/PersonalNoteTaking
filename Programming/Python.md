@@ -72,7 +72,9 @@ print("abc: ", abc)
 
 `#coding:GBK` : 文档第一行申明编码类型。
 
-🟩 **标识符命名规范** 🟩
+### 2.1 变量
+
+ 🟩 **标识符命名规范** 🟩
 
 * 字母、下划线 和 数字 组成。
 
@@ -97,6 +99,14 @@ print("abc: ", abc)
 提示: Python 中并没有真正意义的常量，只是通过命名的约定
 
 * 所有字母都是大写的就是常量，开发时不要轻易的修改
+
+🟩 **变量作用域** 🟩
+
+```python
+for i in range(5):
+    pass
+print(i) # 规范认为这样不可以访问
+```
 
 ## 3. 数据类型
 
@@ -196,7 +206,7 @@ i + "10"  # error
 
 ```python
 if 条件表达式:
-	执行语句
+	执行语句 # 四个空格缩进
 else:
 	执行语句
 
@@ -510,6 +520,7 @@ name = "name"
 age = 18
 message = "我是%s" % name # 我是name
 message = "我是%s%s" % (name, age) # 我是name18, 可以用%s接受int类型
+message = "%d" % (1+1) # 可以直接是表达式
 
 print('%s%d' % (name, age))  # %d: 十进制 %x:十六进制
 info = ('zs', 18)  # 元组类型
@@ -646,7 +657,7 @@ a, b = b, a  # 等号右边是一个元组，小括号被省略了
 
 ```python
 #input 函数
-present = input('请输入你的内容:')
+present = input('请输入你的内容:') # 永远返回字符串类型
 print(present)
 
 eval('1+1')

@@ -220,7 +220,7 @@ FROM 表名;
 SELECT * FROM `order`;
 
 -- 查询常数，每一行数据都会添加
-SELECT 列名1,列名2,'abc'
+SELECT 列名1,列名2,'abc',123
 FROM 表名;
 
 -- 显示表结构
@@ -236,88 +236,6 @@ FROM 表名
 WHERE last_name = 'King'; # 过滤.
 -- 1. 内容区分大小写，但是MySQL不严谨，依旧可以查询出，oracle无法查询出。
 -- 2. MySQL字段值可以双引号，但oracle报错
-```
-
-🟦 **运算符** 🟦
-
-```mysql
--- 算术运算符
-SELECT A + B FROM DUAL;
-# 1.0 + 1 = 2.0, 结果是浮点数。
-# 1 + '1' = 2, MySQL中+没有字符串拼接这个功能
-# 100 + 'a' = 100, 不会转化a
-# 100 + NULL = NULL, NULL值参与运算结果为NULL
-# 'a' || 'b' ,'ab' 字符串连接
-
-SELECT A - B FROM DUAL;
-SELECT A * B FROM DUAL;
-SELECT 列名1 * 12 '别名1' # 查出列1的数据的12倍
-FROM 表名;
-
-SELECT A/B # 或者 SELECT A DIV B
-# 100 DIV 0 = NULL
-SELECT A % B # 或者 SELECT A MOD B
-
--- 比较运算符
-=
-SELECT 1 = 2 FROM DUAL; 	# 返回0代表false
-SELECT 1 = '1' FROM DUAL;	# 1, 隐式类型转换
-SELECT 1 = 'a' FROM DUAL;	# 0, 如果字符串转换成数值不成功，就是0
-SELECT 0 = 'a' FROM DUAL;	# 1
-SELECT 'a' = 'a' FROM DUAL;	# 1, 不需要进行隐式类型转换
-# 100 = NULL = NULL, NULL值参与运算结果为NULL
-# NULL = NULL = NULL, NULL值参与运算结果为NULL
-
-<=>
-# 安全等于，没有NULL参与时和 = 一样
-# 100 = NULL = 0
-# NULL = NULL = 1
-
-<> # 不等于
-!= # 不等于
-
-IS NULL, IS NOT NULL, ISNULL
-... WHERE 列名 IS NULL;	#
-... WHERE ISNULL(列名);	#
-
-LEAST('a','b','c'); # 最小的
-GREATEST('a','b','c'); # 最大的
-
-WHERE salary BETWEEN 6000 AND 8000; # 包括6000和8000, 必须前小后大
-WHERE salary NOT BETWEEN 6000 AND 8000;
-WHERE salary < 6000 OR salary > 8000;
-WHERE salary [NOT] IN (6000, 7000, 8000);
-WHERE last_name LIKE '%a%';	# 模糊查询，且忽略了大小写。 LIKE 'a%':查询以a开头的。
-WHERE last_name LIKE '_a%';	# 查询第二个字符是a的。_代表一个不确定的字符。
-WHERE last_name LIKE '\_$_a%';	# \和$都可以表示转义
-SELECT
-'shkstart' REGEXP '^shk',
-'shkstart' REGEXP 't$',
-'shkstart' REGEXP 'hk'
-'shkstart' REGEXP '[k]' # 包含k
-FROM DUAL;	# 1,1,1 或者使用RLIKE
-
--- 逻辑运算符
-# AND 优先级会高于 OR
-```
-
-| 运算符     | 用作     | 示例                              |
-| ---------- | -------- | --------------------------------- |
-| NOT 或 !   | 逻辑非   | SELECT NOT A                      |
-| AND 或 &&  | 逻辑与   | SELECT A AND B<br />SELECT A && B |
-| OR 或 \|\| | 逻辑或   | SELECT A OR B<br />SELECT A  B    |
-| XOR        | 逻辑异或 | SELECT A XOR B                    |
-
-![](../imgs/MySQL/operator_priority.jpg)
-
-```mysql
--- 位运算符
-SELECT A & B;
-SELECT A | B;
-SELECT A ^ B;
-SELECT ~ A; # 按位取反
-SELECT A >> 2;
-SELECT B << 2;
 ```
 
 🟦 **排序** 🟦
@@ -728,3 +646,93 @@ FROM employees;
 | BENCHMARK(n,expr)              | 将表达式expr重复执行n次。用于测试MySQL处理expr表达式所耗费的时间 |
 | CONVERT(value USING char_code) | 将value所使用的字符编码修改为char_code                       |
 
+## 4. 运算符
+🟦 **算术运算符** 🟦
+
+```mysql
+SELECT A + B FROM DUAL;
+# 1.0 + 1 = 2.0,     结果是浮点数。
+# 1 + '1' = 2,       MySQL中+没有字符串拼接这个功能
+# 100 + 'a' = 100,   不会转化a
+# 100 + NULL = NULL, NULL值参与运算结果为NULL
+# 'a' || 'b' ,'ab'   字符串连接
+
+SELECT A - B FROM DUAL;
+SELECT A * B FROM DUAL; # 结果是整型或者浮点型
+SELECT 列名1 * 12 '别名1' # 查出列1的数据的12倍
+FROM 表名;
+
+SELECT A/B # 或者 SELECT A DIV B
+# 结果都是浮点型
+# 100 DIV 0 = NULL
+SELECT A % B # 或者 SELECT A MOD B
+
+-- 逻辑运算符
+# AND 优先级会高于 OR
+```
+
+🟦 **比较运算符** 🟦
+
+返回0 (false)或者1 (true)。
+
+```mysql
+# =, !=
+SELECT 1 = 2 FROM DUAL; 	# 0
+SELECT 1 = '1' FROM DUAL;	# 1, 隐式类型转换
+SELECT 1 = 'a' FROM DUAL;	# 0, 如果字符串转换成数值不成功，就是0
+SELECT 0 = 'a' FROM DUAL;	# 1
+SELECT 'a' = 'a' FROM DUAL;	# 1, 不需要进行隐式类型转换
+SELECT 'a' = 'b' FROM DUAL;	# 0, 不需要进行隐式类型转换, 就是字符串比较 (ANSI码比较)
+100 = NULL;  # NULL, NULL值参与运算结果为NULL
+NULL = NULL; # NULL, NULL值参与运算结果为NULL
+
+# <=>
+# 安全等于，没有NULL参与时和 = 一样
+# 100 = NULL = 0
+# NULL = NULL = 1
+
+<> # 不等于
+!= # 不等于
+
+IS NULL, IS NOT NULL, ISNULL
+... WHERE 列名 IS NULL;	#
+... WHERE ISNULL(列名);	#
+
+LEAST('a','b','c'); # 最小的
+GREATEST('a','b','c'); # 最大的
+
+WHERE salary BETWEEN 6000 AND 8000; # 包括6000和8000, 必须前小后大
+WHERE salary NOT BETWEEN 6000 AND 8000;
+WHERE salary < 6000 OR salary > 8000;
+WHERE salary [NOT] IN (6000, 7000, 8000);
+WHERE last_name LIKE '%a%';	# 模糊查询，且忽略了大小写。 LIKE 'a%':查询以a开头的。
+WHERE last_name LIKE '_a%';	# 查询第二个字符是a的。_代表一个不确定的字符。
+WHERE last_name LIKE '\_$_a%';	# \和$都可以表示转义
+SELECT
+'shkstart' REGEXP '^shk',
+'shkstart' REGEXP 't$',
+'shkstart' REGEXP 'hk'
+'shkstart' REGEXP '[k]' # 包含k
+FROM DUAL;	# 1,1,1 或者使用RLIKE
+```
+
+
+
+| 运算符     | 用作     | 示例                              |
+| ---------- | -------- | --------------------------------- |
+| NOT 或 !   | 逻辑非   | SELECT NOT A                      |
+| AND 或 &&  | 逻辑与   | SELECT A AND B<br />SELECT A && B |
+| OR 或 \|\| | 逻辑或   | SELECT A OR B<br />SELECT A  B    |
+| XOR        | 逻辑异或 | SELECT A XOR B                    |
+
+![](../imgs/MySQL/operator_priority.jpg)
+
+```mysql
+-- 位运算符
+SELECT A & B;
+SELECT A | B;
+SELECT A ^ B;
+SELECT ~ A; # 按位取反
+SELECT A >> 2;
+SELECT B << 2;
+```
