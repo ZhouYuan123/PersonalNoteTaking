@@ -673,7 +673,7 @@ SELECT A % B # 或者 SELECT A MOD B
 
 🟦 **比较运算符** 🟦
 
-返回0 (false)或者1 (true)。
+返回0 (false)或者1 (true)，其他情况返回NULL。
 
 ```mysql
 # =, !=
@@ -688,35 +688,43 @@ NULL = NULL; # NULL, NULL值参与运算结果为NULL
 
 # <=>
 # 安全等于，没有NULL参与时和 = 一样
-# 100 = NULL = 0
-# NULL = NULL = 1
+100 = NULL;  # 0
+NULL = NULL; # 1
 
 <> # 不等于
 != # 不等于
+>=, <=
 
-IS NULL, IS NOT NULL, ISNULL
+-- 关键字
+IS NULL, IS NOT NULL, ISNULL()
 ... WHERE 列名 IS NULL;	#
 ... WHERE ISNULL(列名);	#
 
-LEAST('a','b','c'); # 最小的
+LEAST('a','b','c');    # 最小的
 GREATEST('a','b','c'); # 最大的
 
 WHERE salary BETWEEN 6000 AND 8000; # 包括6000和8000, 必须前小后大
 WHERE salary NOT BETWEEN 6000 AND 8000;
 WHERE salary < 6000 OR salary > 8000;
 WHERE salary [NOT] IN (6000, 7000, 8000);
-WHERE last_name LIKE '%a%';	# 模糊查询，且忽略了大小写。 LIKE 'a%':查询以a开头的。
-WHERE last_name LIKE '_a%';	# 查询第二个字符是a的。_代表一个不确定的字符。
-WHERE last_name LIKE '\_$_a%';	# \和$都可以表示转义
+
+-- LIKE: 模糊查询
+WHERE last_name LIKE '%a%';	    # %: 不确定个数字符, 且忽略了大小写。
+WHERE last_name LIKE 'a%';      # 查询以a开头的, 且忽略了大小写。
+WHERE last_name LIKE '%a%b%';
+WHERE last_name LIKE '_a%';	    # 查询第二个字符是a的。_代表一个不确定的字符。
+WHERE last_name LIKE '\_$_a%';	# \表示转义。第一个字符是'_'
+WHERE last_name LIKE '\_$_a%' ESCAPE '$'; # 告诉它$也是转义字符
+
 SELECT
-'shkstart' REGEXP '^shk',
-'shkstart' REGEXP 't$',
-'shkstart' REGEXP 'hk'
-'shkstart' REGEXP '[k]' # 包含k
-FROM DUAL;	# 1,1,1 或者使用RLIKE
+'shkstart' REGEXP '^shk', # 开头
+'shkstart' REGEXP 't$',   # 结尾
+'shkstart' REGEXP 'hk'    # 包含hk
+'shkstart' REGEXP '[k]'   # 包含k。 [ABC]:或, '.': 一个字符，*: 0个或者多个
+FROM DUAL;	# 1,1,1,1 或者使用RLIKE
 ```
 
-
+🟦 **逻辑运算符** 🟦
 
 | 运算符     | 用作     | 示例                              |
 | ---------- | -------- | --------------------------------- |

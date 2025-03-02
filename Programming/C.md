@@ -73,7 +73,7 @@ char ch; // char 在默认情况下既不是没有符号，也不是有符号, �
 | 0x或0X | 十六进制 |
 
 ```c
-#include <stdbool.h>
+#include <stdbool.h> // 来源于英国数学家George Boole
 bool myBool = true; // 非0值都是true
 int myInt = myBool; // 隐式转换 bool to int
 

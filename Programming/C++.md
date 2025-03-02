@@ -53,15 +53,50 @@ cout << 25; // printf("%d\n", 25);
 
 ## 2. 数据类型
 
-| 整型      | 长度                                                         |
-| --------- | ------------------------------------------------------------ |
-| char      | 1 byte                                                       |
-| short     | short 至少 2 byte                                            |
-| int       | int 至少与 short 一样长                                      |
-| long      | long 至少 8 byte，且至少与 int 一样长                        |
-| long long | long long 至少 8 byte，且至少与 long 一样长。(**C++11新增**) |
+| 整型              | 长度                                                         |
+| ----------------- | ------------------------------------------------------------ |
+| char (另一种整型) | 1 byte                                                       |
+| short             | short 至少 2 byte                                            |
+| int               | int 至少与 short 一样长                                      |
+| long              | long 至少 8 byte，且至少与 int 一样长                        |
+| long long         | long long 至少 8 byte，且至少与 long 一样长。(**C++11新增**) |
+
+| bool类型 | 长度   |
+| -------- | ------ |
+| bool     | 1 byte |
+
+| 浮点类型    | 长度             |
+| ----------- | ---------------- |
+| float       | 至少 4 byte      |
+| double      | 至少 6 byte      |
+| long double | 至少和double一样 |
 
 ```c++
+// 1. char
+char a = 'A'; // 字面值65
+int b = a;
+cout << b; // 65
+
+a = a + 1;
+cout << a; // B
+cout.put('a'); // 用来输出字符: a
+
+// 2. bool
+bool is_ready = true;
+int ans = true;      // 1
+int promise = false; // 0
+bool start = -100;   // true
+bool start = 0;      // false
+
+// 3. 浮点数
+12.34, 2.52e+8
+// 控制显示的小数的位数 <iomanip>
+cout << cout.setprecision(2);
+cout.setf(); // 保留小数结尾0. cout默认会删除小数结尾的0, 默认6位小数
+
+// 常量，首写字符大写
+const int Months = 12;
+
 int emus;    // 局部变量值不定义，这个值会是任意值。
 int emus{7}; // 使用大括号初始化器。这种方式适合任意数据类型。
 ```
@@ -86,10 +121,6 @@ cout << fixed;
 cout << hex; // 以16进制显示
 cout << oct; // 八进制
 
-// 控制显示的小数的位数 <iomanip>
-cout << cout.setprecision(2);
-cout.setf(); // 保留小数结尾0. cout默认会删除小数结尾的0, 默认6位小数
-
 // 设置打印宽度 <iomanip> 默认右对齐
 int n = 10;
 cout << left;
@@ -100,13 +131,6 @@ cout << setw(n) << 3.14; // _____3.14
 cout << boolalpha;
 bool flag = true;
 cout << flag;	// 输出 "1"，使用了 boolalpha 则是 "true"
-
-char a = 'A'; // 字面值65
-int b = a;
-a = a + 1;
-cout << a; // B
-cout << b; // 65
-cout.put('a'); // 用来输出字符
 
 // 2.键盘录入
 int num;

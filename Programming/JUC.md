@@ -299,7 +299,7 @@ class TwoPhaseTermination{
 
 Critical Section: 一段代码块内如果存在对共享资源的多线程读写操作，称这段代码块为临界区。
 
-**synchronized**
+🟦 **synchronized**
 
 ```java
 synchronized(对象) // 线程1， 线程2(blocked)
@@ -311,13 +311,13 @@ synchronized 在方法上 锁对象是 this (同一对象不同方法互斥)
 synchronized 在静态方法上 锁对象是 Test.class
 ```
 
-## 9. 常见线程安全类
+🟦 **常见线程安全类**
 
 `String` : 不可变类线程安全
 
 `Integer` : 不可变类线程安全
 
-`StringBuffer, Random, Vector, Hashtable, java.utilconcurrent包下的类`
+`StringBuffer, Random, Vector, Hashtable, java.util.concurrent包下的类`
 
 ## 10. Java对象头
 
