@@ -26,11 +26,21 @@ C++ 融合了3种不同的编程方式： **过程性语言 + OOP + 泛型编程
 
 🟩 **与C** 🟩
 
+单行注释：`//`      支持版本 C99, C++
+
+多行注释：`/* */`     支持版本 C89, C99, C++
+
+文档注释 : `/** 文档注释 */` （标准中没有提）
+
+* 面向过程：就是分析出解决问题所需要的步骤，然后用函数把这些步骤一步一步实现，使用的时候再一个一个的依次调用就可以了。
+* 面向对象：是把事务分解成为一个个对象，然后由对象之间分工与合作
+  * 特点：封装，继承，多态
+
 C++是C语言的超集，任何有效的C程序都是有效的C++程序。
 
 C提供了低级硬件访问，OOP提供了高级抽象。
 
-版本: **C++98**，**C++11**，**C++17**
+版本三年一个周期: **C++98**，**C++11**，**C++17**, **C++20**
 
  **头文件** 
 
@@ -53,6 +63,8 @@ cout << 25; // printf("%d\n", 25);
 
 ## 2. 数据类型
 
+### 2.1 基本类型
+
 | 整型              | 长度                                                         |
 | ----------------- | ------------------------------------------------------------ |
 | char (另一种整型) | 1 byte                                                       |
@@ -71,8 +83,15 @@ cout << 25; // printf("%d\n", 25);
 | double      | 至少 6 byte      |
 | long double | 至少和double一样 |
 
+float定义: `1.0f`
+
+这些都有 `unsigned, signed`
+
+C++整数常量在不超出int类型范围的应用情况下，默认优先使用int类型
+
 ```c++
 // 1. char
+char a = 65; // 'A'
 char a = 'A'; // 字面值65
 int b = a;
 cout << b; // 65
@@ -94,6 +113,17 @@ bool start = 0;      // false
 cout << cout.setprecision(2);
 cout.setf(); // 保留小数结尾0. cout默认会删除小数结尾的0, 默认6位小数
 
+// 类型转换
+long_num = short_num; // 小转大自动转换
+int_num = float_num;  // 丢失
+auks = 19.99 + 11.99; // 31
+auto n = 100; // C++11, int
+
+// 强制类型转换
+(typeName)value
+typeName(value)
+static_cast<typeName>(value)
+
 // 常量，首写字符大写
 const int Months = 12;
 
@@ -101,7 +131,65 @@ int emus;    // 局部变量值不定义，这个值会是任意值。
 int emus{7}; // 使用大括号初始化器。这种方式适合任意数据类型。
 ```
 
+### 2.2 复合类型
 
+**一、 数组**
+
+同C语言。
+
+**二、 字符串**
+
+同C语言。
+
+拼接字符串常量：任何两个由空白(空格、制表符和换行符)分隔的字符串常量都将自动拼接成一个。
+
+**string 类**
+
+```c++
+#include <cstring>
+string str = "abc"; // 可以通过下标访问各元素
+str.size();         // 3
+charr2 = charr1;    // INVALID, no array assignment
+str1 = str2;        // VALID, object assignment ok
+// 可以字符串拼接
+str3 = str1 + str2;
+str1 += str2;
+
+char charr[20];
+string str;
+strlen(charr); // 随机
+str.size();    // 0
+```
+
+**二、 结构体**
+
+```c++
+// 1、先定义结构体类型，再定义结构体变量
+struct inflatable
+{
+    std::string name;
+    float volume;
+    double price;
+};
+inflatable hat; // C语言： struct inflatable hat;
+hat = { "abc", 3.12, 32.99 };
+hat.name; // 获取
+inflatable hat { "abc", 3.12, 32.99 }; // C++11
+
+// 2、定义结构体类型的同时定义结构体变量
+struct inflatable
+{
+    std::string name;
+}abc, def;
+
+// 3、直接定义结构体变量 (匿名结构体类型)
+struct
+{
+    float volume;
+}abc, def;
+
+inflatable hat[100]; // 结构体数组。初始化: {{"abc"},{"def"}}
+```
 
 ## 3. cin和cout流
 
@@ -142,6 +230,12 @@ cin >> ch2;
 char ch3;
 cin >> ch3; // 键入5就是字符‘5’
 
+char ch4[20]; // 只能读19个
+cin >> ch4; // cin 遇到空白字符结束，空白后面的字符串加入缓冲区作为下一个cin的输入值。
+cin.get(ch4, 20);     // 每次读取一行。它通过换行符来确定行尾，换行符仍留在输入缓冲区中。
+cin.getline(ch4, 20); // 每次读取一行。它通过换行符来确定行尾，自动移除换行符并丢弃。
+getline(cin, str);    //
+
 // 3.初始化
 int wrens(432); // wrens = 432
 int abc {123}; // 🟥意在希望任意数据类型都可以使用{}🟥
@@ -152,14 +246,6 @@ int rheas = {}; // rheas = 0
 int a = int(99.9);
 int a = (int)99.9;
 ```
-
-当行注释：`//`
-
-文档注释 : `/** 文档注释 */`
-
-* 面向过程：就是分析出解决问题所需要的步骤，然后用函数把这些步骤一步一步实现，使用的时候再一个一个的依次调用就可以了。
-* 面向对象：是把事务分解成为一个个对象，然后由对象之间分工与合作
-  * 特点：封装，继承，多态
 
 ## 4. vector
 
