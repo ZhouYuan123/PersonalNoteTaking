@@ -40,7 +40,7 @@ C++是C语言的超集，任何有效的C程序都是有效的C++程序。
 
 C提供了低级硬件访问，OOP提供了高级抽象。
 
-版本三年一个周期: **C++98**，**C++11**，**C++17**, **C++20**
+版本三年一个周期，主要版本: **C++98**，**C++11**，**C++17**,  **C++23**
 
  **头文件** 
 
@@ -133,11 +133,11 @@ int emus{7}; // 使用大括号初始化器。这种方式适合任意数据类�
 
 ### 2.2 复合类型
 
-**一、 数组**
+🟦  **一、 数组**
 
 同C语言。
 
-🟦 **字符串**
+**字符串**
 
 同C语言部分。
 
@@ -166,7 +166,7 @@ if ("apple" < "banana") { /* true */ }
 if (s1 == s2) { /* 判断内容是否相同 */ }
 ```
 
-**二、 结构体**
+🟦  **二、 结构体**
 
 ```c++
 // 1、先定义结构体类型，再定义结构体变量
@@ -196,7 +196,7 @@ struct
 inflatable hat[100]; // 结构体数组。初始化: {{"abc"},{"def"}}
 ```
 
-**三、 联合体**
+🟦  **三、 联合体**
 
 ```c++
 union one4all
@@ -214,7 +214,7 @@ pail.double_val=1.38; //store adouble,int value is lost
 // 因此，pail 有时可以是 int 变量，而有时又可以是 double 变量。成员名称标识了变量的容量。由于共用体每次只能存储一个值，因此它必须有足够的空间来存储最大的成员，所以，共用体的长度为其最大成员的长度。
 ```
 
-**四、 枚举**
+🟦  **四、 枚举**
 
 同C语言。
 
@@ -237,7 +237,7 @@ long * fellow;
 pt = 0xB8000000;  // type mismatch, 不能给指针直接赋值int
 ```
 
-**动态内存**
+🟦  **动态内存**
 
 ```c++
 int * p = new int;
@@ -260,6 +260,8 @@ delete [] intArray;
 ```
 
 `nullptr` : 空指针，0；
+
+🟦  **引用**
 
 ```c++
 // 引用 reference，只能指向变量，必须立即初始化
@@ -316,6 +318,9 @@ cin.get(ch4, 20);     // 每次读取一行。它通过换行符来确定行尾�
 cin.getline(ch4, 20); // 每次读取一行。它通过换行符来确定行尾，自动移除换行符并丢弃。
 getline(cin, str);    //
 
+cin.fail();           // true 代表到末尾
+cin.clear();          // 重置错误输入标记
+
 // 3.初始化
 int wrens(432); // wrens = 432
 int abc {123}; // 🟥意在希望任意数据类型都可以使用{}🟥
@@ -331,11 +336,22 @@ int a = (int)99.9;
 
 **存储**
 
-1. 自动存储： 在函数内部定义的常规变量使用自动存储空间，被称为自动变量(automatic variable)，这意味着它们在所属的函数被调用时自动产生,在该函数结束时消亡。
+1. 自动存储： 在函数内部定义的常规变量使用自动存储空间，被称为自动变量(automatic variable)，这意味着它们在所属的函数被调用时自动产生,在该函数结束时消亡。局部变量内存自动分配和释放。
 2. 静态存储：静态存储是整个程序执行期间都存在的存储方式。
    1. 函数外面定义的。
    2. 使用关键字 static：`static double fee =56.50;`
 3. 动态存储：new关键字，存在heap中。该内存池同用于静态变量和自动变量的内存是分开的。
+
+**左值和右值**
+
+```c++
+int a = 10;
+int &c = a;        // 左值引用，因为a原本是左值。
+int &c = 10;       // invalid，因为10是右值。
+const int &c = 10; // 内存中创建了临时变量，临时变量是左值。
+
+int &&x = 10;      // 右值引用 (C++11)
+```
 
 ## 5. vector和array
 
@@ -424,29 +440,50 @@ for(double x : prices)
     cout << x << std::endl;
 ```
 
-## 6. 函数
+## 7. 函数
 
-### 6.1 内置函数
-
-STL和Boost C++
-
-![](../imgs/Cpp/function.jpg)
+### 7.1 参数
 
 ```c++
-#include <cmath>
-int x = sqrt(6.25); // 平分根: 2.5
-double pow(double, double); // 平方
+// 无名参数
+void foo(int);
 
-#include <climits> // 定义了基本数据类型最大最小值
-int n_int = INT_MAX;
+// 如果实参与引用参数不匹配，C++将生成临时变量。当且仅当参数为const引用时，C++才允许这样做，但以前不是这样。
 
-#include <ctime>
-clock_t start = clock();           // 当前时钟节拍
-clock_t delay = secs * CLOCKS_PER_SEC;
-while(clock() - start < delay); // 等待指定 secs 秒
+// 默认参数
+void sample(int = 10);
+void sample(int num)
+{
+    cout << num << endl;
+}
+
+int main()
+{
+    sample();    // 10
+    sample(123); // 123
+}
+// 1. 默认值可以在函数原型域定义中给出，不能在这两个位置同时出现
+// 2. 对于带参数列表的函数，必须从右向左添加默认值
+void test1(int a, int b = 5, int c = 10);
+test(1); // 如果存在void test1(int a);会调用这个方法
+test(1, 2);
+
+/*
+函数参数使用const：
+
+1. 使用 const 可以避免无意中修改数据的编程错误;
+2. 使用 const 使函数能够处理它const和非const 实参，否则将只能接受非 const数据;
+3. 使用 const 引用使函数能够正确生成并使用临时变量。
+*/
+
+// overloading
+// 非引用类型和引用类型不能构成重载，报错。(重载决议 时不区分引用)
+// const不构成重载
+
+// 函数的结尾声明为const, 函数内部不允许修改对象本身。
 ```
 
-### 6.2 引用
+🟦 **数组参数**
 
 数组在作为参数传递时实际上是退化为指针的。也就是说，数组名作为函数参数时，传递的是指向数组首元素的指针。因此，如果数组作为参数以引用的方式传递，实际上是指针的引用，而不是数组的引用。
 
@@ -473,38 +510,15 @@ const int& sum(int& num){}
 sum(num) = 55; // 报错
 ```
 
-### 6.3 参数
+### 7.2 函数多态(函数重载)
 
-```c++
-// 无名参数
-void foo(int);
+函数名字相同参数不同
 
-// 默认参数
-void sample(int = 10);
-void sample(int num)
-{
-    cout << num << endl;
-}
+* 参数：类型引用和类型本身视为同一个特征标
+* const 跟 非 const参数是不同特征标 , 但调用的时候非const可以作为实参调用const函数
+* 参数：左值引用可以跟右值引用构成重载，但如果右值引用函数没有被定义，那就会调用const修饰的左值引用的参数的函数
 
-int main()
-{
-    sample();
-    sample(123);
-}
-// 1. 默认值可以在函数原型域定义中给出，不能在这两个位置同时出现
-// 2. 对干带参数列表的函数，必须从右向左添加默认值
-void test1(int a, int b = 5, int c = 10);
-test(1); // 如果存在void test1(int a);会调用这个方法
-test(1, 2);
-
-// overloading
-// 非引用类型和引用类型不能构成重载，报错。(重载决议 时不区分引用)
-// const不构成重载
-
-// 函数的结尾声明为const, 函数内部不允许修改对象本身。
-```
-
-### 6.4 函数模板
+### 7.3 函数模板
 
 Function Template
 
@@ -518,6 +532,23 @@ void Swap(T &a, T &b)
     a = b;
     b = temp;
 }
+```
+
+### 7.4 内置函数
+
+STL和Boost C++
+
+![](../imgs/Cpp/function.jpg)
+
+```c++
+#include <cmath>
+int x = sqrt(6.25); // 平分根: 2.5
+double pow(double, double); // 平方
+
+#include <ctime>
+clock_t start = clock();           // 当前时钟节拍
+clock_t delay = secs * CLOCKS_PER_SEC;
+while(clock() - start < delay); // 等待指定 secs 秒
 ```
 
 ## 7. 对象
@@ -827,14 +858,14 @@ void operation()(string test)
 
 ## 11. 文件操作
 
-### 11.1 文本文件格式
+🟦 **文本文件**
 
 文本以ASCII码的形式存储在计算机中。
 
 ```c++
 #include <fstream> // 读写流
-ofstream ofs;
-ofs.open("文件路径", ios::out); // 写文件
+ofstream ofs;      // 写
+ofs.open("文件路径", ios::out); // 创建或者重写文件
 ofs << "内容1" << endl;
 ofs << "内容2" << endl;
 ofs.close();
@@ -842,7 +873,7 @@ ofs.close();
 
 ```c++
 #include <fstream>
-ifstream ifs
+ifstream ifs       // 读
 ifs.open("文件路径", ios::in);
 if(ifs.is_open()){
     char buf[1024] = {0};
@@ -868,7 +899,7 @@ if(ifs.is_open()){
 ifs.close();
 ```
 
-### 11.2 二进制文件
+🟦 **二进制文件**
 
 二进制存储，无法读懂。
 
