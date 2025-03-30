@@ -524,7 +524,9 @@ Function Template
 
 ```c++
 // 函数声明
-template<typename T> void Swap(T&, T&);
+template<typename T> // c++98之前：<class T>
+void Swap(T&, T&);
+
 template<typename T> // 模板头
 void Swap(T &a, T &b)
 {
@@ -532,7 +534,80 @@ void Swap(T &a, T &b)
     a = b;
     b = temp;
 }
+// 编译器最终还是生成多个独立的函数
+--
+// 函数模板可以重载
+
+// C++98
+template<class Tl,class T2>
+void ft(T1 x, T2 Y)
+{
+	?type? xpy = x + Y; // 不知道type类型，例如X是int，Y是short
+	// decltype(x + y) xpy = x + y; c++11
+}
+// c++ 11
+int x;
+decltype(x) y; // make y the same type as x
+decltype(x + y) xpy;
+xpy = x + y;
 ```
+
+**显式具体化和显式实例化**
+
+```c++
+// 显式具体化模板函数
+template <>
+void Swap<Job>(job &j1, job &j2);
+
+// 显式具体化
+template <> void Swap<int>(int &, int &);// explicit specialization
+template <> void Swap(int &, int &);     // explicit specialization
+
+
+// 一般模板：隐式实例化(implicit instantiation)
+// 函数调用的时候才会生成一个函数实例（此前只是定义）
+
+// 显式实例化(explicit instantiation)
+// 无论函数是否调用都会生成一个函数实例
+template void Swap<int>(int,int);       // explicit instantiation
+```
+
+例子：
+
+```c++
+template <class T>
+void Swap(T &, T &);   // template prototype
+
+template <> void Swap<job>(job &,job &); // explicit specialization for job
+
+int main(void)
+{
+    template void Swap<char>(char &,char &); // explicit instantiation for char
+    short a.b;
+    Swap(a,b); // implicit template instantiation for short
+    job n, m;
+    Swap(n，m); // use explicit specialization for job
+    char g,h;
+    Swap(g,h); // use explicit template instantiation for char
+}
+```
+
+**函数调用优先级**：非模板函数 > 模板函数 > 显式具体化模板函数
+
+```c++
+may('B');
+void may(int);                        // #1
+float may(float,float=3);             // #2
+void may(char);                       // #3
+char may(const char &);               // #4
+template<class T> void ay(const T &); // #5
+// 3>5>6>1>2
+
+may<>(m);    // 自己选择，告诉编译器调用模板函数
+may<int>(m); // 强制类型转化成int类型然后调用模板
+```
+
+
 
 ### 7.4 内置函数
 
