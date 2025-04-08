@@ -241,6 +241,8 @@ pt = 0xB8000000;  // type mismatch, 不能给指针直接赋值int
 
 ```c++
 int * p = new int;
+int * p = new int(6);  // 初始化 *pi set to 6
+int * p = new int{6};  // 初始化 *pi set to 6
 /*
  * 释放内存
  * 1. 重复释放报错
@@ -257,6 +259,9 @@ int arr[5];
 // 动态联编，动态数组，程序运行时才会创建数组。
 int * intArray = new int[10]; // 10可以是变量
 delete [] intArray;
+
+// 定位new，不能delete
+#include <new>
 ```
 
 `nullptr` : 空指针，0；
@@ -334,13 +339,37 @@ int a = (int)99.9;
 
 ## 4. 变量
 
-**存储**
+| 类型                                   | 定义                                                         | 存储                                                         | 作用域   | 链接性 |
+| -------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | -------- | ------ |
+| 全局变量                               | 函数外面定义的。                                             |                                                              | 全局     | 外部   |
+| 静态全局变量                           | const or static                                              |                                                              | 全局     | 内部   |
+| 局部变量，自动变量(automatic variable) | 函数内部定义的常规变量                                       | 自动存储：在所属的函数被调用时自动产生，在该函数结束时消亡。<br />局部变量内存自动分配和释放。 | 代码块中 | 无     |
+| 静态变量                               | 1. 函数外面定义的。 <br />2. 使用关键字 static：`static double fee =56.50;` | 静态存储：整个程序执行期间都存在。                           | 全局     | 内部   |
+| 动态变量                               | new关键字                                                    | 动态存储：一直存在直到使用delete或者程序结束。自由存储(freestore)或堆(heap)。该内存池同用于静态变量和自动变量的内存是分开的。 |          |        |
+| 外部变量                               | extern                                                       | // (头文件中)声明引用外部定义的变量                          | 全局     | 外部   |
 
-1. 自动存储： 在函数内部定义的常规变量使用自动存储空间，被称为自动变量(automatic variable)，这意味着它们在所属的函数被调用时自动产生,在该函数结束时消亡。局部变量内存自动分配和释放。
-2. 静态存储：静态存储是整个程序执行期间都存在的存储方式。
-   1. 函数外面定义的。
-   2. 使用关键字 static：`static double fee =56.50;`
-3. 动态存储：new关键字，存在heap中。该内存池同用于静态变量和自动变量的内存是分开的。
+```c++
+::abc; // 全局变量中的abc
+```
+
+**volatile**
+
+防止编译器优化，强制从内存读取最新值。
+
+编译器默认会缓存频繁访问的变量到寄存器中以提高效率，但若变量可能被外部因素（如硬件、其他线程）修改，缓存会导致程序读取旧值。
+
+**mutable**
+
+即使结构(或类)变量为const,其某个成员也可以被修改
+
+```c++
+struct data {
+    char name [30];
+    mutable int accesses;
+}
+
+const data veep = ... // veep 中 accesses可以被修改
+```
 
 **左值和右值**
 
@@ -537,19 +566,50 @@ void Swap(T &a, T &b)
 // 编译器最终还是生成多个独立的函数
 --
 // 函数模板可以重载
+```
 
+**无法知道模板中形参类型**
+
+```c++
 // C++98
-template<class Tl,class T2>
+template<class T1,class T2>
 void ft(T1 x, T2 Y)
 {
 	?type? xpy = x + Y; // 不知道type类型，例如X是int，Y是short
 	// decltype(x + y) xpy = x + y; c++11
 }
 // c++ 11
+// 1. 没有括号的表达式
 int x;
 decltype(x) y; // make y the same type as x
 decltype(x + y) xpy;
 xpy = x + y;
+
+// 2. 是一个函数调用
+long indeed(int);
+decltype(indeed(3)) m; // m is type long
+// 注意:并不会实际调用函数。编译器通过查看函数的原型来获悉返回类型，而无需实际调用函数
+
+// 3. 有括号的
+double xx = 4.4;
+decltype((xx)) r2 = xx; // r2 is double &
+decltype(xx) w = xx; // w is double (stage 1 match)
+
+
+// 方法返回值无法推断类型, 因为声明时还没有使用形参
+template<class T1, class T2>
+?type? gt(T1 x, T2 y)
+{
+    ...
+    return x + y;
+}
+// 使用c++11新增的语法可编写成这样: 后置返回类型
+template<class T1, class T2>
+auto gt(T1 x, T2 y) -> decltype(x + y)
+{
+    ...
+    return x + y;
+}
 ```
 
 **显式具体化和显式实例化**
@@ -607,8 +667,6 @@ may<>(m);    // 自己选择，告诉编译器调用模板函数
 may<int>(m); // 强制类型转化成int类型然后调用模板
 ```
 
-
-
 ### 7.4 内置函数
 
 STL和Boost C++
@@ -625,6 +683,24 @@ clock_t start = clock();           // 当前时钟节拍
 clock_t delay = secs * CLOCKS_PER_SEC;
 while(clock() - start < delay); // 等待指定 secs 秒
 ```
+
+## 7. 内存
+
+编译：不需要编译头文件。
+
+头文件中常包含的内容：
+
+> 函数原型。
+>
+> 使用#define或const定义的符号常量。
+>
+> 结构声明。
+>
+> 类声明。
+>
+> 模板声明。
+>
+> 内联函数。
 
 ## 7. 对象
 
