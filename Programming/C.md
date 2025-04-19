@@ -328,8 +328,11 @@ s = Sex(1);        // valid, 强制类型转换
 ```c
 #define INT_PTR int*
 typedef int* int_ptr;
-INT_PTR a,b; // int*p1,p2;int *p1, *p2; 只有b不是指针类型。
-int_ptr c,d;
+INT_PTR a,b; // int *a, b;
+int_ptr c,d; // int *c, *d;  只有b不是指针类型。
+
+const int_ptr e = ..; // 指针常量，不能修改地址。
+const int * f = ..; // 常量指针
 ```
 
 <font color=blue>**== 指针运算 ==**</font>

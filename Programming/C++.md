@@ -269,7 +269,10 @@ delete [] intArray;
 🟦  **引用**
 
 ```c++
-// 引用 reference，只能指向变量，必须立即初始化
+/* 引用 reference
+ * 1. 只能指向变量，必须立即初始化
+ * 2. 只有空指针，没有空引用
+ */
 int int_value = 1024;
 int& refValue = int_value; // int* const refValue = &int_value;
 refValue = 10; // *refValue = 10;
@@ -401,6 +404,7 @@ vector<int> vec(5);                 // 元素为 {0, 0, 0, 0, 0}
 vector<int> vec(5, 10);             // 元素为 {10, 10, 10, 10, 10}
 vector<int> vec2(vec.begin(), vec.end()); // 初始化一个与vec具有相同元素的vector容器
 vector<int> vec3(vec);              // 复制一个与vec相同的vector容器
+vector<int> vec4(arr, arr+5);
 
 clear(); // 移除容器中的所有数据
 empty(); // 判断容器是否为空
@@ -479,7 +483,7 @@ void foo(int);
 
 // 如果实参与引用参数不匹配，C++将生成临时变量。当且仅当参数为const引用时，C++才允许这样做，但以前不是这样。
 
-// 默认参数
+// 默认参数 (函数声明时)
 void sample(int = 10);
 void sample(int num)
 {
@@ -546,6 +550,13 @@ sum(num) = 55; // 报错
 * 参数：类型引用和类型本身视为同一个特征标
 * const 跟 非 const参数是不同特征标 , 但调用的时候非const可以作为实参调用const函数
 * 参数：左值引用可以跟右值引用构成重载，但如果右值引用函数没有被定义，那就会调用const修饰的左值引用的参数的函数
+
+```c++
+class A {
+    operator const int();
+    operator int() const;
+}
+```
 
 ### 7.3 函数模板
 
@@ -684,7 +695,26 @@ clock_t delay = secs * CLOCKS_PER_SEC;
 while(clock() - start < delay); // 等待指定 secs 秒
 ```
 
-## 7. 内存
+## 8. 名称空间
+
+```c++
+// using 声明，相当于一个局部变量
+namespace Jill {
+    double bucket (double n){...}
+    double fetch;
+    struct Hill
+}
+char fetch;
+int main(){
+    using Jill::fetch; // put fetch into local namespace
+    double fetch;      // Error! Already have a local fetch
+    cin >> fetch;      // read a value into Jill::fetch
+    cin >> ::fetch;    // read a value into global fetch
+}
+
+// using 编译
+using namespace Jack;  // make all the names in Jack available
+```
 
 编译：不需要编译头文件。
 
@@ -702,14 +732,18 @@ while(clock() - start < delay); // 等待指定 secs 秒
 >
 > 内联函数。
 
-## 7. 对象
+## 9. 类和对象
 
-### 7.1 成员
+封装，继承和多态。
+
+### 9.1 成员
 
 关键字class
 
 * 默认成员是私有，(struct默认是共有)
 * `::` : 作用域解析运算符。
+* 成员名字一般以 `m_` 开头
+* `static const int Months = 12`;
 
 hpp文件一般包含实现的内联函数,通常用于模板类这种声明与实现共存的情况。
 
@@ -753,17 +787,36 @@ Person person2(person); // 使用拷贝构造函数创建新对象
 
 // 重载赋值运算符
 Person person2 = person; // 使用重载等于号运算符赋值
+
+Stock mystuff[4]; // 使用默认构造创建了4个对象
 ```
 
-### 7.2 函数
+### 9.2 函数
 
-<font color="green">**构造函数**</font>
+🟦 **内联函数**
+
+其**定义**位于类**声明**中的函数都将自动成为内联函数。
+
+类声明常将短小的成员函数作为内联函数。
+
+🟦 **构造函数**
 
 > 名字跟类名相同。
 >
 > 没有返回值类型。
 >
 > 自定义了构造函数，系统就不会再自动生成默认构造。
+
+```c++
+// 显式调用构造函数:
+Stock food = Stock("World Cabbage", 250, 1.25);
+
+// 隐式地调用构造函数:
+Stock garment("Furry Mason", 50, 2.5);
+
+// 默认构造函数: 当且仅当没有定义任何构造函数时
+Stock cat;
+```
 
 <font color="green">**拷贝构造**</font>
 
@@ -802,9 +855,9 @@ int main() {
 }
 ```
 
-<font color="green">**析构函数**</font>
+🟦 **析构函数**
 
-> 对象过期时自动调用的特殊成员函数
+> 对象过期时自动调用的特殊成员函数 (包括手动调用delete时)
 >
 > 析构函数一般用来完成清理工作
 >
@@ -833,7 +886,7 @@ private:
 }
 ```
 
-<font color="green">**this指针**</font>
+🟦 **this指针**
 
 * 每个成员函数( 包括构造和析构 )都有一个this指针
 * this指针指向调用对象，即可以通过this关键字访问当前对象的成员
@@ -851,12 +904,14 @@ public:
 }
 ```
 
-## 8. const
+### 9.3 const
 
 ```c++
 // 1. 修饰变量
 const int x = 10;
-x = 20;  // 编译错误，x是只读变量，不能修改其值
+x = 20;      // 编译错误，x是只读变量，不能修改其值
+const Stock land = Stock("Kludgehorn Properties");
+land.show(); // 编译错误，无法保证这个方法中 land 中的数据不被修改
 
 // 2. 修饰函数参数
 void func(const int x) {
