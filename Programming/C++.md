@@ -697,6 +697,8 @@ while(clock() - start < delay); // 等待指定 secs 秒
 
 ## 8. 名称空间
 
+### 8.1 using
+
 ```c++
 // using 声明，相当于一个局部变量
 namespace Jill {
@@ -732,6 +734,10 @@ using namespace Jack;  // make all the names in Jack available
 >
 > 内联函数。
 
+### 8.2 友元
+
+1. 友元函数：非成员函数可以访问私有数据。
+
 ## 9. 类和对象
 
 封装，继承和多态。
@@ -743,11 +749,13 @@ using namespace Jack;  // make all the names in Jack available
 * 默认成员是私有，(struct默认是共有)
 * `::` : 作用域解析运算符。
 * 成员名字一般以 `m_` 开头
-* `static const int Months = 12`;
+* `static const int Months = 12`; 静态成员属性所有对象共享
 
 hpp文件一般包含实现的内联函数,通常用于模板类这种声明与实现共存的情况。
 
 建议: 只要不是纯模板，一律使用.h作为头文件后缀，使用.cpp文件作为函数的实现文件。
+
+注意:静态数据成员在类声明中声明，在包含类方法的文件中初始化。初始化时使用作用域运算符来指出静态成员所属的类。但如果静态成员是整型或枚举型const，则可以在类声明中初始化。
 
 <font color="green">**访问修饰符**</font>
 
@@ -792,6 +800,14 @@ Stock mystuff[4]; // 使用默认构造创建了4个对象
 ```
 
 ### 9.2 函数
+
+C++自动提供了下面这些成员函数:
+
+* 默认构造函数，如果没有定义构造函数;
+* 默认析构函数，如果没有定义;
+* 复制构造函数，如果没有定义;
+* 赋值运算符，如果没有定义;
+* 地址运算符，如果没有定义。
 
 🟦 **内联函数**
 
@@ -951,7 +967,52 @@ int main() {
 }
 ```
 
-## 9. 运算符重载
+### 9.4 类型转换
+
+```c++
+// 自动类型转换
+long count = 8;       // long
+double time = 11;     // double
+int side = 3.33;      // int
+int * p = (int *) 10; // int *, 但没有意义
+
+Stonewt blossem(132.5);   // 调用构造
+Stonewt buttercup(10，2); // 调用构造
+Stonewt bubbles;          // 调用构造
+
+// 只有一个参数的才能自动转换
+Stonewt myCat;      // create a Stonewt object
+myCat = 19.6;       // Stonewt(double) to convert 19.6 to Stonewt
+
+// explicit 关闭自动转换
+explicit Stonewt(double lbs); // no implicit conversions allowed
+mycat =(Stonewt)19.6;         // 可以，因为是强制类型转换
+```
+
+🟩 **转换函数**
+
+`operator typeName();`
+
+* 转换函数必须是类方法
+* 转换函数不能指定返回类型
+* 转换函数不能有参数
+
+```c++
+class ...
+operator double();
+...
+Stonewt::operator double() const
+{
+    return pounds;
+}
+
+Stonewt poppins(9,2.8);
+double pwt = poppins;      // implicit conversion
+```
+
+
+
+## 10. 运算符重载
 
 对于内置数据类型不能实现运算符重载。
 
@@ -965,45 +1026,28 @@ public:
         value = num;
     }
 
+    // 左侧的操作数是调用对象
     MyClass operator+(const MyClass& other) {
         MyClass result(value + other.value);
         return result;
     }
+
+    friend MyClass operator+(int num, const MyClass& obj);
 };
+
+// 全局运算符重载实现
+MyClass operator+(int num, const MyClass& obj) {
+    return MyClass(num + obj.value);
+}
 
 int main() {
     MyClass obj1(10);
     MyClass obj2(20);
-    MyClass result = obj1 + obj2;
-    // 将 obj1 和 obj2 相加，将结果赋给 result
-    // result 的 value 成员变量将被赋值为 30
-}
 
-// 友元函数重载
-// 在C++中，一个函数可以成为另一个类的友元，只要在类定义中包含一个友元声明。友元函数不受类的访问控制限制，可以访问类的所有成员，包括私有成员和保护成员。
-#include <iostream>
-class MyClass {
-public:
-    MyClass(int value) : myValue(value) {}
-    // 声明友元函数
-    friend MyClass operator+(const int& obj1, const MyClass& obj2);
-private:
-    int myValue;
-};
+    // 等于替换上 obj1.operator+(obj2);
+    MyClass result = obj1 + obj2; // 返回 result， value 成员变量为 30
 
-// 定义友元函数
-MyClass operator+(const int& obj1, const MyClass& obj2) {
-    MyClass newObj(obj1); // 将第一个参数作为构造函数的参数，以便将其转换为int类型
-    newObj.myValue += obj2.myValue; // 执行加法操作
-    return newObj;
-}
-
-int main() {
-    MyClass myObj1(5);
-    MyClass myObj2(10);
-    MyClass myObj3 = 1 + myObj2; // 使用加号重载
-    std::cout << "The value of myObj3 is: " << myObj3.myValue << std::endl;
-    return 0;
+    MyClass result = 10 + obj2; // operator+(10, obj2);
 }
 ```
 
@@ -1012,9 +1056,16 @@ int main() {
 ```c++
 ostream& operator<<(ostream &cout, Object &other)
 {
-    cout << "" << "";
+    cout << "data: " << obj.data;
     return cout;
 }
+
+class Object {
+private:
+    int data;
+public:
+    friend ostream& operator<<(ostream& out, const Object& obj);
+};
 ```
 
 **递增运算符++**
