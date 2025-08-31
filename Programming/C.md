@@ -29,7 +29,7 @@ int main()
 
 | 内置类型	|长度(Byte)      |
 | --------- | ---- |
-| char       | 1，'\0' 空字符，ASCII 码为0 |
+| char       | 1，'\0' 空字符，ASCII 码为0. 存储的是ASCII码而非字符本身 |
 | short | 2 |
 | int  | 4 |
 | long      | 4 (C语言标准：sizeof(long)>=sizeof(int) 就可以了) |
@@ -319,9 +319,9 @@ s = Sex(1);        // valid, 强制类型转换
 2. 指针越界。
 3. 指针指向的空间已经被释放。
 
-`int * const p;` ： 指针常量，不能修改地址。
+`int * const p;` ： 修饰变量，指针常量，不能修改地址。
 
-`const int *p;` ： 常量指针，不能修改值。
+`const int *p;` ： 修饰指针，常量指针，不能修改值。
 
 `const int const *p;` ： 都不能修改。
 
