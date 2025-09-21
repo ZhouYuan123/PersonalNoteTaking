@@ -344,7 +344,7 @@ int a = (int)99.9;
 
 | 类型                                   | 定义                                           | 存储和周期                                                   | 作用域   | 链接性 |
 | -------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------ | -------- | ------ |
-| 全局变量                               | 函数外面定义的。                               |                                                              | 全局     | 外部   |
+| 全局变量                               | 函数外面定义的。                               | 从程序启动开始，到程序结束销毁                               | 全局     | 外部   |
 | 静态全局变量                           | const or static                                | 整个程序运行期                                               | 全局     | 内部   |
 | 局部变量，自动变量(automatic variable) | 函数内部定义的常规变量                         | 自动存储：在所属的函数被调用时自动产生，在该函数结束时消亡。<br />局部变量内存自动分配和释放。 | 代码块中 | 无     |
 | 静态变量                               | 使用关键字 static：`static double fee =56.50;` | 静态存储：整个程序执行期间都存在。初始化一次。               | 函数内部 | 内部   |
@@ -565,18 +565,36 @@ Function Template
 ```c++
 // 函数声明
 template<typename T> // c++98之前：<class T>
-void Swap(T&, T&);
+void swap(T&, T&);
 
 template<typename T> // 模板头
-void Swap(T &a, T &b)
+void swap(T &a, T &b)
 {
     T temp = a;
     a = b;
     b = temp;
 }
+
+swap(1, 2);      // 自动类型推导：必须推测出一致类型的T
+swap<int>(1, 2); // 显示指定类型
+
 // 编译器最终还是生成多个独立的函数
 --
-// 函数模板可以重载
+```
+
+**重载**
+
+1. 普通函数可以跟函数模板构成重载
+   1. 优先调用普通函数
+   2. 可以通过空模板函数列表强制调用模板
+   3. 函数模板之间可以构成重载
+   4. 如果函数模板产生更好的匹配，优先调用函数模板
+
+```c++
+myPrint();       // 普通函数
+myPrint<>();     // 模板函数
+char a = 'a';
+myPrint(a); // 函数模板：普通函数入参是int, 函数模板是T
 ```
 
 **无法知道模板中形参类型**
@@ -630,7 +648,7 @@ auto gt(T1 x, T2 y) -> decltype(x + y)
 template <>
 void Swap<Job>(job &j1, job &j2);
 
-// 显式具体化
+// 显式具体化，针对特殊类型特殊处理
 template <> void Swap<int>(int &, int &);// explicit specialization
 template <> void Swap(int &, int &);     // explicit specialization
 
@@ -742,6 +760,34 @@ using namespace Jack;  // make all the names in Jack available
 
 封装，继承和多态。
 
+继承分类：公共继承，保护继承和私有继承。所有属性都继承下来保留一份，私有成员是被编译器影藏了所以无法访问。
+
+![](../imgs/Cpp/extend.png)
+
+```c++
+class Base {
+public:
+    int publicVar;
+protected:
+    int protectedVar;
+private:
+    int privateVar;
+};
+
+class Derived : virtual public Base1, Base2 {
+    // publicVar 在此仍是 public
+    // protectedVar 在此仍是 protected
+    // privateVar 不可直接访问
+};
+
+Derived d;
+d.publicVar;
+d.Base::publicVar; // 调用跟父类同名属性或者方法，需要加上作用域
+Derived::Base::publicVar; // 调用跟父类同名的静态属性或者方法
+
+virtual // 虚继承解决菱形继承出现两份数据的问题。只有一份数据
+```
+
 ### 9.1 成员
 
 关键字class
@@ -755,7 +801,16 @@ hpp文件一般包含实现的内联函数,通常用于模板类这种声明与�
 
 建议: 只要不是纯模板，一律使用.h作为头文件后缀，使用.cpp文件作为函数的实现文件。
 
-注意:静态数据成员在类声明中声明，在包含类方法的文件中初始化。初始化时使用作用域运算符来指出静态成员所属的类。但如果静态成员是整型或枚举型const，则可以在类声明中初始化。
+**静态成员变量**
+
+- 所有对象共享同一份数据
+- 在编译阶段分配内存
+- 类内声明，类外初始化 (必须初始化，否则使用时报错 `int Stu::m_A = 100;`)初始化时使用作用域运算符来指出静态成员所属的类。但如果静态成员是整型或枚举型const，则可以在类声明中初始化。
+
+**静态成员函数**
+
+- 所有对象共享同一个函数
+- 静态成员函数只能访问静态成员变量
 
 <font color="green">**访问修饰符**</font>
 
@@ -880,6 +935,8 @@ int main() {
 > 析构函数的名称是在类名前加上~
 >
 > 析构函数没有参数，只能有一个
+>
+> 虚析构使用delete父类的时候才能调用子类析构
 
 <font color="green">**类型转换函数**</font>
 
@@ -946,10 +1003,11 @@ int main() {
     value = 20;  // 可以修改value的值，但是不能修改func()返回的值
 }
 
-// 4. 修饰成员函数
+// 4. 修饰成员函数(常函数)
 class MyClass {
 public:
     int x;
+    mutable int y;
 
     void func() {
         x = 10;
@@ -957,13 +1015,14 @@ public:
 
     void constFunc() const {
         // x = 10;  // 编译错误，不能在const成员函数中修改成员变量
+        y = 10; // 可以修改
     }
 }
 
 int main() {
     const MyClass obj;
     obj.func();  // 编译错误，不能在常量对象上调用非const成员函数
-    obj.constFunc();  // 可以在常量对象上调用const成员函数
+    obj.constFunc();  // 常量对象调用常函数
 }
 ```
 
@@ -1010,7 +1069,21 @@ Stonewt poppins(9,2.8);
 double pwt = poppins;      // implicit conversion
 ```
 
+### 9.5 类模板
 
+```c++
+template <typename NameType, typename AgeType>
+class Person
+{
+public:
+    Person(NameType name, AgeType age)
+    {
+
+    }
+}
+
+Person<string, int> p1("sunwukong", 999);
+```
 
 ## 10. 运算符重载
 
